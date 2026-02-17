@@ -78,15 +78,33 @@
             border-left: 3px solid #D07D7D;
             padding: 1.5rem;
             border-radius: 0.5rem;
+            transition: transform 0.2s;
         }
+        .kpi-card:hover { transform: translateY(-2px); border-color: #D07D7D; }
         .kpi-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: #71717a; margin-bottom: 0.5rem; }
         .kpi-value { font-size: 1.8rem; font-weight: 700; color: #fff; font-family: 'Inter', sans-serif; }
         .kpi-sub { font-size: 0.75rem; color: #52525b; margin-top: 0.25rem; }
 
         /* Accordion */
-        details > summary { list-style: none; cursor: pointer; transition: background 0.2s; }
+        details { 
+            background-color: #0f1012; 
+            border: 1px solid #27272a; 
+            border-radius: 0.5rem; 
+            overflow: hidden; 
+            transition: all 0.3s ease;
+        }
+        details[open] { border-color: #D07D7D; box-shadow: 0 0 15px rgba(208, 125, 125, 0.05); }
+        details > summary { 
+            list-style: none; 
+            cursor: pointer; 
+            padding: 1rem;
+            background-color: #121214;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s; 
+        }
         details > summary::-webkit-details-marker { display: none; }
-        details[open] > summary { background-color: #18181b; }
         details > summary:hover { background-color: #18181b; }
         .chevron { transition: transform 0.3s; }
         details[open] .chevron { transform: rotate(180deg); }
@@ -95,38 +113,44 @@
         #mobile-menu { transition: transform 0.3s ease-in-out; }
         .menu-closed { transform: translateX(-100%); }
         .menu-open { transform: translateX(0); }
+        
+        /* Utility */
+        .badge-source { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; background: #1f2125; color: #71717a; border: 1px solid #27272a; font-family: monospace; }
+        .highlight-text { color: #fff; font-weight: 600; }
+        .section-divider { border-bottom: 1px solid #27272a; padding-bottom: 1.5rem; margin-bottom: 2rem; }
     </style>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen overflow-x-hidden">
 
     <!-- MOBILE HEADER -->
-    <header class="md:hidden flex items-center justify-between p-4 bg-dark-panel border-b border-dark-border sticky top-0 z-50">
+    <header class="md:hidden flex items-center justify-between p-4 bg-dark-panel border-b border-dark-border sticky top-0 z-50 shadow-md">
         <div class="font-bold text-white tracking-tight">AUDITORIA <span class="text-brand">VALLBLANC</span></div>
-        <button id="hamburger-btn" class="text-zinc-400 p-2 focus:outline-none">
+        <button id="hamburger-btn" class="text-zinc-400 p-2 focus:outline-none hover:text-brand transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
     </header>
 
-    <!-- SIDEBAR -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-dark-panel border-r border-dark-border z-40 transform menu-closed md:relative md:transform-none md:flex flex-col shrink-0 transition-transform duration-300">
+    <!-- SIDEBAR NAV -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-dark-panel border-r border-dark-border z-40 transform menu-closed md:relative md:transform-none md:flex flex-col shrink-0 transition-transform duration-300 shadow-2xl md:shadow-none">
         <div class="p-6 border-b border-dark-border flex justify-between items-start">
             <div>
                 <h1 class="text-xl font-bold text-white tracking-tight leading-none">AUDITORIA WEB<br><span class="text-brand text-2xl">VALLBLANC</span></h1>
-                <div class="text-[10px] text-zinc-500 font-mono mt-3">INFORME INTEGRAL</div>
+                <div class="text-[10px] text-zinc-500 font-mono mt-3">INFORME INTEGRAL v3.0</div>
                 <div class="mt-4 inline-flex items-center gap-2 px-2 py-1 bg-brand-glow border border-brand/20 rounded text-brand text-[10px] font-mono font-bold">
                     <span class="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span> FULL DATA
                 </div>
             </div>
-            <button id="close-menu-btn" class="md:hidden text-zinc-500"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            <button id="close-menu-btn" class="md:hidden text-zinc-500 hover:text-white transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
         </div>
 
         <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+            <a href="#intro" onclick="closeMenu()" class="block px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-dark-surface transition-colors border-l-2 border-transparent hover:border-brand">0. Introducción y Alcance</a>
             <a href="#diagnostico" onclick="closeMenu()" class="block px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-dark-surface transition-colors border-l-2 border-transparent hover:border-brand">1. Diagnóstico Ejecutivo</a>
             <a href="#gsc-data" onclick="closeMenu()" class="block px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-dark-surface transition-colors border-l-2 border-transparent hover:border-brand">2. Datos Búsqueda (GSC)</a>
             <a href="#ga4-data" onclick="closeMenu()" class="block px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-dark-surface transition-colors border-l-2 border-transparent hover:border-brand">3. Tráfico & GA4</a>
             <a href="#contenidos" onclick="closeMenu()" class="block px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-dark-surface transition-colors border-l-2 border-transparent hover:border-brand">4. Auditoría Contenidos</a>
             <a href="#tecnico" onclick="closeMenu()" class="block px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-dark-surface transition-colors border-l-2 border-transparent hover:border-brand">5. Anomalías Técnicas</a>
-            <a href="#plan" onclick="closeMenu()" class="block px-4 py-3 rounded-lg text-sm font-medium text-white bg-brand/10 border border-brand/20 mt-4 shadow-[0_0_15px_rgba(208,125,125,0.1)]">6. Plan Director 2026</a>
+            <a href="#plan" onclick="closeMenu()" class="block px-4 py-3 rounded-lg text-sm font-medium text-white bg-brand/10 border border-brand/20 mt-4 shadow-[0_0_15px_rgba(208,125,125,0.1)] hover:bg-brand/20 transition-all">6. Plan Director 2026</a>
         </nav>
         
         <div class="p-6 border-t border-dark-border bg-dark-bg text-[10px] text-zinc-600 font-mono">
@@ -139,19 +163,52 @@
     </aside>
 
     <!-- MAIN CONTENT -->
-    <main class="flex-1 w-full overflow-y-auto bg-dark-bg p-6 md:p-12">
+    <main class="flex-1 w-full overflow-y-auto bg-dark-bg p-6 md:p-12 lg:pr-20">
         
+        <!-- 0. INTRODUCCIÓN -->
+        <section id="intro" class="mb-20 scroll-mt-24">
+            <div class="section-divider">
+                <h2 class="text-3xl font-bold text-white mb-2">0. Introducción y Alcance</h2>
+                <p class="text-sm text-zinc-500">Metodología y Fuentes de Datos</p>
+            </div>
+            <div class="bg-dark-panel p-6 rounded-lg border border-dark-border shadow-lg">
+                <div class="text-sm text-zinc-300 space-y-4 leading-relaxed">
+                    <p>Este documento constituye la auditoría técnica y estratégica completa del ecosistema digital de <strong>vallblanc.com</strong>. El objetivo es identificar las barreras que limitan el crecimiento orgánico, analizar la calidad del tráfico actual y proponer una hoja de ruta accionable para el ejercicio 2026.</p>
+                    <p>Se han analizado todas las fuentes de datos proporcionadas sin omitir información cruda para garantizar la transparencia del diagnóstico.</p>
+                </div>
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-3 bg-dark-surface rounded border border-dark-border">
+                        <div class="text-xs text-brand font-bold uppercase mb-1">Fuente 1: GSC</div>
+                        <div class="text-xs text-zinc-400">Rendimiento de búsqueda, indexación y experiencia de página. Periodo: Oct 2024 - Feb 2026.</div>
+                    </div>
+                    <div class="p-3 bg-dark-surface rounded border border-dark-border">
+                        <div class="text-xs text-brand font-bold uppercase mb-1">Fuente 2: GA4</div>
+                        <div class="text-xs text-zinc-400">Comportamiento de usuario, adquisición y eventos. Informes de Adquisición y Panorámico.</div>
+                    </div>
+                    <div class="p-3 bg-dark-surface rounded border border-dark-border">
+                        <div class="text-xs text-brand font-bold uppercase mb-1">Contexto</div>
+                        <div class="text-xs text-zinc-400">Sector Salud (YMYL). Dependencia de redes sociales vs SEO orgánico.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- 1. DIAGNOSTICO -->
         <section id="diagnostico" class="mb-20 scroll-mt-24">
-            <h2 class="text-2xl font-bold text-white mb-6 pb-4 border-b border-dark-border">1. Diagnóstico Ejecutivo</h2>
+            <div class="section-divider">
+                <h2 class="text-3xl font-bold text-white mb-2">1. Diagnóstico Ejecutivo</h2>
+                <p class="text-sm text-zinc-500">Estado de Salud del Proyecto</p>
+            </div>
             
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-10">
-                <div class="space-y-6 text-sm text-zinc-300 leading-7">
-                    <p><strong class="text-white">Situación Actual:</strong> El análisis exhaustivo de los últimos 16 meses (Oct 2024 - Feb 2026) muestra un proyecto con una <strong>visibilidad masiva pero ineficiente</strong>. La web acumula 446,000 impresiones en Google, pero solo consigue 2,040 clics, resultando en un CTR global del 0.46%, una cifra crítica para el sector salud local.</p>
-                    <p><strong class="text-white">La Brecha de Calidad:</strong> Existe una discrepancia severa en la calidad del tráfico según la fuente. El reporte "Informe Panorámico" indica que el canal "StoryMeta/VideoReel" es la principal fuente de usuarios (5.4 mil usuarios), pero la interacción es mínima. En contraposición, el tráfico orgánico de Google es un 400% más eficiente en retención, pero tiene un volumen 3 veces menor.</p>
-                    <p><strong class="text-white">Alerta Móvil:</strong> El archivo "Dispositivos.csv" confirma que el <strong>66.5% del tráfico orgánico es móvil</strong> (1322 clics vs 647 desktop). Sin embargo, la posición media en móvil (11.73) difiere de desktop (37.94), y la velocidad de carga (según PageSpeed externo) es un cuello de botella. El negocio depende de pantallas pequeñas.</p>
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-10 mb-10">
+                <!-- Text Analysis -->
+                <div class="space-y-6 text-sm text-zinc-300 leading-7 font-light">
+                    <p><strong class="highlight-text">Situación Actual:</strong> El análisis exhaustivo de los últimos 16 meses (Oct 2024 - Feb 2026) muestra un proyecto con una <strong>visibilidad masiva pero ineficiente</strong>. La web acumula 446,000 impresiones en Google, pero solo consigue 2,040 clics, resultando en un CTR global del 0.46%, una cifra crítica para el sector salud local.</p>
+                    <p><strong class="highlight-text">La Brecha de Calidad:</strong> Existe una discrepancia severa en la calidad del tráfico según la fuente. El reporte "Informe Panorámico" indica que el canal "StoryMeta/VideoReel" es la principal fuente de usuarios (5.4 mil usuarios), pero la interacción es mínima. En contraposición, el tráfico orgánico de Google es un 400% más eficiente en retención, pero tiene un volumen 3 veces menor.</p>
+                    <p><strong class="highlight-text">Alerta Móvil:</strong> El archivo "Dispositivos.csv" confirma que el <strong>66.5% del tráfico orgánico es móvil</strong> (1322 clics vs 647 desktop). Sin embargo, la posición media en móvil (11.73) difiere de desktop (37.94), y la velocidad de carga es un cuello de botella. El negocio depende de pantallas pequeñas.</p>
                 </div>
                 
+                <!-- KPI Cards -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="kpi-card">
                         <div class="kpi-label">Clics Totales (GSC)</div>
@@ -179,30 +236,33 @@
 
         <!-- 2. GSC DATA -->
         <section id="gsc-data" class="mb-20 scroll-mt-24">
-            <h2 class="text-2xl font-bold text-white mb-6 pb-4 border-b border-dark-border flex items-center justify-between">
-                <span>2. Datos de Búsqueda (GSC)</span>
-                <span class="text-xs font-mono font-normal text-zinc-500 border border-dark-border px-2 py-1 rounded">FUENTE: CSV EXPORTS</span>
-            </h2>
+            <div class="section-divider flex items-center justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-2">2. Datos de Búsqueda (GSC)</h2>
+                    <p class="text-sm text-zinc-500">Datos Crudos y Anomalías Geográficas</p>
+                </div>
+                <span class="badge-source">FUENTE: CSV EXPORTS</span>
+            </div>
 
             <!-- ANOMALIA PAISES -->
-            <details class="bg-dark-panel border border-dark-border rounded-lg mb-6 group open">
-                <summary class="flex items-center justify-between p-4 cursor-pointer">
+            <details class="mb-6 group open">
+                <summary>
                     <div class="flex items-center gap-3">
                         <span class="text-brand font-bold text-sm uppercase tracking-wider">Anomalía Detectada: Listado Completo de Países</span>
-                        <span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">Países.csv</span>
+                        <span class="badge-source">Países.csv</span>
                     </div>
-                    <svg class="w-5 h-5 text-zinc-500 chevron group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <svg class="w-5 h-5 text-zinc-500 chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </summary>
                 <div class="p-4 border-t border-dark-border overflow-x-auto">
-                    <p class="text-sm text-zinc-400 mb-4">A continuación, el volcado completo de los datos geográficos que evidencian la dispersión de tráfico irrelevante:</p>
+                    <p class="text-sm text-zinc-400 mb-4 bg-dark-surface p-3 rounded">Se han detectado impresiones y clics provenientes de regiones fuera del mercado objetivo (Badalona/España), lo que sugiere problemas con versiones de idioma automáticas o ataques de bot de rastreo.</p>
                     <table class="data-table">
                         <thead>
                             <tr><th>País</th><th class="text-right">Clics</th><th class="text-right">Impresiones</th><th class="text-right">CTR</th><th class="text-right">Posición</th><th>Estado</th></tr>
                         </thead>
                         <tbody>
                             <tr><td class="font-bold text-white">España</td><td class="text-right">1,172</td><td class="text-right">120,493</td><td class="text-right">0.97%</td><td class="text-right">31.91</td><td class="text-green-500 font-bold">Mercado Principal</td></tr>
-                            <tr><td>Italia</td><td class="text-right">75</td><td class="text-right">8,925</td><td class="text-right">0.84%</td><td class="text-right">20.61</td><td>Irrelevante</td></tr>
-                            <tr><td>Francia</td><td class="text-right">72</td><td class="text-right">16,837</td><td class="text-right">0.43%</td><td class="text-right">40.84</td><td>Irrelevante</td></tr>
+                            <tr><td>Italia</td><td class="text-right">75</td><td class="text-right">8,925</td><td class="text-right">0.84%</td><td class="text-right">20.61</td><td class="text-yellow-500">¿Turismo/Error?</td></tr>
+                            <tr><td>Francia</td><td class="text-right">72</td><td class="text-right">16,837</td><td class="text-right">0.43%</td><td class="text-right">40.84</td><td class="text-yellow-500">¿Turismo/Error?</td></tr>
                             <tr class="bg-red-900/10"><td class="text-brand font-bold">Siria</td><td class="text-right font-bold text-white">44</td><td class="text-right">13,908</td><td class="text-right">0.32%</td><td class="text-right">6.51</td><td class="text-red-400 font-bold">SPAM / BOT</td></tr>
                             <tr class="bg-red-900/10"><td class="text-brand font-bold">Rusia</td><td class="text-right font-bold text-white">39</td><td class="text-right">7,766</td><td class="text-right">0.50%</td><td class="text-right">29.31</td><td class="text-red-400 font-bold">SPAM / BOT</td></tr>
                             <tr><td>Estados Unidos</td><td class="text-right">38</td><td class="text-right">39,551</td><td class="text-right">0.10%</td><td class="text-right">21.88</td><td>Informativo</td></tr>
@@ -217,7 +277,7 @@
                             <tr><td>Bolivia</td><td class="text-right">15</td><td class="text-right">3,247</td><td class="text-right">0.46%</td><td class="text-right">4.85</td><td>Informativo</td></tr>
                             <tr><td>Venezuela</td><td class="text-right">14</td><td class="text-right">7,586</td><td class="text-right">0.18%</td><td class="text-right">5.77</td><td>Informativo</td></tr>
                             <tr class="bg-red-900/10"><td class="text-brand">Libia</td><td class="text-right">14</td><td class="text-right">4...</td><td class="text-right">-</td><td class="text-right">-</td><td class="text-red-400">SPAM</td></tr>
-                            <tr class="bg-red-900/10"><td class="text-zinc-500 italic">Long Tail (Yibuti, Afganistán...)</td><td class="text-right">0</td><td class="text-right">25+</td><td class="text-right">0%</td><td class="text-right">Var</td><td class="text-red-400">BASURA</td></tr>
+                            <tr class="bg-red-900/10"><td class="text-zinc-500 italic">Long Tail (Yibuti, Afganistán, Malaui, Reunión, Níger...)</td><td class="text-right">0</td><td class="text-right">25+</td><td class="text-right">0%</td><td class="text-right">Var</td><td class="text-red-400">BASURA</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -225,12 +285,16 @@
 
             <!-- CONSULTAS DETALLADAS -->
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                <div class="bg-dark-panel border border-dark-border rounded-lg overflow-hidden">
-                    <div class="p-4 bg-dark-surface border-b border-dark-border flex justify-between items-center">
-                        <h3 class="text-white text-sm font-bold uppercase">Top Consultas de Marca</h3>
-                        <span class="text-[10px] text-zinc-500 font-mono">Consultas.csv</span>
-                    </div>
-                    <div class="overflow-x-auto">
+                <!-- Brand -->
+                <details class="bg-dark-panel border border-dark-border rounded-lg group open">
+                    <summary class="flex items-center justify-between p-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-white text-sm font-bold uppercase">Top Consultas de Marca</span>
+                            <span class="badge-source">Consultas.csv</span>
+                        </div>
+                        <svg class="w-5 h-5 text-zinc-500 chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </summary>
+                    <div class="overflow-x-auto p-0">
                         <table class="data-table">
                             <tbody>
                                 <tr><td class="text-white font-medium">vallblanc</td><td class="text-right font-bold">233 Clics</td><td class="text-right text-brand">24.89% CTR</td></tr>
@@ -239,17 +303,21 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </details>
 
-                <div class="bg-dark-panel border border-dark-border rounded-lg overflow-hidden">
-                    <div class="p-4 bg-dark-surface border-b border-dark-border flex justify-between items-center">
-                        <h3 class="text-white text-sm font-bold uppercase flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                            Consultas "Zombie" (Volumen Sin Clic)
-                        </h3>
-                        <span class="text-[10px] text-zinc-500 font-mono">Consultas.csv</span>
-                    </div>
-                    <div class="overflow-x-auto">
+                <!-- Zombie -->
+                <details class="bg-dark-panel border border-dark-border rounded-lg group open">
+                    <summary class="flex items-center justify-between p-4">
+                         <div class="flex items-center gap-2">
+                            <span class="text-white text-sm font-bold uppercase flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                                Consultas "Zombie"
+                            </span>
+                            <span class="badge-source">Consultas.csv</span>
+                        </div>
+                        <svg class="w-5 h-5 text-zinc-500 chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </summary>
+                    <div class="overflow-x-auto p-0">
                         <table class="data-table">
                             <tbody>
                                 <tr class="bg-red-900/10">
@@ -265,22 +333,25 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </details>
             </div>
         </section>
 
         <!-- 3. GA4 DATA -->
         <section id="ga4-data" class="mb-20 scroll-mt-24">
-            <h2 class="text-2xl font-bold text-white mb-6 pb-4 border-b border-dark-border">3. Tráfico & Google Analytics 4</h2>
+            <div class="section-divider">
+                <h2 class="text-3xl font-bold text-white mb-2">3. Tráfico & Google Analytics 4</h2>
+                <p class="text-sm text-zinc-500">Calidad del Tráfico y Comportamiento</p>
+            </div>
 
             <!-- ADQUISICION -->
-            <details class="bg-dark-panel border border-dark-border rounded-lg mb-8 group open">
-                <summary class="flex items-center justify-between p-4 cursor-pointer">
+            <details class="mb-8 group open">
+                <summary>
                     <div class="flex items-center gap-3">
                         <span class="text-brand font-bold text-sm uppercase tracking-wider">Matriz de Adquisición: Calidad del Tráfico</span>
-                        <span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">Adquisición_de_tráfico.pdf</span>
+                        <span class="badge-source">Adquisición_de_tráfico.pdf</span>
                     </div>
-                    <svg class="w-5 h-5 text-zinc-500 chevron group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <svg class="w-5 h-5 text-zinc-500 chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </summary>
                 <div class="p-4 border-t border-dark-border overflow-x-auto">
                     <table class="data-table">
@@ -337,22 +408,59 @@
                             </tr>
                         </tbody>
                     </table>
-                    <p class="text-[10px] text-zinc-500 mt-3">* <strong>ANÁLISIS:</strong> El canal "Organic Video" aporta el mayor volumen (32.64%) pero la peor calidad (4s). Organic Search es 11 veces más efectivo en retención.</p>
+                    <p class="text-[10px] text-zinc-500 mt-3 p-2 border-l-2 border-brand bg-brand/5 inline-block rounded-r">* <strong>ANÁLISIS:</strong> El canal "Organic Video" aporta el mayor volumen (32.64%) pero la peor calidad (4s). Organic Search es 11 veces más efectivo en retención.</p>
                 </div>
             </details>
+
+            <!-- EVENTOS -->
+            <div class="bg-dark-panel p-6 border border-dark-border rounded-lg shadow-lg">
+                <div class="mb-4 flex items-center justify-between">
+                    <h4 class="text-white text-sm font-bold uppercase tracking-wide">Desglose de Eventos</h4>
+                    <span class="badge-source">Eventos_Nombre_del_evento.pdf</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="data-table">
+                        <tbody>
+                            <tr>
+                                <td class="font-bold text-white">page_view</td>
+                                <td class="text-right font-mono text-brand">33,367</td>
+                                <td class="text-right text-xs">2.02 por usuario</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold text-white">user_engagement</td>
+                                <td class="text-right font-mono text-brand">31,206</td>
+                                <td class="text-right text-xs">Indicador de interés</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold text-white">session_start</td>
+                                <td class="text-right font-mono text-brand">20,347</td>
+                                <td class="text-right text-xs">Inicio visitas</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold text-zinc-500">scroll</td>
+                                <td class="text-right font-mono text-zinc-500">N/A</td>
+                                <td class="text-right text-xs text-zinc-600">Profundidad</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </section>
 
         <!-- 4. CONTENIDOS -->
         <section id="contenidos" class="mb-20 scroll-mt-24">
-            <h2 class="text-2xl font-bold text-white mb-6 pb-4 border-b border-dark-border">4. Auditoría de Contenidos</h2>
+            <div class="section-divider">
+                <h2 class="text-3xl font-bold text-white mb-2">4. Auditoría de Contenidos</h2>
+                <p class="text-sm text-zinc-500">Rendimiento por URL</p>
+            </div>
 
-            <details class="bg-dark-panel border border-dark-border rounded-lg mb-8 group open">
-                <summary class="flex items-center justify-between p-4 cursor-pointer">
+            <details class="mb-8 group open">
+                <summary>
                     <div class="flex items-center gap-3">
-                        <span class="text-brand font-bold text-sm uppercase tracking-wider">Rendimiento por URL (Rebote y SEO)</span>
-                        <span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">Informe_panorámico.pdf + Páginas.csv</span>
+                        <span class="text-brand font-bold text-sm uppercase tracking-wider">Análisis de Rebote y Vistas</span>
+                        <span class="badge-source">Informe_panorámico.pdf + Páginas.csv</span>
                     </div>
-                    <svg class="w-5 h-5 text-zinc-500 chevron group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <svg class="w-5 h-5 text-zinc-500 chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </summary>
                 <div class="p-4 border-t border-dark-border overflow-x-auto">
                     <table class="data-table">
@@ -412,19 +520,28 @@
                     </table>
                 </div>
             </details>
+            
+            <div class="bg-red-950/20 border border-red-900/30 p-6 rounded-lg text-sm text-zinc-300 shadow-lg relative overflow-hidden">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-red-500"></div>
+                <strong class="text-red-400 block mb-2 uppercase tracking-wide">Hallazgo Crítico de Canibalización:</strong>
+                Se observa tráfico distribuido entre "Fisioterapia Temporomandibular" (Servicio) y "El bruxismo" (Blog). Ambas páginas compiten por intención similar ("dolor mandíbula"). Además, hay versiones en <code>/ar/</code> y <code>/ru/</code> de estas páginas indexadas con 1 impresión, diluyendo la fuerza del dominio.
+            </div>
         </section>
 
         <!-- 5. TECNICO -->
         <section id="tecnico" class="mb-20 scroll-mt-24">
-            <h2 class="text-2xl font-bold text-white mb-6 pb-4 border-b border-dark-border">5. Anomalías Técnicas</h2>
+            <div class="section-divider">
+                <h2 class="text-3xl font-bold text-white mb-2">5. Anomalías Técnicas</h2>
+                <p class="text-sm text-zinc-500">Thin Content y Errores</p>
+            </div>
 
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
                 <!-- Indexing Issues -->
                 <div class="bg-dark-panel border border-dark-border p-6 rounded-lg">
                     <h3 class="text-white font-bold mb-4 flex items-center gap-2">
-                        <span class="text-brand text-lg">01.</span> Indexación de "Basura" (Thin Content)
+                        <span class="text-brand text-lg">01.</span> Indexación de "Basura"
                     </h3>
-                    <p class="text-sm text-zinc-400 mb-4">El archivo <code>Páginas.csv</code> revela la indexación de URLs que no aportan valor SEO y consumen Crawl Budget. Listado literal de hallazgos:</p>
+                    <p class="text-sm text-zinc-400 mb-4">El archivo <code>Páginas.csv</code> revela la indexación de URLs que no aportan valor SEO. Listado literal:</p>
                     <ul class="space-y-3 text-xs font-mono text-zinc-400">
                         <li class="p-3 bg-dark-bg rounded border border-zinc-800 text-red-400 break-all hover:bg-zinc-900">.../wp-content/uploads/2024/09/cirurgia-1.jpg</li>
                         <li class="p-3 bg-dark-bg rounded border border-zinc-800 text-red-400 break-all hover:bg-zinc-900">.../wp-content/uploads/2024/09/ortodoncia-9-1024x646.jpg</li>
@@ -440,7 +557,7 @@
                     <h3 class="text-white font-bold mb-4 flex items-center gap-2">
                         <span class="text-brand text-lg">02.</span> Consultas en Idiomas Extraños
                     </h3>
-                    <p class="text-sm text-zinc-400 mb-4">El archivo <code>Consultas.csv</code> contiene términos literales que indican una mala configuración de internacionalización:</p>
+                    <p class="text-sm text-zinc-400 mb-4">El archivo <code>Consultas.csv</code> contiene términos literales que indican mala internacionalización:</p>
                     <ul class="space-y-3 text-xs font-mono text-zinc-400">
                         <li class="p-3 bg-dark-bg rounded border border-zinc-800 flex justify-between items-center hover:bg-zinc-900">
                             <span>физиотерапия при внчс (Ruso)</span>
@@ -469,7 +586,10 @@
 
         <!-- 6. PLAN DIRECTOR -->
         <section id="plan" class="mb-24 scroll-mt-24">
-            <h2 class="text-2xl font-bold text-brand mb-6 pb-4 border-b border-dark-border">6. Plan Director Detallado 2026</h2>
+            <div class="section-divider">
+                <h2 class="text-3xl font-bold text-brand mb-2">6. Plan Director Detallado 2026</h2>
+                <p class="text-sm text-zinc-500">Hoja de Ruta Priorizada</p>
+            </div>
             
             <div class="space-y-6">
                 <!-- Action 1 -->
@@ -494,11 +614,11 @@
                 <!-- Action 2 -->
                 <div class="border border-dark-border rounded-lg bg-dark-panel overflow-hidden shadow-lg hover:border-brand/40 transition-all">
                     <div class="bg-zinc-900/50 px-6 py-4 border-b border-dark-border flex flex-wrap justify-between items-center gap-2">
-                        <h3 class="text-white font-bold text-lg">B. Estrategia "Dientes Bebé" (114k Impresiones)</h3>
+                        <h3 class="text-white font-bold text-lg">B. Estrategia "Dientes Bebé"</h3>
                         <span class="px-3 py-1 bg-red-900/20 text-red-400 text-xs font-bold border border-red-900/50 rounded-full tracking-wider">PRIORIDAD ALTA</span>
                     </div>
                     <div class="p-6 text-sm text-zinc-400 space-y-4">
-                        <p><strong>Problema:</strong> CTR de 0.06% en la página con mayor potencial de visibilidad.</p>
+                        <p><strong>Problema:</strong> CTR de 0.06% en la página con mayor potencial de visibilidad (114k Impresiones).</p>
                         <div class="bg-dark-bg p-4 rounded border border-dark-border">
                             <strong class="text-brand block mb-2 text-xs uppercase tracking-wide">Solución Técnica:</strong>
                             <ul class="list-disc pl-5 space-y-2">
@@ -535,6 +655,7 @@
             <p class="text-brand font-bold text-lg mb-2">VALLBLANC</p>
             <p class="text-xs font-mono uppercase tracking-widest text-zinc-500 mb-1">By Ferran Martínez</p>
             <p class="text-[10px] font-mono text-zinc-600">17/02/2026</p>
+            <div class="w-8 h-1 bg-brand mx-auto mt-4 rounded-full opacity-50"></div>
         </footer>
 
     </main>
