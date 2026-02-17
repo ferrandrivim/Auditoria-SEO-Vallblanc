@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es" class="dark scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AUDITORÍA MAESTRA: VALLBLANC.COM (FULL DATA)</title>
+    <title>AUDITORIA WEB VALLBLANC - Full Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -14,201 +13,321 @@
                     colors: {
                         brand: {
                             DEFAULT: '#D07D7D',
-                            dim: 'rgba(208, 125, 125, 0.1)',
-                            dark: '#5c2b2b'
+                            50: '#fbf5f5',
+                            100: '#f5e6e6',
+                            200: '#eccbcb',
+                            500: '#D07D7D',
+                            900: '#5c2b2b',
+                            glow: 'rgba(208, 125, 125, 0.15)'
                         },
                         dark: {
                             bg: '#050505',
                             panel: '#0f1012',
-                            border: '#1f2125'
+                            border: '#1f2125',
+                            surface: '#121214'
                         }
                     },
                     fontFamily: {
                         mono: ['JetBrains Mono', 'Menlo', 'monospace'],
                         sans: ['Inter', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'neon': '0 0 20px rgba(208, 125, 125, 0.1)'
                     }
                 }
             }
         }
     </script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
         body { background-color: #050505; color: #a1a1aa; font-family: 'Inter', sans-serif; }
-        ::-webkit-scrollbar { width: 12px; height: 12px; }
+        
+        /* Custom Scrollbar Brand Themed */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
         ::-webkit-scrollbar-track { background: #0f1012; }
-        ::-webkit-scrollbar-thumb { background: #27272a; border: 3px solid #0f1012; border-radius: 6px; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border: 2px solid #0f1012; border-radius: 6px; }
         ::-webkit-scrollbar-thumb:hover { background: #D07D7D; }
 
-        .data-table th { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.05em; text-transform: uppercase; font-size: 0.7rem; color: #52525b; }
-        .data-table td { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; border-color: #1f2125; }
+        /* Typography & Tables */
+        .data-table th { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.02em; text-transform: uppercase; font-size: 0.7rem; color: #71717a; padding: 12px 16px; background: #121214; }
+        .data-table td { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; border-bottom: 1px solid #1f2125; padding: 12px 16px; color: #d4d4d8; }
+        .data-table tr:last-child td { border-bottom: none; }
         .data-table tr:hover td { background-color: rgba(208, 125, 125, 0.05); color: #fff; }
 
-        .metric-box { border-left: 3px solid #D07D7D; background: linear-gradient(90deg, #0f1012 0%, transparent 100%); }
-        .metric-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: #52525b; }
-        .metric-val { font-size: 1.5rem; font-weight: 700; color: #e4e4e7; font-family: 'JetBrains Mono', monospace; }
+        /* Metric Boxes */
+        .metric-box { 
+            border-left: 3px solid #D07D7D; 
+            background: linear-gradient(145deg, #0f1012 0%, #161719 100%);
+            border-radius: 0 8px 8px 0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .metric-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border-left-color: #e6aaaa;
+        }
+        .metric-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: #71717a; margin-bottom: 4px; }
+        .metric-val { font-size: 1.75rem; font-weight: 700; color: #f4f4f5; font-family: 'Inter', sans-serif; letter-spacing: -0.03em; }
 
-        .section-title { font-size: 1.25rem; color: #fff; font-weight: 600; border-bottom: 1px solid #1f2125; padding-bottom: 1rem; margin-bottom: 2rem; }
-        .subsection-title { color: #D07D7D; font-size: 0.9rem; font-weight: 700; text-transform: uppercase; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        /* Sections */
+        .section-header { 
+            border-bottom: 1px solid #1f2125; 
+            padding-bottom: 1.5rem; 
+            margin-bottom: 2rem; 
+        }
+        .section-title { 
+            font-size: 1.5rem; 
+            color: #fff; 
+            font-weight: 600; 
+            letter-spacing: -0.02em;
+        }
         
-        .raw-data-badge { background: #1f2125; color: #71717a; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; border: 1px solid #27272a; font-family: monospace; }
+        /* Accordion Styles */
+        .accordion-content {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 2000px; /* Arbitrary large number for open state */
+            opacity: 1;
+            overflow: hidden;
+        }
+        .accordion-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin: 0;
+        }
+        .accordion-trigger svg {
+            transition: transform 0.3s;
+        }
+        .accordion-trigger.collapsed svg {
+            transform: rotate(-90deg);
+        }
+
+        /* Mobile Nav */
+        .mobile-menu {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .mobile-menu.hidden-menu {
+            transform: translateX(-100%);
+        }
     </style>
 </head>
-<body class="flex h-screen overflow-hidden">
+<body class="flex flex-col md:flex-row min-h-screen">
 
-    <!-- SIDEBAR -->
-    <aside class="w-72 bg-dark-panel border-r border-dark-border flex flex-col shrink-0">
-        <div class="p-6 border-b border-dark-border">
-            <h1 class="text-xl font-bold text-white tracking-tighter">VALLBLANC<span class="text-brand">.RAW</span></h1>
-            <div class="text-[10px] text-zinc-500 font-mono mt-2">FULL AUDIT REPORT • v2.0</div>
-            <div class="mt-4 px-3 py-2 bg-red-950/20 border border-red-900/30 rounded text-red-400 text-xs font-mono">
-                ⚠ MODE: UNABRIDGED
+    <!-- MOBILE HEADER (Visible only on small screens) -->
+    <header class="md:hidden bg-dark-panel border-b border-dark-border p-4 sticky top-0 z-50 flex justify-between items-center backdrop-blur-md bg-opacity-90">
+        <h1 class="text-sm font-bold text-white tracking-tight">AUDITORIA <span class="text-brand">VALLBLANC</span></h1>
+        <button id="menu-btn" class="text-zinc-400 hover:text-brand focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+    </header>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-dark-panel border-r border-dark-border flex flex-col z-40 mobile-menu hidden-menu md:transform-none md:relative md:flex shrink-0 shadow-2xl md:shadow-none">
+        <div class="p-6 border-b border-dark-border flex justify-between items-start">
+            <div>
+                <h1 class="text-lg font-bold text-white tracking-tighter leading-none">AUDITORIA WEB<br><span class="text-brand text-2xl">VALLBLANC</span></h1>
+                <div class="text-[10px] text-zinc-500 font-mono mt-3">INFORME INTEGRAL • v2.1</div>
+                <div class="mt-4 inline-flex items-center gap-2 px-3 py-1.5 bg-brand-glow border border-brand/30 rounded text-brand text-[10px] font-mono font-bold tracking-wide">
+                    <span class="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span>
+                    FULL DATA
+                </div>
             </div>
+            <!-- Close button for mobile -->
+            <button id="close-menu" class="md:hidden text-zinc-500 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
         </div>
-        <nav class="flex-1 overflow-y-auto py-4 space-y-1">
-            <button onclick="scrollToId('exec')" class="w-full text-left px-6 py-3 text-sm hover:bg-zinc-900 text-zinc-400 hover:text-brand transition-colors">1. Diagnóstico Ejecutivo</button>
-            <button onclick="scrollToId('gsc-raw')" class="w-full text-left px-6 py-3 text-sm hover:bg-zinc-900 text-zinc-400 hover:text-brand transition-colors">2. GSC: Datos de Búsqueda</button>
-            <button onclick="scrollToId('ga4-raw')" class="w-full text-left px-6 py-3 text-sm hover:bg-zinc-900 text-zinc-400 hover:text-brand transition-colors">3. GA4: Eventos y Tráfico</button>
-            <button onclick="scrollToId('content-audit')" class="w-full text-left px-6 py-3 text-sm hover:bg-zinc-900 text-zinc-400 hover:text-brand transition-colors">4. Auditoría de Contenidos</button>
-            <button onclick="scrollToId('tech-audit')" class="w-full text-left px-6 py-3 text-sm hover:bg-zinc-900 text-zinc-400 hover:text-brand transition-colors">5. Anomalías Técnicas</button>
-            <button onclick="scrollToId('action-plan')" class="w-full text-left px-6 py-3 text-sm hover:bg-zinc-900 text-zinc-400 hover:text-brand transition-colors font-bold">6. Plan Director Detallado</button>
+
+        <nav class="flex-1 overflow-y-auto py-6 space-y-1 px-3">
+            <a href="#exec" onclick="closeMenu()" class="block w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:bg-dark-surface hover:text-white transition-all border border-transparent hover:border-dark-border group">
+                <span class="text-brand opacity-50 group-hover:opacity-100 mr-2">01.</span> Diagnóstico Ejecutivo
+            </a>
+            <a href="#gsc-raw" onclick="closeMenu()" class="block w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:bg-dark-surface hover:text-white transition-all border border-transparent hover:border-dark-border group">
+                <span class="text-brand opacity-50 group-hover:opacity-100 mr-2">02.</span> Datos Búsqueda (GSC)
+            </a>
+            <a href="#ga4-raw" onclick="closeMenu()" class="block w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:bg-dark-surface hover:text-white transition-all border border-transparent hover:border-dark-border group">
+                <span class="text-brand opacity-50 group-hover:opacity-100 mr-2">03.</span> Tráfico & Eventos (GA4)
+            </a>
+            <a href="#content-audit" onclick="closeMenu()" class="block w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:bg-dark-surface hover:text-white transition-all border border-transparent hover:border-dark-border group">
+                <span class="text-brand opacity-50 group-hover:opacity-100 mr-2">04.</span> Auditoría Contenidos
+            </a>
+            <a href="#tech-audit" onclick="closeMenu()" class="block w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:bg-dark-surface hover:text-white transition-all border border-transparent hover:border-dark-border group">
+                <span class="text-brand opacity-50 group-hover:opacity-100 mr-2">05.</span> Anomalías Técnicas
+            </a>
+            <a href="#action-plan" onclick="closeMenu()" class="block w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-white bg-brand/10 border border-brand/30 shadow-neon mt-4 hover:bg-brand/20 transition-all">
+                <span class="text-brand mr-2">06.</span> Plan Director 2026
+            </a>
         </nav>
-        <div class="p-4 border-t border-dark-border bg-dark-bg text-xs text-zinc-600 font-mono">
-            Source Files:<br>
-            - Performance-on-Search*.csv<br>
-            - Informe_panorámico.pdf<br>
-            - Adquisición_de_tráfico.pdf<br>
-            - Eventos_Nombre_del_evento.pdf
+        
+        <div class="p-6 border-t border-dark-border bg-dark-bg">
+            <div class="text-[10px] text-zinc-600 font-mono leading-relaxed">
+                <strong class="text-zinc-500">FUENTES AUDITADAS:</strong><br>
+                - Performance-on-Search*.csv<br>
+                - Informe_panorámico.pdf<br>
+                - Adquisición_de_tráfico.pdf<br>
+                - Eventos_Nombre_del_evento.pdf
+            </div>
         </div>
     </aside>
 
-    <!-- MAIN -->
-    <main class="flex-1 overflow-y-auto bg-dark-bg p-8 md:p-12 scroll-smooth" id="main-content">
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 overflow-y-auto bg-dark-bg p-6 md:p-12 lg:p-16 scroll-smooth w-full">
         
         <!-- 1. EXECUTIVE DIAGNOSTIC -->
-        <section id="exec" class="mb-20">
-            <h2 class="section-title">1. Diagnóstico Ejecutivo: La Realidad de los Datos</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div>
-                    <div class="text-sm text-zinc-300 space-y-4 leading-relaxed">
-                        <p><strong class="text-white">Situación Actual:</strong> El análisis exhaustivo de los últimos 16 meses (Oct 2024 - Feb 2026) muestra un proyecto con una <strong>visibilidad masiva pero ineficiente</strong>. La web acumula 446,000 impresiones en Google, pero solo consigue 2,040 clics, resultando en un CTR global del 0.46%, una cifra crítica para el sector salud local.</p>
-                        <p><strong class="text-white">La Brecha de Calidad:</strong> Existe una discrepancia severa en la calidad del tráfico según la fuente. El reporte "Informe Panorámico" indica que el canal "StoryMeta/VideoReel" es la principal fuente de usuarios (5.4 mil usuarios), pero la interacción es mínima. En contraposición, el tráfico orgánico de Google es un 400% más eficiente en retención, pero tiene un volumen 3 veces menor.</p>
-                        <p><strong class="text-white">Alerta Móvil:</strong> El archivo "Dispositivos.csv" confirma que el <strong>66.5% del tráfico orgánico es móvil</strong> (1322 clics vs 647 desktop). Sin embargo, la posición media en móvil (11.73) difiere de desktop (37.94), y la velocidad de carga (según PageSpeed externo) es un cuello de botella. El negocio depende de pantallas pequeñas.</p>
+        <section id="exec" class="mb-24 scroll-mt-20">
+            <div class="section-header">
+                <h2 class="section-title">1. Diagnóstico Ejecutivo: La Realidad de los Datos</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-12">
+                <!-- Text Analysis -->
+                <div class="bg-dark-panel p-6 rounded-xl border border-dark-border shadow-lg">
+                    <div class="text-sm text-zinc-300 space-y-5 leading-7 font-light">
+                        <p><strong class="text-white font-semibold">Situación Actual:</strong> El análisis exhaustivo de los últimos 16 meses (Oct 2024 - Feb 2026) muestra un proyecto con una <strong>visibilidad masiva pero ineficiente</strong>. La web acumula 446,000 impresiones en Google, pero solo consigue 2,040 clics, resultando en un CTR global del 0.46%, una cifra crítica para el sector salud local.</p>
+                        
+                        <p><strong class="text-white font-semibold">La Brecha de Calidad:</strong> Existe una discrepancia severa en la calidad del tráfico según la fuente. El reporte "Informe Panorámico" indica que el canal "StoryMeta/VideoReel" es la principal fuente de usuarios (5.4 mil usuarios), pero la interacción es mínima. En contraposición, el tráfico orgánico de Google es un 400% más eficiente en retención, pero tiene un volumen 3 veces menor.</p>
+                        
+                        <p><strong class="text-white font-semibold">Alerta Móvil:</strong> El archivo "Dispositivos.csv" confirma que el <strong>66.5% del tráfico orgánico es móvil</strong> (1322 clics vs 647 desktop). Sin embargo, la posición media en móvil (11.73) difiere de desktop (37.94), y la velocidad de carga (según PageSpeed externo) es un cuello de botella. El negocio depende de pantallas pequeñas.</p>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="metric-box p-4">
+
+                <!-- KPI Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 content-start">
+                    <div class="metric-box p-6">
                         <div class="metric-label">Clics Totales (GSC)</div>
                         <div class="metric-val">2,040</div>
-                        <div class="text-xs text-zinc-500">Volumen real captado</div>
+                        <div class="text-xs text-zinc-500 mt-1">Volumen real captado</div>
                     </div>
-                    <div class="metric-box p-4">
+                    <div class="metric-box p-6">
                         <div class="metric-label">Impresiones (GSC)</div>
-                        <div class="metric-val">446,000+</div>
-                        <div class="text-xs text-zinc-500">Alcance potencial desperdiciado</div>
+                        <div class="metric-val text-brand">446,000+</div>
+                        <div class="text-xs text-zinc-500 mt-1">Alcance potencial desperdiciado</div>
                     </div>
-                    <div class="metric-box p-4">
+                    <div class="metric-box p-6">
                         <div class="metric-label">Usuarios Activos (GA4)</div>
                         <div class="metric-val">17,000</div>
-                        <div class="text-xs text-zinc-500">Dato de Informe Panorámico</div>
+                        <div class="text-xs text-zinc-500 mt-1">Dato de Informe Panorámico</div>
                     </div>
-                    <div class="metric-box p-4">
+                    <div class="metric-box p-6 border-l-red-500">
                         <div class="metric-label">Tasa Rebote "Inicio"</div>
                         <div class="metric-val text-red-400">59.7%</div>
-                        <div class="text-xs text-zinc-500">Fuga principal de tráfico</div>
+                        <div class="text-xs text-zinc-500 mt-1">Fuga principal de tráfico</div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- 2. GSC RAW DATA -->
-        <section id="gsc-raw" class="mb-20">
-            <h2 class="section-title">2. Google Search Console: Datos Crudos & Anomalías</h2>
+        <section id="gsc-raw" class="mb-24 scroll-mt-20">
+            <div class="section-header flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <h2 class="section-title">2. Google Search Console: Datos Crudos & Anomalías</h2>
+                <span class="text-xs font-mono text-zinc-500 border border-zinc-800 px-3 py-1 rounded bg-dark-surface">FUENTE: CSV EXPORTS</span>
+            </div>
             
-            <!-- ANOMALY: COUNTRIES -->
-            <div class="mb-10">
-                <div class="subsection-title">
-                    <span>ANOMALÍA DETECTADA: TRÁFICO IRRELEVANTE</span>
-                    <span class="raw-data-badge">Fuente: Países.csv</span>
-                </div>
-                <div class="bg-dark-panel border border-dark-border p-6 rounded text-sm mb-4">
-                    <p class="text-zinc-300 mb-2">Se han detectado impresiones y clics provenientes de regiones fuera del mercado objetivo (Badalona/España), lo que sugiere problemas con versiones de idioma automáticas o ataques de bot de rastreo.</p>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left data-table">
-                            <thead>
-                                <tr>
-                                    <th class="p-2">País</th>
-                                    <th class="p-2 text-right">Clics</th>
-                                    <th class="p-2 text-right">Impresiones</th>
-                                    <th class="p-2 text-right">CTR</th>
-                                    <th class="p-2 text-right">Posición</th>
-                                    <th class="p-2">Evaluación</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-zinc-400">
-                                <tr><td class="p-2 text-white">España</td><td class="p-2 text-right">1,172</td><td class="p-2 text-right">120,493</td><td class="p-2 text-right">0.97%</td><td class="p-2 text-right">31.91</td><td class="p-2 text-green-500">Core Market</td></tr>
-                                <tr><td class="p-2">Italia</td><td class="p-2 text-right">75</td><td class="p-2 text-right">8,925</td><td class="p-2 text-right">0.84%</td><td class="p-2 text-right">20.61</td><td class="p-2 text-yellow-500">¿Turismo/Error?</td></tr>
-                                <tr><td class="p-2">Francia</td><td class="p-2 text-right">72</td><td class="p-2 text-right">16,837</td><td class="p-2 text-right">0.43%</td><td class="p-2 text-right">40.84</td><td class="p-2 text-yellow-500">¿Turismo/Error?</td></tr>
-                                <tr class="bg-red-900/10"><td class="p-2 text-brand">Siria</td><td class="p-2 text-right">44</td><td class="p-2 text-right">13,908</td><td class="p-2 text-right">0.32%</td><td class="p-2 text-right">6.51</td><td class="p-2 text-red-400">IRRELEVANTE (Spam?)</td></tr>
-                                <tr class="bg-red-900/10"><td class="p-2 text-brand">Rusia</td><td class="p-2 text-right">39</td><td class="p-2 text-right">7,766</td><td class="p-2 text-right">0.50%</td><td class="p-2 text-right">29.31</td><td class="p-2 text-red-400">IRRELEVANTE</td></tr>
-                                <tr><td class="p-2">Estados Unidos</td><td class="p-2 text-right">38</td><td class="p-2 text-right">39,551</td><td class="p-2 text-right">0.10%</td><td class="p-2 text-right">21.88</td><td class="p-2 text-zinc-500">Informativo</td></tr>
-                                <tr class="bg-red-900/10"><td class="p-2">Yibuti, Afganistán, Malaui...</td><td class="p-2 text-right">0</td><td class="p-2 text-right">25+</td><td class="p-2 text-right">0%</td><td class="p-2 text-right">Var</td><td class="p-2 text-red-400">Long Tail Basura</td></tr>
-                            </tbody>
-                        </table>
+            <!-- ANOMALY: COUNTRIES (Collapsible) -->
+            <div class="mb-10 border border-dark-border rounded-xl bg-dark-panel overflow-hidden">
+                <button class="w-full flex items-center justify-between p-5 bg-dark-surface hover:bg-zinc-900 transition-colors accordion-trigger" onclick="toggleAccordion('acc-countries', this)">
+                    <div class="flex items-center gap-3">
+                        <span class="text-brand font-bold text-sm uppercase tracking-wider">Anomalía Detectada: Tráfico Irrelevante</span>
+                        <span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">Países.csv</span>
+                    </div>
+                    <svg class="w-5 h-5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                
+                <div id="acc-countries" class="accordion-content">
+                    <div class="p-6 border-t border-dark-border">
+                        <p class="text-sm text-zinc-300 mb-6 max-w-3xl">Se han detectado impresiones y clics provenientes de regiones fuera del mercado objetivo (Badalona/España), lo que sugiere problemas con versiones de idioma automáticas o ataques de bot de rastreo.</p>
+                        <div class="overflow-x-auto rounded-lg border border-dark-border">
+                            <table class="w-full text-left data-table min-w-[600px]">
+                                <thead>
+                                    <tr>
+                                        <th class="w-1/4">País</th>
+                                        <th class="text-right">Clics</th>
+                                        <th class="text-right">Impresiones</th>
+                                        <th class="text-right">CTR</th>
+                                        <th class="text-right">Posición</th>
+                                        <th class="w-1/6">Evaluación</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-dark-bg">
+                                    <tr><td class="text-white font-medium">España</td><td class="text-right">1,172</td><td class="text-right">120,493</td><td class="text-right">0.97%</td><td class="text-right">31.91</td><td class="text-green-500 font-bold">Core Market</td></tr>
+                                    <tr><td>Italia</td><td class="text-right">75</td><td class="text-right">8,925</td><td class="text-right">0.84%</td><td class="text-right">20.61</td><td class="text-yellow-500">¿Turismo/Error?</td></tr>
+                                    <tr><td>Francia</td><td class="text-right">72</td><td class="text-right">16,837</td><td class="text-right">0.43%</td><td class="text-right">40.84</td><td class="text-yellow-500">¿Turismo/Error?</td></tr>
+                                    <tr class="bg-red-900/10"><td class="text-brand">Siria</td><td class="text-right">44</td><td class="text-right">13,908</td><td class="text-right">0.32%</td><td class="text-right">6.51</td><td class="text-red-400 font-bold">IRRELEVANTE (Spam?)</td></tr>
+                                    <tr class="bg-red-900/10"><td class="text-brand">Rusia</td><td class="text-right">39</td><td class="text-right">7,766</td><td class="text-right">0.50%</td><td class="text-right">29.31</td><td class="text-red-400 font-bold">IRRELEVANTE</td></tr>
+                                    <tr><td>Estados Unidos</td><td class="text-right">38</td><td class="text-right">39,551</td><td class="text-right">0.10%</td><td class="text-right">21.88</td><td class="text-zinc-500">Informativo</td></tr>
+                                    <tr class="bg-red-900/10"><td>Yibuti, Afganistán, Malaui...</td><td class="text-right">0</td><td class="text-right">25+</td><td class="text-right">0%</td><td class="text-right">Var</td><td class="text-red-400 font-bold">Long Tail Basura</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- KEYWORDS DEEP DIVE -->
-            <div class="mb-10">
-                <div class="subsection-title">
-                    <span>ANÁLISIS DE CONSULTAS: MARCA VS DESCUBRIMIENTO</span>
-                    <span class="raw-data-badge">Fuente: Consultas.csv</span>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div class="bg-dark-panel border border-dark-border p-4 rounded">
-                        <h4 class="text-white text-sm font-bold mb-4 border-b border-dark-border pb-2">Top Consultas de Marca</h4>
-                        <table class="w-full data-table">
-                            <tbody class="text-zinc-400">
+            <!-- KEYWORDS DEEP DIVE (Grid) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Brand Queries -->
+                <div class="bg-dark-panel border border-dark-border rounded-xl overflow-hidden shadow-lg">
+                    <div class="px-5 py-4 border-b border-dark-border bg-dark-surface flex items-center justify-between">
+                        <h4 class="text-white text-sm font-bold uppercase tracking-wide">Top Consultas de Marca</h4>
+                        <span class="text-[10px] text-zinc-500 font-mono">Consultas.csv</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full data-table min-w-[300px]">
+                            <tbody class="bg-dark-bg">
                                 <tr>
-                                    <td class="p-2 text-white">vallblanc</td>
-                                    <td class="p-2 text-right">233 Clics</td>
-                                    <td class="p-2 text-right">24.89% CTR</td>
+                                    <td class="text-white font-medium">vallblanc</td>
+                                    <td class="text-right font-bold">233 Clics</td>
+                                    <td class="text-right text-brand">24.89% CTR</td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2 text-white">vallblanc espai dental</td>
-                                    <td class="p-2 text-right">42 Clics</td>
-                                    <td class="p-2 text-right">22.46% CTR</td>
+                                    <td class="text-white font-medium">vallblanc espai dental</td>
+                                    <td class="text-right font-bold">42 Clics</td>
+                                    <td class="text-right text-brand">22.46% CTR</td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2 text-white">espai dental</td>
-                                    <td class="p-2 text-right">2 Clics</td>
-                                    <td class="p-2 text-right">0.11% CTR</td>
+                                    <td class="text-white font-medium">espai dental</td>
+                                    <td class="text-right font-bold">2 Clics</td>
+                                    <td class="text-right text-brand">0.11% CTR</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="bg-dark-panel border border-dark-border p-4 rounded">
-                        <h4 class="text-white text-sm font-bold mb-4 border-b border-dark-border pb-2">Consultas ZOMBIE (Alto Volumen, 0 Clics)</h4>
-                        <table class="w-full data-table">
-                            <tbody class="text-zinc-400">
+                </div>
+
+                <!-- Zombie Queries -->
+                <div class="bg-dark-panel border border-dark-border rounded-xl overflow-hidden shadow-lg">
+                    <div class="px-5 py-4 border-b border-dark-border bg-dark-surface flex items-center justify-between">
+                        <h4 class="text-white text-sm font-bold uppercase tracking-wide flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                            Consultas ZOMBIE (Volumen/0 Clics)
+                        </h4>
+                        <span class="text-[10px] text-zinc-500 font-mono">Consultas.csv</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full data-table min-w-[300px]">
+                            <tbody class="bg-dark-bg">
                                 <tr class="bg-red-900/10">
-                                    <td class="p-2 text-brand">dientes bebe</td>
-                                    <td class="p-2 text-right">114,859 Imp</td>
-                                    <td class="p-2 text-right text-red-400">0.06% CTR</td>
+                                    <td class="text-brand font-medium">dientes bebe</td>
+                                    <td class="text-right font-bold">114,859 Imp</td>
+                                    <td class="text-right text-red-400 font-bold">0.06% CTR</td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2">regeneración osea guiada</td>
-                                    <td class="p-2 text-right">1,072 Imp</td>
-                                    <td class="p-2 text-right">0.37% CTR</td>
+                                    <td>regeneración osea guiada</td>
+                                    <td class="text-right font-bold">1,072 Imp</td>
+                                    <td class="text-right">0.37% CTR</td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2">dolor por bruxismo</td>
-                                    <td class="p-2 text-right">807 Imp</td>
-                                    <td class="p-2 text-right text-red-400">0.87% CTR</td>
+                                    <td>dolor por bruxismo</td>
+                                    <td class="text-right font-bold">807 Imp</td>
+                                    <td class="text-right text-red-400 font-bold">0.87% CTR</td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2">cuando crecen los dientes...</td>
-                                    <td class="p-2 text-right">34 Imp</td>
-                                    <td class="p-2 text-right">0% CTR</td>
+                                    <td>cuando crecen los dientes...</td>
+                                    <td class="text-right font-bold">34 Imp</td>
+                                    <td class="text-right text-zinc-500">0% CTR</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -218,265 +337,377 @@
         </section>
 
         <!-- 3. GA4 RAW DATA -->
-        <section id="ga4-raw" class="mb-20">
-            <h2 class="section-title">3. Google Analytics 4: Comportamiento Real</h2>
+        <section id="ga4-raw" class="mb-24 scroll-mt-20">
+            <div class="section-header">
+                <h2 class="section-title">3. Google Analytics 4: Comportamiento Real</h2>
+            </div>
             
-            <div class="mb-8">
-                <div class="subsection-title">
-                    <span>MATRIZ DE ADQUISICIÓN: CALIDAD DEL TRÁFICO</span>
-                    <span class="raw-data-badge">Fuente: Adquisición_de_tráfico.pdf</span>
+            <!-- ACQUISITION MATRIX (Collapsible) -->
+            <div class="mb-10 border border-dark-border rounded-xl bg-dark-panel overflow-hidden">
+                <button class="w-full flex items-center justify-between p-5 bg-dark-surface hover:bg-zinc-900 transition-colors accordion-trigger" onclick="toggleAccordion('acc-acquisition', this)">
+                    <div class="flex items-center gap-3">
+                        <span class="text-brand font-bold text-sm uppercase tracking-wider">Matriz de Adquisición: Calidad del Tráfico</span>
+                        <span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">Adquisición_de_tráfico.pdf</span>
+                    </div>
+                    <svg class="w-5 h-5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                
+                <div id="acc-acquisition" class="accordion-content">
+                    <div class="p-0 md:p-6 border-t border-dark-border">
+                        <div class="overflow-x-auto rounded-lg border border-dark-border">
+                            <table class="w-full data-table min-w-[800px]">
+                                <thead class="bg-zinc-900/50">
+                                    <tr>
+                                        <th class="p-3">Grupo de Canales</th>
+                                        <th class="p-3 text-right">Sesiones</th>
+                                        <th class="p-3 text-right">% Total</th>
+                                        <th class="p-3 text-right">Interacciones</th>
+                                        <th class="p-3 text-right text-white bg-zinc-800/50 border-l border-r border-dark-border">Tiempo Medio (s)</th>
+                                        <th class="p-3 text-right">Eventos/Sesión</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-zinc-400 divide-y divide-dark-border bg-dark-bg">
+                                    <tr class="bg-red-900/5">
+                                        <td class="p-3 font-bold text-white">Organic Video</td>
+                                        <td class="p-3 text-right font-mono">6,859</td>
+                                        <td class="p-3 text-right font-mono">32.64%</td>
+                                        <td class="p-3 text-right font-mono">19.84%</td>
+                                        <td class="p-3 text-right font-mono text-red-400 font-bold border-l border-r border-dark-border bg-red-900/10">4 s</td>
+                                        <td class="p-3 text-right font-mono">3.79</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3">Cross-network</td>
+                                        <td class="p-3 text-right font-mono">3,057</td>
+                                        <td class="p-3 text-right font-mono">14.55%</td>
+                                        <td class="p-3 text-right font-mono">65.62%</td>
+                                        <td class="p-3 text-right font-mono text-green-400 font-bold border-l border-r border-dark-border bg-dark-surface">39 s</td>
+                                        <td class="p-3 text-right font-mono">6.56</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3">Paid Search</td>
+                                        <td class="p-3 text-right font-mono">2,824</td>
+                                        <td class="p-3 text-right font-mono">13.44%</td>
+                                        <td class="p-3 text-right font-mono">68.70%</td>
+                                        <td class="p-3 text-right font-mono text-blue-400 font-bold border-l border-r border-dark-border bg-dark-surface">31 s</td>
+                                        <td class="p-3 text-right font-mono">6.32</td>
+                                    </tr>
+                                    <tr class="bg-brand/5">
+                                        <td class="p-3 text-brand font-bold">Organic Search</td>
+                                        <td class="p-3 text-right font-mono text-white">2,686</td>
+                                        <td class="p-3 text-right font-mono text-white">12.78%</td>
+                                        <td class="p-3 text-right font-mono text-white">63.78%</td>
+                                        <td class="p-3 text-right font-mono text-brand font-bold border-l border-r border-dark-border bg-brand/10">44 s</td>
+                                        <td class="p-3 text-right font-mono text-white">5.99</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3">Direct</td>
+                                        <td class="p-3 text-right font-mono">2,145</td>
+                                        <td class="p-3 text-right font-mono">10.20%</td>
+                                        <td class="p-3 text-right font-mono">43.83%</td>
+                                        <td class="p-3 text-right font-mono text-yellow-400 font-bold border-l border-r border-dark-border bg-dark-surface">21 s</td>
+                                        <td class="p-3 text-right font-mono">4.50</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="text-[10px] text-zinc-500 mt-3 p-2 border-l-2 border-brand bg-brand/5 inline-block rounded-r">* Nota: "Organic Video" (StoryMeta) tiene un volumen alto pero una retención nula (4s). Es tráfico de baja calidad.</p>
+                    </div>
                 </div>
-                <div class="overflow-x-auto bg-dark-panel border border-dark-border rounded">
-                    <table class="w-full data-table">
-                        <thead>
-                            <tr class="bg-zinc-900/50">
-                                <th class="p-3">Grupo de Canales</th>
-                                <th class="p-3 text-right">Sesiones</th>
-                                <th class="p-3 text-right">% Total</th>
-                                <th class="p-3 text-right">Interacciones</th>
-                                <th class="p-3 text-right text-white">Tiempo Medio (s)</th>
-                                <th class="p-3 text-right">Eventos/Sesión</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-zinc-400 divide-y divide-dark-border">
-                            <tr class="bg-red-900/5">
-                                <td class="p-3 font-bold text-white">Organic Video</td>
-                                <td class="p-3 text-right">6,859</td>
-                                <td class="p-3 text-right">32.64%</td>
-                                <td class="p-3 text-right">19.84%</td>
-                                <td class="p-3 text-right text-red-400 font-bold border-l border-r border-dark-border">4 s</td>
-                                <td class="p-3 text-right">3.79</td>
+            </div>
+
+            <!-- EVENTS BREAKDOWN -->
+            <div class="bg-dark-panel p-6 border border-dark-border rounded-xl shadow-lg">
+                <div class="mb-4 flex items-center justify-between">
+                    <h4 class="text-white text-sm font-bold uppercase tracking-wide">Desglose de Eventos</h4>
+                    <span class="text-[10px] text-zinc-500 font-mono">Eventos_Nombre_del_evento.pdf</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full data-table min-w-[400px]">
+                        <tbody class="text-zinc-400 bg-dark-bg">
+                            <tr>
+                                <td class="font-bold text-white">page_view</td>
+                                <td class="text-right font-mono text-brand">33,367</td>
+                                <td class="text-right text-xs">2.02 por usuario</td>
                             </tr>
                             <tr>
-                                <td class="p-3">Cross-network</td>
-                                <td class="p-3 text-right">3,057</td>
-                                <td class="p-3 text-right">14.55%</td>
-                                <td class="p-3 text-right">65.62%</td>
-                                <td class="p-3 text-right text-green-400 font-bold border-l border-r border-dark-border">39 s</td>
-                                <td class="p-3 text-right">6.56</td>
+                                <td class="font-bold text-white">user_engagement</td>
+                                <td class="text-right font-mono text-brand">31,206</td>
+                                <td class="text-right text-xs">Indicador de interés</td>
                             </tr>
                             <tr>
-                                <td class="p-3">Paid Search</td>
-                                <td class="p-3 text-right">2,824</td>
-                                <td class="p-3 text-right">13.44%</td>
-                                <td class="p-3 text-right">68.70%</td>
-                                <td class="p-3 text-right text-blue-400 font-bold border-l border-r border-dark-border">31 s</td>
-                                <td class="p-3 text-right">6.32</td>
-                            </tr>
-                            <tr class="bg-brand-dim/5">
-                                <td class="p-3 text-brand">Organic Search</td>
-                                <td class="p-3 text-right">2,686</td>
-                                <td class="p-3 text-right">12.78%</td>
-                                <td class="p-3 text-right">63.78%</td>
-                                <td class="p-3 text-right text-brand font-bold border-l border-r border-dark-border">44 s</td>
-                                <td class="p-3 text-right">5.99</td>
+                                <td class="font-bold text-white">session_start</td>
+                                <td class="text-right font-mono text-brand">20,347</td>
+                                <td class="text-right text-xs">Inicio visitas</td>
                             </tr>
                             <tr>
-                                <td class="p-3">Direct</td>
-                                <td class="p-3 text-right">2,145</td>
-                                <td class="p-3 text-right">10.20%</td>
-                                <td class="p-3 text-right">43.83%</td>
-                                <td class="p-3 text-right text-yellow-400 font-bold border-l border-r border-dark-border">21 s</td>
-                                <td class="p-3 text-right">4.50</td>
+                                <td class="font-bold text-zinc-500">scroll</td>
+                                <td class="text-right font-mono text-zinc-500">N/A en recorte</td>
+                                <td class="text-right text-xs text-zinc-600">Profundidad</td>
                             </tr>
                         </tbody>
                     </table>
-                </div>
-                <p class="text-xs text-zinc-500 mt-2 p-2">* Nota: "Organic Video" (StoryMeta) tiene un volumen alto pero una retención nula (4s). Es tráfico de baja calidad.</p>
-            </div>
-
-            <div>
-                <div class="subsection-title">
-                    <span>DESGLOSE DE EVENTOS</span>
-                    <span class="raw-data-badge">Fuente: Eventos_Nombre_del_evento.pdf</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-dark-panel p-4 border border-dark-border">
-                        <table class="w-full data-table">
-                            <tbody class="text-zinc-400">
-                                <tr>
-                                    <td class="p-2">page_view</td>
-                                    <td class="p-2 text-right font-mono text-white">33,367</td>
-                                    <td class="p-2 text-right text-xs">2.02 por usuario</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2">user_engagement</td>
-                                    <td class="p-2 text-right font-mono text-white">31,206</td>
-                                    <td class="p-2 text-right text-xs">Indicador de interés</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2">session_start</td>
-                                    <td class="p-2 text-right font-mono text-white">20,347</td>
-                                    <td class="p-2 text-right text-xs">Inicio visitas</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2">scroll</td>
-                                    <td class="p-2 text-right font-mono text-white">N/A en recorte</td>
-                                    <td class="p-2 text-right text-xs">Profundidad</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
             </div>
         </section>
 
         <!-- 4. CONTENT AUDIT -->
-        <section id="content-audit" class="mb-20">
-            <h2 class="section-title">4. Auditoría de Contenidos: Rendimiento por URL</h2>
+        <section id="content-audit" class="mb-24 scroll-mt-20">
+            <div class="section-header">
+                <h2 class="section-title">4. Auditoría de Contenidos: Rendimiento por URL</h2>
+            </div>
 
-            <div class="subsection-title">
-                <span>ANÁLISIS DE REBOTE Y VISTAS (INFORME PANORÁMICO)</span>
-                <span class="raw-data-badge">Fuente: Informe_panorámico.pdf + Páginas.csv</span>
+            <!-- TABLE (Collapsible) -->
+            <div class="mb-10 border border-dark-border rounded-xl bg-dark-panel overflow-hidden">
+                 <button class="w-full flex items-center justify-between p-5 bg-dark-surface hover:bg-zinc-900 transition-colors accordion-trigger" onclick="toggleAccordion('acc-content', this)">
+                    <div class="flex items-center gap-3">
+                        <span class="text-brand font-bold text-sm uppercase tracking-wider">Análisis de Rebote y Vistas</span>
+                        <span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">Informe_panorámico.pdf + Páginas.csv</span>
+                    </div>
+                    <svg class="w-5 h-5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+
+                <div id="acc-content" class="accordion-content">
+                    <div class="p-0 md:p-6 border-t border-dark-border">
+                        <div class="overflow-x-auto rounded-lg border border-dark-border">
+                            <table class="w-full data-table min-w-[800px]">
+                                <thead class="bg-zinc-900/50">
+                                    <tr>
+                                        <th class="p-3">Título de Página / URL</th>
+                                        <th class="p-3 text-right">Vistas (GA4)</th>
+                                        <th class="p-3 text-right">Usuarios Activos</th>
+                                        <th class="p-3 text-right">Rebote %</th>
+                                        <th class="p-3 text-right">Clics SEO (GSC)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-zinc-400 divide-y divide-dark-border bg-dark-bg">
+                                    <tr>
+                                        <td class="p-3 text-white font-bold">Inicio - VallBlanc Espai Dental...</td>
+                                        <td class="p-3 text-right">16,000</td>
+                                        <td class="p-3 text-right">10,000</td>
+                                        <td class="p-3 text-right text-red-400 font-bold">59.7%</td>
+                                        <td class="p-3 text-right">744</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 text-white">Pide Cita - VallBlanc...</td>
+                                        <td class="p-3 text-right">2,600</td>
+                                        <td class="p-3 text-right">2,000</td>
+                                        <td class="p-3 text-right text-yellow-400 font-bold">42.2%</td>
+                                        <td class="p-3 text-right text-zinc-600">N/D</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3">Fisioterapia Temporomandibular...</td>
+                                        <td class="p-3 text-right">2,100</td>
+                                        <td class="p-3 text-right">1,100</td>
+                                        <td class="p-3 text-right text-green-400 font-bold">29.5%</td>
+                                        <td class="p-3 text-right">71 (/tratamientos/...)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3">El bruxismo: cómo aliviar... (Blog)</td>
+                                        <td class="p-3 text-right">787</td>
+                                        <td class="p-3 text-right">433</td>
+                                        <td class="p-3 text-right text-green-400 font-bold">33.7%</td>
+                                        <td class="p-3 text-right">93</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3">Dientes bebé: cuándo empiezan...</td>
+                                        <td class="p-3 text-right text-zinc-600">N/D (GA4)</td>
+                                        <td class="p-3 text-right text-zinc-600">N/D</td>
+                                        <td class="p-3 text-right">-</td>
+                                        <td class="p-3 text-right text-brand font-bold">69 (114k Imp)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
             
-            <div class="overflow-x-auto bg-dark-panel border border-dark-border rounded mb-8">
-                <table class="w-full data-table">
-                    <thead>
-                        <tr class="bg-zinc-900/50">
-                            <th class="p-3">Título de Página / URL</th>
-                            <th class="p-3 text-right">Vistas (GA4)</th>
-                            <th class="p-3 text-right">Usuarios Activos</th>
-                            <th class="p-3 text-right">Rebote %</th>
-                            <th class="p-3 text-right">Clics SEO (GSC)</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-zinc-400 divide-y divide-dark-border">
-                        <tr>
-                            <td class="p-3 text-white font-bold">Inicio - VallBlanc Espai Dental...</td>
-                            <td class="p-3 text-right">16,000</td>
-                            <td class="p-3 text-right">10,000</td>
-                            <td class="p-3 text-right text-red-400">59.7%</td>
-                            <td class="p-3 text-right">744</td>
-                        </tr>
-                        <tr>
-                            <td class="p-3 text-white">Pide Cita - VallBlanc...</td>
-                            <td class="p-3 text-right">2,600</td>
-                            <td class="p-3 text-right">2,000</td>
-                            <td class="p-3 text-right text-yellow-400">42.2%</td>
-                            <td class="p-3 text-right">N/D</td>
-                        </tr>
-                        <tr>
-                            <td class="p-3">Fisioterapia Temporomandibular...</td>
-                            <td class="p-3 text-right">2,100</td>
-                            <td class="p-3 text-right">1,100</td>
-                            <td class="p-3 text-right text-green-400">29.5%</td>
-                            <td class="p-3 text-right">71 (/tratamientos/...)</td>
-                        </tr>
-                        <tr>
-                            <td class="p-3">El bruxismo: cómo aliviar... (Blog)</td>
-                            <td class="p-3 text-right">787</td>
-                            <td class="p-3 text-right">433</td>
-                            <td class="p-3 text-right text-green-400">33.7%</td>
-                            <td class="p-3 text-right">93</td>
-                        </tr>
-                        <tr>
-                            <td class="p-3">Dientes bebé: cuándo empiezan...</td>
-                            <td class="p-3 text-right">N/D (GA4)</td>
-                            <td class="p-3 text-right">N/D</td>
-                            <td class="p-3 text-right">-</td>
-                            <td class="p-3 text-right text-brand">69 (114k Imp)</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="bg-red-950/20 border border-red-900/30 p-4 rounded text-sm text-zinc-300">
-                <strong class="text-red-400">HALLAZGO CRÍTICO DE CANIBALIZACIÓN:</strong><br>
+            <div class="bg-red-950/20 border border-red-900/30 p-6 rounded-xl text-sm text-zinc-300 shadow-lg relative overflow-hidden">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-red-500"></div>
+                <strong class="text-red-400 block mb-2 uppercase tracking-wide">Hallazgo Crítico de Canibalización:</strong>
                 Se observa tráfico distribuido entre "Fisioterapia Temporomandibular" (Servicio) y "El bruxismo" (Blog). Ambas páginas compiten por intención similar ("dolor mandíbula"). Además, hay versiones en <code>/ar/</code> y <code>/ru/</code> de estas páginas indexadas con 1 impresión, diluyendo la fuerza del dominio.
             </div>
         </section>
 
         <!-- 5. TECHNICAL ANOMALIES -->
-        <section id="tech-audit" class="mb-20">
-            <h2 class="section-title">5. Anomalías Técnicas Específicas Detectadas</h2>
+        <section id="tech-audit" class="mb-24 scroll-mt-20">
+            <div class="section-header">
+                <h2 class="section-title">5. Anomalías Técnicas Específicas Detectadas</h2>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="bg-dark-panel border border-dark-border p-6 rounded">
-                    <h3 class="text-white font-bold mb-4">1. Indexación de "Basura" (Thin Content)</h3>
+                <!-- Indexing Issues -->
+                <div class="bg-dark-panel border border-dark-border p-6 rounded-xl shadow-lg hover:border-brand/30 transition-colors">
+                    <h3 class="text-white font-bold mb-4 flex items-center gap-2">
+                        <span class="text-brand text-lg">01.</span> Indexación de "Basura" (Thin Content)
+                    </h3>
                     <p class="text-sm text-zinc-400 mb-4">El archivo <code>Páginas.csv</code> revela la indexación de URLs que no aportan valor SEO y consumen Crawl Budget.</p>
-                    <ul class="space-y-2 text-xs font-mono text-zinc-500">
-                        <li class="p-2 bg-black rounded border border-zinc-800 text-red-400">https://vallblanc.com/wp-content/uploads/2024/09/cirurgia-1.jpg</li>
-                        <li class="p-2 bg-black rounded border border-zinc-800 text-red-400">https://vallblanc.com/wp-content/uploads/2024/09/ortodoncia-9-1024x646.jpg</li>
-                        <li class="p-2 bg-black rounded border border-zinc-800 text-red-400">https://vallblanc.com/ar/cookies (Árabe)</li>
-                        <li class="p-2 bg-black rounded border border-zinc-800 text-red-400">https://vallblanc.com/it/ca/tratamientos/prostodoncia-barcelona/ (Ruta corrupta it/ca)</li>
+                    <ul class="space-y-3 text-xs font-mono text-zinc-400">
+                        <li class="p-3 bg-dark-bg rounded border border-zinc-800 text-red-400 break-all hover:bg-zinc-900">https://vallblanc.com/wp-content/uploads/2024/09/cirurgia-1.jpg</li>
+                        <li class="p-3 bg-dark-bg rounded border border-zinc-800 text-red-400 break-all hover:bg-zinc-900">https://vallblanc.com/wp-content/uploads/2024/09/ortodoncia-9-1024x646.jpg</li>
+                        <li class="p-3 bg-dark-bg rounded border border-zinc-800 text-red-400 break-all hover:bg-zinc-900">https://vallblanc.com/ar/cookies (Árabe)</li>
+                        <li class="p-3 bg-dark-bg rounded border border-zinc-800 text-red-400 break-all hover:bg-zinc-900">https://vallblanc.com/it/ca/tratamientos/prostodoncia-barcelona/ (Ruta corrupta it/ca)</li>
                     </ul>
                 </div>
-                <div class="bg-dark-panel border border-dark-border p-6 rounded">
-                    <h3 class="text-white font-bold mb-4">2. Consultas en Idiomas Extraños</h3>
+
+                <!-- Strange Languages -->
+                <div class="bg-dark-panel border border-dark-border p-6 rounded-xl shadow-lg hover:border-brand/30 transition-colors">
+                    <h3 class="text-white font-bold mb-4 flex items-center gap-2">
+                        <span class="text-brand text-lg">02.</span> Consultas en Idiomas Extraños
+                    </h3>
                     <p class="text-sm text-zinc-400 mb-4">El archivo <code>Consultas.csv</code> contiene términos que indican una posible mala configuración de plugins de traducción (WPML/Polylang) o tráfico spam.</p>
-                    <ul class="space-y-2 text-xs font-mono text-zinc-500">
-                        <li class="p-2 bg-black rounded border border-zinc-800">физиотерапия при внчс (Ruso - 8 clics)</li>
-                        <li class="p-2 bg-black rounded border border-zinc-800">التعويضات السنية (Árabe - 6 clics)</li>
-                        <li class="p-2 bg-black rounded border border-zinc-800">整骨 (Chino/Japonés - 3 clics)</li>
-                        <li class="p-2 bg-black rounded border border-zinc-800">soin dentaire blanchiment (Francés)</li>
+                    <ul class="space-y-3 text-xs font-mono text-zinc-400">
+                        <li class="p-3 bg-dark-bg rounded border border-zinc-800 flex justify-between items-center hover:bg-zinc-900">
+                            <span>физиотерапия при внчс (Ruso)</span>
+                            <span class="text-brand font-bold">8 clics</span>
+                        </li>
+                        <li class="p-3 bg-dark-bg rounded border border-zinc-800 flex justify-between items-center hover:bg-zinc-900">
+                            <span>التعويضات السنية (Árabe)</span>
+                            <span class="text-brand font-bold">6 clics</span>
+                        </li>
+                        <li class="p-3 bg-dark-bg rounded border border-zinc-800 flex justify-between items-center hover:bg-zinc-900">
+                            <span>整骨 (Chino/Japonés)</span>
+                            <span class="text-brand font-bold">3 clics</span>
+                        </li>
+                        <li class="p-3 bg-dark-bg rounded border border-zinc-800 flex justify-between items-center hover:bg-zinc-900">
+                            <span>soin dentaire blanchiment (Francés)</span>
+                            <span class="text-zinc-600">0 clics</span>
+                        </li>
                     </ul>
                 </div>
             </div>
         </section>
 
         <!-- 6. ACTION PLAN -->
-        <section id="action-plan" class="pb-20">
-            <h2 class="section-title text-brand">6. Plan Director Detallado 2026</h2>
+        <section id="action-plan" class="pb-24 scroll-mt-20">
+            <div class="section-header">
+                <h2 class="section-title text-brand">6. Plan Director Detallado 2026</h2>
+            </div>
+            
             <div class="space-y-6">
                 
                 <!-- Action 1 -->
-                <div class="border border-zinc-800 rounded bg-dark-panel overflow-hidden">
-                    <div class="bg-zinc-900 px-6 py-4 border-b border-zinc-800 flex justify-between items-center">
-                        <h3 class="text-white font-bold">A. Saneamiento Técnico Urgente</h3>
-                        <span class="px-2 py-1 bg-red-900/30 text-red-400 text-xs border border-red-900/50 rounded">PRIORIDAD ALTA</span>
+                <div class="border border-dark-border rounded-xl bg-dark-panel overflow-hidden shadow-lg transition-transform hover:-translate-y-1 hover:shadow-neon duration-300">
+                    <div class="bg-gradient-to-r from-zinc-900 to-dark-surface px-6 py-4 border-b border-dark-border flex flex-wrap justify-between items-center gap-2">
+                        <h3 class="text-white font-bold text-lg">A. Saneamiento Técnico Urgente</h3>
+                        <span class="px-3 py-1 bg-red-900/20 text-red-400 text-xs font-bold border border-red-900/50 rounded-full tracking-wider shadow-sm">PRIORIDAD ALTA</span>
                     </div>
                     <div class="p-6 text-sm text-zinc-400 space-y-4">
                         <p><strong>Problema:</strong> Indexación de adjuntos (URLs .jpg) y rutas de idioma corruptas (/it/ca/).</p>
-                        <p><strong>Solución Técnica:</strong></p>
-                        <ul class="list-disc pl-5 space-y-1">
-                            <li>Instalar/Configurar plugin SEO (RankMath/Yoast) para activar la opción "Redirigir adjuntos a post padre".</li>
-                            <li>Revisar configuración de traductor (WPML). Desactivar idiomas AR, RU, ZH si no hay negocio real o bloquear su indexación en `robots.txt` (`Disallow: /ar/`).</li>
-                            <li>Eliminar URLs basura de GSC usando la herramienta de eliminación temporal mientras Google re-rastrea.</li>
-                        </ul>
+                        <div class="bg-dark-bg p-4 rounded-lg border border-dark-border">
+                            <strong class="text-brand block mb-2 text-xs uppercase tracking-wide">Solución Técnica:</strong>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li>Instalar/Configurar plugin SEO (RankMath/Yoast) para activar la opción "Redirigir adjuntos a post padre".</li>
+                                <li>Revisar configuración de traductor (WPML). Desactivar idiomas AR, RU, ZH si no hay negocio real o bloquear su indexación en `robots.txt` (`Disallow: /ar/`).</li>
+                                <li>Eliminar URLs basura de GSC usando la herramienta de eliminación temporal mientras Google re-rastrea.</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Action 2 -->
-                <div class="border border-zinc-800 rounded bg-dark-panel overflow-hidden">
-                    <div class="bg-zinc-900 px-6 py-4 border-b border-zinc-800 flex justify-between items-center">
-                        <h3 class="text-white font-bold">B. Estrategia de Contenidos "ZOMBIE"</h3>
-                        <span class="px-2 py-1 bg-red-900/30 text-red-400 text-xs border border-red-900/50 rounded">PRIORIDAD ALTA</span>
+                <div class="border border-dark-border rounded-xl bg-dark-panel overflow-hidden shadow-lg transition-transform hover:-translate-y-1 hover:shadow-neon duration-300">
+                    <div class="bg-gradient-to-r from-zinc-900 to-dark-surface px-6 py-4 border-b border-dark-border flex flex-wrap justify-between items-center gap-2">
+                        <h3 class="text-white font-bold text-lg">B. Estrategia de Contenidos "ZOMBIE"</h3>
+                        <span class="px-3 py-1 bg-red-900/20 text-red-400 text-xs font-bold border border-red-900/50 rounded-full tracking-wider shadow-sm">PRIORIDAD ALTA</span>
                     </div>
                     <div class="p-6 text-sm text-zinc-400 space-y-4">
                         <p><strong>Problema:</strong> "Dientes bebé" tiene 114k impresiones pero 0.06% CTR. "Dolor por bruxismo" tiene 807 impresiones y 0.87% CTR.</p>
-                        <p><strong>Solución Técnica:</strong></p>
-                        <ul class="list-disc pl-5 space-y-1">
-                            <li>Reescribir Meta Title de "Dientes Bebé" para atacar la intención informativa. Ej: <em>"Calendario de Dentición: Cuándo le salen los dientes a tu bebé (Tabla)"</em>.</li>
-                            <li>Implementar Schema Markup (FAQPage) en estas páginas para ganar visibilidad visual en las SERPs.</li>
-                            <li>Añadir tabla de contenidos al inicio del post para reducir rebote.</li>
-                        </ul>
+                        <div class="bg-dark-bg p-4 rounded-lg border border-dark-border">
+                            <strong class="text-brand block mb-2 text-xs uppercase tracking-wide">Solución Técnica:</strong>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li>Reescribir Meta Title de "Dientes Bebé" para atacar la intención informativa. Ej: <em>"Calendario de Dentición: Cuándo le salen los dientes a tu bebé (Tabla)"</em>.</li>
+                                <li>Implementar Schema Markup (FAQPage) en estas páginas para ganar visibilidad visual en las SERPs.</li>
+                                <li>Añadir tabla de contenidos al inicio del post para reducir rebote.</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Action 3 -->
-                <div class="border border-zinc-800 rounded bg-dark-panel overflow-hidden">
-                    <div class="bg-zinc-900 px-6 py-4 border-b border-zinc-800 flex justify-between items-center">
-                        <h3 class="text-white font-bold">C. Optimización de Tráfico Social</h3>
-                        <span class="px-2 py-1 bg-yellow-900/30 text-yellow-400 text-xs border border-yellow-900/50 rounded">PRIORIDAD MEDIA</span>
+                <div class="border border-dark-border rounded-xl bg-dark-panel overflow-hidden shadow-lg transition-transform hover:-translate-y-1 hover:shadow-neon duration-300">
+                    <div class="bg-gradient-to-r from-zinc-900 to-dark-surface px-6 py-4 border-b border-dark-border flex flex-wrap justify-between items-center gap-2">
+                        <h3 class="text-white font-bold text-lg">C. Optimización de Tráfico Social</h3>
+                        <span class="px-3 py-1 bg-yellow-900/20 text-yellow-400 text-xs font-bold border border-yellow-900/50 rounded-full tracking-wider shadow-sm">PRIORIDAD MEDIA</span>
                     </div>
                     <div class="p-6 text-sm text-zinc-400 space-y-4">
                         <p><strong>Problema:</strong> El tráfico de "StoryMeta" (Video) rebota en 4 segundos.</p>
-                        <p><strong>Solución Técnica:</strong></p>
-                        <ul class="list-disc pl-5 space-y-1">
-                            <li>El usuario de Reels espera inmediatez visual. Crear una Landing Page específica para el tráfico de Instagram (link in bio) que cargue instantáneamente y ofrezca botones grandes: "WhatsApp Directo" y "Ver Precios".</li>
-                            <li>Eliminar pop-ups o textos largos en la versión móvil de esa landing.</li>
-                        </ul>
+                        <div class="bg-dark-bg p-4 rounded-lg border border-dark-border">
+                            <strong class="text-brand block mb-2 text-xs uppercase tracking-wide">Solución Técnica:</strong>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li>El usuario de Reels espera inmediatez visual. Crear una Landing Page específica para el tráfico de Instagram (link in bio) que cargue instantáneamente y ofrezca botones grandes: "WhatsApp Directo" y "Ver Precios".</li>
+                                <li>Eliminar pop-ups o textos largos en la versión móvil de esa landing.</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
             </div>
         </section>
 
+        <!-- FOOTER -->
+        <footer class="border-t border-dark-border pt-8 pb-12 mt-12 text-center text-zinc-600">
+            <p class="text-xs font-mono uppercase tracking-widest mb-2">By Ferran Martínez</p>
+            <p class="text-[10px] font-mono opacity-60">17/02/2026</p>
+            <div class="w-8 h-1 bg-brand mx-auto mt-4 rounded-full opacity-50"></div>
+        </footer>
+
     </main>
 
     <script>
-        function scrollToId(id) {
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        // Accordion Logic
+        function toggleAccordion(id, trigger) {
+            const content = document.getElementById(id);
+            if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+                // Close
+                content.style.maxHeight = '0px';
+                content.style.opacity = '0';
+                content.classList.add('collapsed');
+                trigger.classList.add('collapsed');
+            } else {
+                // Open
+                content.classList.remove('collapsed');
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.opacity = '1';
+                trigger.classList.remove('collapsed');
+            }
+        }
+
+        // Initialize accordions as open but togglable, or closed based on preference. 
+        // User requested "desplegables", implies closed initially or togglable. 
+        // Let's close the huge ones initially for better mobile UX, but ensure user knows they are there.
+        document.addEventListener('DOMContentLoaded', () => {
+            const accIds = ['acc-countries', 'acc-acquisition', 'acc-content'];
+            accIds.forEach(id => {
+                const el = document.getElementById(id);
+                const trigger = document.querySelector(`button[onclick="toggleAccordion('${id}', this)"]`);
+                if(el && trigger) {
+                    // Close them initially for cleaner UX on mobile
+                    el.style.maxHeight = '0px';
+                    el.style.opacity = '0';
+                    el.classList.add('collapsed');
+                    trigger.classList.add('collapsed');
+                }
+            });
+
+            // Mobile Menu Logic
+            const menuBtn = document.getElementById('menu-btn');
+            const closeMenuBtn = document.getElementById('close-menu');
+            const sidebar = document.getElementById('sidebar');
+
+            function toggleMenu() {
+                sidebar.classList.toggle('hidden-menu');
+            }
+
+            menuBtn.addEventListener('click', toggleMenu);
+            closeMenuBtn.addEventListener('click', toggleMenu);
+        });
+
+        // Helper to close menu when clicking a link (mobile)
+        function closeMenu() {
+            if (window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.add('hidden-menu');
+            }
         }
     </script>
 </body>
