@@ -3,21 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auditoría Estratégica VallBlanc | Ferran Martínez</title>
+    <title>Auditoría Estratégica VallBlanc 2026</title>
     
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS (Estilos) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    
-    <!-- Babel Standalone -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
-
+    <!-- Configuración de Colores Corporativos -->
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -33,463 +24,400 @@
                             900: '#4a1a1a',
                         },
                         dark: {
-                            bg: '#0B0F19', 
-                            panel: '#111827', 
-                            border: '#1F2937'
+                            bg: '#0f172a', // Slate 900
+                            panel: '#1e293b', // Slate 800
+                            border: '#334155' // Slate 700
                         }
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['Georgia', 'serif'],
                     }
                 }
             }
         }
     </script>
 
+    <!-- React y ReactDOM (Librerías del Núcleo) -->
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    
+    <!-- Babel (Para traducir el código a algo que el navegador entienda) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Estilos CSS Base -->
     <style>
-        body { background-color: #0B0F19; color: #cbd5e1; }
+        body { background-color: #0f172a; color: #cbd5e1; font-family: 'Inter', sans-serif; }
+        .text-pretty { white-space: pre-line; }
+        /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0B0F19; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #D07D7D; }
-        .prose-custom p { margin-bottom: 1.5em; line-height: 1.8; color: #cbd5e1; text-align: justify; }
-        .prose-custom strong { color: #f1f5f9; font-weight: 600; }
-        .prose-custom ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1.5em; }
-        .prose-custom li { margin-bottom: 0.5em; }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    
+    <!-- Punto de Montaje de la App -->
+    <div id="root" class="flex h-screen w-full items-center justify-center text-slate-400">
+        <div class="text-center">
+            <div class="w-12 h-12 border-4 border-brand border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p>Cargando Informe Integral VallBlanc...</p>
+        </div>
+    </div>
 
+    <!-- CÓDIGO DE LA APLICACIÓN -->
     <script type="text/babel">
-        const { useState, useEffect } = React;
 
-        // --- ICONOS SVG ---
-        const Icons = {
-            Chart: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>,
-            Target: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
-            Zap: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></polygon>,
-            MapPin: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-9 13-9 13s-9-7-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>,
-            Search: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>,
-            Globe: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
-            List: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>,
-            Menu: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>,
-            X: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>,
-            Sitemap: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><line x1="7" x2="7" y1="10" y2="13"/><line x1="7" x2="17" y1="13" y2="13"/><line x1="17" x2="17" y1="10" y2="14"/></svg>
-        };
-
-        // --- CONTENIDO COMPLETO (INTEGRAL) ---
-        const REPORT = {
-            summary: {
-                title: "1. Resumen Ejecutivo (Sin Pelos en la Lengua)",
-                content: [
-                    "El análisis forense de la presencia digital de vallblanc.com revela una patología estructural severa común en clínicas locales con aspiraciones de crecimiento pero ejecución técnica deficiente: una hiperdependencia del tráfico de marca y de pago combinada con una infraestructura técnica que sabotea activamente la adquisición de nuevos pacientes orgánicos 'fríos'. La clínica opera digitalmente muy por debajo de su capacidad clínica real.",
-                    "Hemorragia de Tráfico Crítica: De aproximadamente 17,000 usuarios activos registrados, la tasa de rebote en la home alcanza un crítico 59.7%. Esto indica que 6 de cada 10 visitantes, muchos pagados con Google CPC, son repelidos por la experiencia antes de interactuar.",
-                    "Conversión Anémica: La tasa de conversión global es del 0.57%. El sitio requiere casi 200 visitas para generar una sola conversión digital traqueada. Considerando el volumen de tráfico pago, esto infla desproporcionadamente el CAC (Costo de Adquisición de Cliente).",
-                    "Invisibilidad Expat: La gestión de idiomas mediante parámetros (?lang=) en lugar de subdirectorios ha provocado que Google indexe 'clones' de la página, generando canibalización masiva en lugar de relevancia geolocalizada."
+        // --- 1. BASE DE DATOS (CONTENIDO DEL PDF COMPLETO) ---
+        const DATA = {
+            resumen: {
+                titulo: "1. Resumen Ejecutivo (Estado Crítico)",
+                contenido: [
+                    "El análisis forense de la presencia digital de vallblanc.com revela una patología estructural severa común en clínicas locales con aspiraciones de crecimiento pero ejecución técnica deficiente: una hiperdependencia del tráfico de marca y de pago combinada con una infraestructura técnica que sabotea activamente la adquisición de nuevos pacientes orgánicos 'fríos' (no referidos).",
+                    "La clínica opera digitalmente muy por debajo de su capacidad clínica real. Mientras la infraestructura física cuenta con tecnología de vanguardia (CBCT, escáneres intraorales), la infraestructura digital padece de obsolescencia técnica en su Core Web Vitals y un desorden arquitectónico en su estrategia de internacionalización.",
+                    "HEMORRAGIA DE TRÁFICO CRÍTICA: De aproximadamente 17,000 usuarios activos registrados en el periodo analizado, la tasa de rebote en la página de inicio alcanza un crítico 59.7%. Esto indica estadísticamente que 6 de cada 10 visitantes, muchos de ellos adquiridos a través de campañas de pago costosas (Google CPC y Social Ads), son repelidos por la experiencia de carga.",
+                    "CONVERSIÓN ANÉMICA: La tasa de conversión global registrada es del 0.57% (evento conversion_gracias_cita). Para una clínica dental en BCN, el estándar debería oscilar entre el 3% y el 5%. Actualmente, el sitio requiere casi 200 visitas para generar una sola conversión digital traqueada.",
+                    "INVISIBILIDAD EXPAT: La gestión de idiomas mediante parámetros (?lang=) en lugar de subdirectorios consolidados (/en/, /fr/) ha provocado que Google indexe 'clones' de la página de inicio, generando canibalización interna masiva en lugar de relevancia geolocalizada."
                 ],
                 kpis: [
-                    { label: "Tasa Rebote Home", value: "59.7%", status: "critical", sub: "Pérdida de inversión publicitaria" },
-                    { label: "Tasa Conversión", value: "0.57%", status: "critical", sub: "Estándar sector: 3-5%" },
-                    { label: "Tráfico Orgánico", value: "12.7%", status: "warning", sub: "Dependencia de Meta/Ads" },
-                    { label: "Velocidad Servidor", value: "1.7s", status: "warning", sub: "TTFB muy lento" }
+                    { label: "Tasa Rebote Home", val: "59.7%", status: "critical", sub: "Pérdida Inversión Ads" },
+                    { label: "Tasa Conversión", val: "0.57%", status: "critical", sub: "Objetivo: 3.0%" },
+                    { label: "Tráfico Orgánico", val: "12.7%", status: "warning", sub: "Dependencia de Pago" },
+                    { label: "Velocidad Servidor", val: "1.7s", status: "warning", sub: "TTFB Lento (Google)" }
                 ],
                 quickWins: [
-                    { title: "Desbloqueo de Rastreo", desc: "Habilitar acceso inmediato al sitemap_index.xml (actualmente bloqueado) para indexación profunda." },
-                    { title: "Compresión Scripts", desc: "Implementar carga diferida (defer/async) para GTM y Litespeed (TTFB 1.7s)." },
-                    { title: "Ajuste Títulos SEO", desc: "Reescribir Meta Titles de páginas con muchas impresiones y CTR < 2%." }
+                    { title: "Desbloqueo Rastreo", desc: "Habilitar sitemap_index.xml (bloqueado) para indexación profunda." },
+                    { title: "Compresión Scripts", desc: "Carga diferida (defer) para GTM/Litespeed (TTFB 1.7s)." },
+                    { title: "Títulos SEO", desc: "Reescribir Titles de páginas con muchas impresiones y CTR < 2%." }
                 ]
             },
-            competitors: {
-                title: "2. Auditoría de Competencia (Benchmarking)",
-                intro: "Análisis comparativo directo: Turó Park (Líder Expat), Clínica Blasi (Prestigio) y British Dental (Nicho).",
-                data: [
-                    { 
-                        dim: "Arquitectura Idiomas", 
-                        us: "Parámetros (?lang=) / Inconsistente / Sin Hreflang", 
-                        them: "Turó Park: Subdirectorios robustos / Perfiles con banderas. British: Sitio nativo en Inglés." 
-                    },
-                    { 
-                        dim: "Enfoque SEO Local", 
-                        us: "'Vallcarca', 'Gràcia' (Hiperlocal)", 
-                        them: "'Barcelona', 'English speaking', 'Sarrià', 'Heart of the city'." 
-                    },
-                    { 
-                        dim: "Contenido", 
-                        us: "Blog genérico, traducciones automáticas.", 
-                        them: "Guías de seguros, 'Medical Tourism', Casos clínicos Antes/Después (USA trained)." 
-                    },
-                    { 
-                        dim: "Velocidad Mobile", 
-                        us: "LCP 2.2s / Script Bloat masivo (80% peso JS).", 
-                        them: "Optimizado para móviles. 'Fast Track' buttons." 
-                    },
-                    { 
-                        dim: "Captación", 
-                        us: "Formulario genérico 'Pide Cita' (Alto abandono).", 
-                        them: "WhatsApp directo, Booking Online, Portal Paciente, Widget 'Need Help?'." 
-                    }
+            competencia: {
+                titulo: "2. Auditoría de Competencia (Benchmarking)",
+                intro: "Ingeniería inversa de la élite: Turó Park (Líder Expat), Clínica Blasi (Prestigio) y British Dental (Nicho).",
+                tabla: [
+                    { dim: "Arquitectura Idiomas", us: "Parámetros (?lang=) / Sin Hreflang", them: "Subdirectorios robustos / Perfiles con banderas (Turó Park)." },
+                    { dim: "Enfoque Local", us: "'Vallcarca', 'Gràcia' (Barrio)", them: "'Barcelona', 'English speaking', 'Sarrià' (Ciudad)." },
+                    { dim: "Contenido", us: "Blog genérico, traducciones auto.", them: "Guías Seguros, 'Medical Tourism', Casos Clínicos (Blasi)." },
+                    { dim: "Velocidad Mobile", us: "LCP 2.2s / Script Bloat (80% peso)", them: "Optimizado móviles / Botones rápidos." },
+                    { dim: "Captación", us: "Formulario genérico (Alto abandono)", them: "WhatsApp directo, Booking Online, Portal Paciente." }
                 ],
                 gaps: [
-                    "Falta de 'Aterrizaje Suave' para Expats: No hay info sobre seguros internacionales o logística.",
-                    "Falta de Transparencia en Precios: Competencia publica 'Price Lists'. VallBlanc no, generando fricción.",
-                    "Falta de Validación (E-E-A-T): Necesitamos 'traducir' la experiencia de la Dra. Valverde para el expat (e.g., 'English Speaking Senior Orthodontist')."
+                    "Aterrizaje Suave Expat: Faltan páginas de 'Medical Tourism' y seguros internacionales.",
+                    "Transparencia Precios: Competencia publica tarifas. VallBlanc no, generando fricción.",
+                    "Validación E-E-A-T: Falta destacar 'English Speaking Senior Orthodontist' en perfiles."
+                ],
+                pack: [
+                    "Categorización Agresiva: Usar las 10 categorías (Emergency, Pediatric, etc).",
+                    "Reseñas SEO: Respuestas con keywords semánticas ('Root canal', 'Implante').",
+                    "Fotos Confianza: Evitar stock. Mostrar tecnología real (CBCT)."
                 ]
             },
-            technical: {
-                title: "3. Auditoría Técnica (PageSpeed)",
-                intro: "La salud técnica presenta una contradicción peligrosa: métricas de campo aceptables que enmascaran una arquitectura ineficiente.",
-                details: [
-                    {
-                        metric: "TTFB (Time to First Byte)",
-                        val: "1.7s",
-                        status: "Mal",
-                        finding: "El servidor tarda casi 2s en responder. Esto destruye el SEO internacional y frustra al usuario móvil.",
-                        rec: "Activar caché a nivel servidor (Redis/Varnish) y CDN (Cloudflare)."
-                    },
-                    {
-                        metric: "Script Bloat (JS)",
-                        val: "80% Peso",
-                        status: "Crítico",
-                        finding: "Litespeed JS (180kB) y GTM (170kB) saturan el hilo principal. Se cargan antes que el contenido.",
-                        rec: "Auditoría GTM urgente. Implementar 'Delay JS Execution'."
-                    },
-                    {
-                        metric: "LCP Móvil",
-                        val: "2.2s",
-                        status: "Regular",
-                        finding: "Al límite. Afectado por imágenes de alta resolución no optimizadas en el hero.",
-                        rec: "Implementar preload para imagen principal y formatos WebP."
-                    }
+            tecnica: {
+                titulo: "3. Auditoría Técnica (PageSpeed)",
+                intro: "La velocidad es rentabilidad. Un TTFB de 1.7s destruye el Crawl Budget y la UX móvil.",
+                metricas: [
+                    { k: "TTFB (Respuesta Servidor)", v: "1.7s", s: "critical", d: "El servidor tarda 2s en 'pensar'. Hosting o caché deficientes." },
+                    { k: "Script Bloat (JS)", v: "80%", s: "critical", d: "Litespeed JS y GTM saturan la carga antes que el contenido." },
+                    { k: "LCP Móvil", v: "2.2s", s: "warning", d: "Al límite. Imágenes de alta resolución no optimizadas en el hero." }
+                ],
+                acciones: [
+                    "Activar caché servidor (Redis/Varnish) y CDN (Cloudflare).",
+                    "Auditoría GTM urgente. Implementar 'Delay JS Execution'.",
+                    "Implementar preload para imagen principal y formatos WebP."
                 ]
             },
-            gmb: {
-                title: "4. Auditoría GMB (SEO Local)",
-                intro: "El corazón del SEO Local. Análisis de la ficha de Google.",
-                findings: [
-                    { title: "Inconsistencia NAP", desc: "Aparece como 'VallBlanc', 'VallBlanc Espai Dental', etc. Diluye autoridad. Acción: Estandarizar a 'VallBlanc Espai Dental'." },
-                    { title: "Categorías Faltantes", desc: "Faltan categorías clave: 'Emergency dental service', 'Pediatric dentist', 'Dental implants periodontist'." },
-                    { title: "Reseñas sin Keywords", desc: "Las reseñas carecen de palabras clave. Acción: Responder introduciendo keywords ('Gracias por confiar en VallBlanc para tu implante')." },
-                    { title: "Falta de Fotos", desc: "Subir fotos reales del equipo y tecnología (CBCT) para vender confianza." }
-                ]
-            },
-            organic: {
-                title: "5. Rendimiento Orgánico (Datos GSC/GA4)",
-                intro: "La verdad de los datos: Desconexión entre tráfico captado y negocio.",
-                opportunities: [
-                    { key: "'Periodoncia Barcelona'", data: "2,396 Impresiones / 0 Clics", diag: "Oportunidad masiva perdida. Falta Power Page específica." },
-                    { key: "'Precio Implante Dental'", data: "1,835 Impresiones / 0 Clics", diag: "Intención transaccional pura. Falta página de precios." },
-                    { key: "'Implant Dentaire Barcelone'", data: "1,967 Impresiones / 0 Clics", diag: "Demanda francesa activa. Página en francés invisible." },
-                    { key: "Canibalización", data: "Regeneración Ósea", diag: "URLs compiten (id=11 vs id=43). Google alterna cuál muestra. Solución: Power Page + 301." },
-                    { key: "Fuga Conversión", data: "42.2% Rebote en Cita", diag: "Formulario pide demasiados datos. Solución: Simplificar a Nombre+Teléfono." }
+            organico: {
+                titulo: "5. Rendimiento Orgánico (GSC/GA4)",
+                intro: "Oportunidades perdidas donde Google nos muestra pero el usuario no hace clic.",
+                casos: [
+                    { t: "'Periodoncia Barcelona'", d: "2,396 Impresiones / 0 Clics", a: "Falta página específica. El usuario busca especialista, no generalista." },
+                    { t: "'Precio Implante Dental'", d: "1,835 Impresiones / 0 Clics", a: "Intención transaccional pura. Falta página de precios visible." },
+                    { t: "Canibalización 'Regeneración'", d: "Conflicto URLs (id=11 vs 43)", a: "Contenido duplicado interno. Solución: Power Page + 301." },
+                    { t: "Fuga 'Pide Cita'", d: "42.2% Tasa Abandono", a: "Formulario complejo. Solución: Simplificar a Nombre+Telf." }
                 ]
             },
             expat: {
-                title: "6. Estrategia 'Expat Barcelona'",
-                intro: "El Océano Azul. Crecimiento exponencial vía nichos internacionales.",
-                strategy: [
-                    { title: "Auditoría Idiomas", desc: "La implementación actual con parámetros es deficiente. Francés y Ruso (Nichos de oro) desperdiciados." },
-                    { title: "Landing 'Emergency Dentist'", desc: "Keyword: 'emergency dentist barcelona'. El expat con dolor no compara precios, busca inmediatez. Crear landing agresiva." },
-                    { title: "Comparativa Precios", desc: "Keyword: 'dental implants barcelona cost'. Crear página comparativa vs precios UK/USA." },
-                    { title: "Riesgos Traducción", desc: "Evitar traductores automáticos para términos médicos. Revisión humana obligatoria." }
+                titulo: "6. Estrategia 'Expat Barcelona'",
+                intro: "El Océano Azul. Crecimiento vía nichos internacionales.",
+                fases: [
+                    { f: "1. Infraestructura", d: "Implementar Hreflang real. Eliminar ?lang= y usar /en/, /fr/." },
+                    { f: "2. Landing Urgencia", d: "Crear 'Emergency Dentist Barcelona'. El expat con dolor busca inmediatez." },
+                    { f: "3. Social Proof", d: "Mostrar reseñas en inglés solo en la versión inglesa." },
+                    { f: "4. Nicho Ruso", d: "Potenciar 'Fisioterapia ATM' en ruso (Alto rendimiento detectado)." }
                 ]
             },
             roadmap: {
-                title: "7. Hoja de Ruta (Roadmap)",
-                intro: "Plan de Acción Priorizado (Impacto x Esfuerzo)",
-                tasks: [
-                    { task: "Implementar Hreflang y reestructurar URLs", prio: "Crítica", impact: "Alto (SEO Int)", effort: "Alto", owner: "Dev" },
-                    { task: "Optimizar carga JS (Defer/Async) y LCP", prio: "Crítica", impact: "Alto (UX)", effort: "Medio", owner: "Dev" },
-                    { task: "Auditoría y Fusión GTM (Limpieza)", prio: "Alta", impact: "Medio", effort: "Bajo", owner: "Analista" },
-                    { task: "Crear Landing 'Emergency Dentist' + GMB", prio: "Alta", impact: "Alto (Leads)", effort: "Medio", owner: "Content/SEO" },
-                    { task: "Simplificar Formulario 'Pide Cita'", prio: "Alta", impact: "Alto (Conv)", effort: "Bajo", owner: "Dev/UX" },
-                    { task: "Power Page 'Periodoncia' e 'Implantes'", prio: "Media", impact: "Medio", effort: "Alto", owner: "Content" },
-                    { task: "Campaña Reseñas (Keywords)", prio: "Media", impact: "Medio", effort: "Bajo", owner: "Recepción" }
+                titulo: "7. Hoja de Ruta (Roadmap)",
+                tareas: [
+                    { t: "Implementar Hreflang y URLs (/en/)", p: "Crítica", i: "Alto", e: "Alto", r: "Dev" },
+                    { t: "Optimizar carga JS y LCP", p: "Crítica", i: "Alto", e: "Medio", r: "Dev" },
+                    { t: "Auditoría GTM (Limpieza)", p: "Alta", i: "Medio", e: "Bajo", r: "Analista" },
+                    { t: "Landing 'Emergency Dentist'", p: "Alta", i: "Alto", e: "Medio", r: "Content" },
+                    { t: "Simplificar Formulario Cita", p: "Alta", i: "Alto", e: "Bajo", r: "UX/Dev" },
+                    { t: "Power Page 'Periodoncia'", p: "Media", i: "Medio", e: "Alto", r: "Content" }
                 ]
             },
             extra: {
-                title: "Extra: Arquitectura & Mapa Oportunidades",
-                map: {
-                    local: "Keywords: 'Dentista Vallcarca', 'Implantes Gràcia', 'Urgencias dentales Barcelona'.",
-                    expat: "Keywords: 'English speaking dentist Barcelona', 'Emergency dentist Barcelona', 'Dental implants cost'."
-                },
+                titulo: "Extra: Arquitectura Silos",
                 silos: [
                     "/es/ (Home Local)",
-                    "/es/tratamientos/implantes-dentales/",
-                    "/es/urgencias-dentales/",
-                    "/es/barrio/vallcarca/",
+                    "  ├── /es/tratamientos/implantes-dentales/",
+                    "  ├── /es/urgencias-dentales/ (Landing)",
+                    "  └── /es/barrio/vallcarca/",
                     "/en/ (Home Expat)",
-                    "/en/emergency-dentist/",
-                    "/en/international-patients/"
+                    "  ├── /en/emergency-dentist/ (High ROI)",
+                    "  └── /en/international-patients/"
                 ]
             }
         };
 
+        // --- 2. COMPONENTES VISUALES SIMPLES ---
+
+        const Icono = ({ tipo }) => {
+            const clases = "w-5 h-5 inline-block mr-2";
+            switch(tipo) {
+                case 'alerta': return <svg className={clases} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>;
+                case 'check': return <svg className={clases} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>;
+                case 'grafico': return <svg className={clases} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>;
+                case 'mapa': return <svg className={clases} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>;
+                default: return <span className={clases}>•</span>;
+            }
+        };
+
+        const TarjetaKPI = ({ etiqueta, valor, estado, sub }) => (
+            <div className={`p-4 rounded-lg border ${estado === 'critical' ? 'bg-red-900/20 border-red-500/30 text-red-100' : 'bg-yellow-900/20 border-yellow-500/30 text-yellow-100'}`}>
+                <div className="text-xs uppercase opacity-70 mb-1">{etiqueta}</div>
+                <div className="text-2xl font-bold mb-1">{valor}</div>
+                <div className="text-xs font-mono">{sub}</div>
+            </div>
+        );
+
+        // --- 3. APLICACIÓN PRINCIPAL ---
+
         const App = () => {
-            const [activeTab, setActiveTab] = useState('summary');
-            const [isMenuOpen, setIsMenuOpen] = useState(false);
+            const [seccion, setSeccion] = React.useState('resumen');
 
-            const tabs = [
-                { id: 'summary', label: '1. Resumen Ejecutivo', icon: Icons.Chart },
-                { id: 'competitors', label: '2. Competencia', icon: Icons.Target },
-                { id: 'technical', label: '3. Técnica', icon: Icons.Zap },
-                { id: 'gmb', label: '4. GMB Local', icon: Icons.MapPin },
-                { id: 'organic', label: '5. Orgánico', icon: Icons.Search },
-                { id: 'expat', label: '6. Estrategia Expat', icon: Icons.Globe },
-                { id: 'roadmap', label: '7. Hoja de Ruta', icon: Icons.List },
-                { id: 'extra', label: 'Extra: Arquitectura', icon: Icons.Sitemap },
-            ];
+            // Navegación lateral
+            const Menu = () => (
+                <nav className="space-y-1">
+                    {[
+                        ['resumen', '1. Resumen Ejecutivo'],
+                        ['competencia', '2. Competencia'],
+                        ['tecnica', '3. Auditoría Técnica'],
+                        ['organico', '5. Rendimiento Orgánico'],
+                        ['expat', '6. Estrategia Expat'],
+                        ['roadmap', '7. Hoja de Ruta'],
+                        ['extra', 'Extra: Arquitectura']
+                    ].map(([key, label]) => (
+                        <button 
+                            key={key}
+                            onClick={() => setSeccion(key)}
+                            className={`w-full text-left px-4 py-3 rounded text-sm transition-colors ${seccion === key ? 'bg-brand text-white font-bold' : 'text-slate-400 hover:bg-dark-panel hover:text-slate-200'}`}
+                        >
+                            {label}
+                        </button>
+                    ))}
+                </nav>
+            );
 
-            const renderContent = () => {
-                switch(activeTab) {
-                    case 'summary':
-                        return (
-                            <div className="space-y-8 animate-in fade-in duration-500">
-                                <div className="border-l-4 border-brand pl-4">
-                                    <h2 className="text-3xl font-serif font-bold text-white">{REPORT.summary.title}</h2>
-                                    <p className="text-brand">Diagnóstico Forense</p>
+            // Renderizado condicional de contenido
+            const Contenido = () => {
+                const data = DATA[seccion];
+                if (!data) return <div>Cargando...</div>;
+
+                return (
+                    <div className="animate-fade-in">
+                        <h2 className="text-3xl font-bold text-white mb-2 pb-4 border-b border-dark-border">
+                            {data.titulo}
+                        </h2>
+                        
+                        {/* 1. RESUMEN */}
+                        {seccion === 'resumen' && (
+                            <div className="space-y-6">
+                                <div className="prose prose-invert max-w-none text-slate-300">
+                                    {data.contenido.map((p, i) => <p key={i} className="mb-4 leading-relaxed">{p}</p>)}
                                 </div>
-                                <div className="prose-custom">
-                                    {REPORT.summary.content.map((p, i) => <p key={i}>{p}</p>)}
-                                </div>
-                                <div className="grid md:grid-cols-4 gap-4">
-                                    {REPORT.summary.kpis.map((kpi, i) => (
-                                        <div key={i} className="bg-dark-panel p-4 rounded-xl border border-dark-border">
-                                            <div className="text-xs text-slate-500 uppercase">{kpi.label}</div>
-                                            <div className="text-2xl font-bold text-white my-1">{kpi.value}</div>
-                                            <div className={`text-xs px-2 py-1 rounded inline-block font-bold ${kpi.status === 'critical' ? 'bg-red-900/30 text-red-400' : 'bg-yellow-900/30 text-yellow-400'}`}>{kpi.sub}</div>
-                                        </div>
-                                    ))}
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    {data.kpis.map((k, i) => <TarjetaKPI key={i} etiqueta={k.label} valor={k.val} estado={k.status} sub={k.sub} />)}
                                 </div>
                                 <div className="bg-dark-panel p-6 rounded-xl border border-dark-border">
-                                    <h3 className="text-xl font-bold text-white mb-4">Quick Wins (≤ 14 días)</h3>
-                                    <div className="grid md:grid-cols-3 gap-6">
-                                        {REPORT.summary.quickWins.map((win, i) => (
-                                            <div key={i} className="bg-slate-900/50 p-4 rounded border border-dark-border">
-                                                <div className="text-brand font-bold mb-2">{win.title}</div>
-                                                <div className="text-sm text-slate-400">{win.desc}</div>
+                                    <h3 className="text-xl font-bold text-brand mb-4">Quick Wins (≤ 14 días)</h3>
+                                    <div className="grid md:grid-cols-3 gap-4">
+                                        {data.quickWins.map((w, i) => (
+                                            <div key={i} className="bg-dark-bg p-4 rounded border border-dark-border">
+                                                <div className="font-bold text-white mb-2">{w.title}</div>
+                                                <div className="text-sm text-slate-400">{w.desc}</div>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
                             </div>
-                        );
-                    case 'competitors':
-                        return (
-                            <div className="space-y-8 animate-in fade-in duration-500">
-                                <div className="border-l-4 border-brand pl-4">
-                                    <h2 className="text-3xl font-serif font-bold text-white">{REPORT.competitors.title}</h2>
-                                    <p className="text-brand">{REPORT.competitors.intro}</p>
-                                </div>
-                                <div className="space-y-6">
-                                    {REPORT.competitors.data.map((item, i) => (
-                                        <div key={i} className="bg-dark-panel p-6 rounded-xl border border-dark-border">
-                                            <h3 className="text-lg font-bold text-brand mb-4 uppercase tracking-wider">{item.dim}</h3>
-                                            <div className="grid md:grid-cols-2 gap-8">
-                                                <div className="border-l-2 border-red-500/30 pl-4">
-                                                    <div className="text-xs text-red-400 font-bold mb-1">NOSOTROS (VALLBLANC)</div>
-                                                    <p className="text-slate-300 text-sm">{item.us}</p>
-                                                </div>
-                                                <div className="border-l-2 border-green-500/30 pl-4">
-                                                    <div className="text-xs text-green-400 font-bold mb-1">COMPETENCIA (TOP 3)</div>
-                                                    <p className="text-slate-300 text-sm">{item.them}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className="bg-slate-900/50 p-6 rounded-xl border border-dark-border">
-                                    <h3 className="text-xl font-bold text-white mb-4">Gaps Detectados</h3>
-                                    <ul className="list-disc pl-5 space-y-2 text-slate-400">
-                                        {REPORT.competitors.gaps.map((gap, i) => <li key={i}>{gap}</li>)}
-                                    </ul>
-                                </div>
-                            </div>
-                        );
-                    case 'technical':
-                        return (
-                            <div className="space-y-8 animate-in fade-in duration-500">
-                                <div className="border-l-4 border-brand pl-4">
-                                    <h2 className="text-3xl font-serif font-bold text-white">{REPORT.technical.title}</h2>
-                                    <p className="text-brand">{REPORT.technical.intro}</p>
-                                </div>
-                                <div className="grid gap-6">
-                                    {REPORT.technical.details.map((det, i) => (
-                                        <div key={i} className="bg-dark-panel p-6 rounded-xl border border-dark-border">
-                                            <div className="flex justify-between items-start mb-2">
-                                                <h3 className="text-xl font-bold text-white">{det.metric}</h3>
-                                                <span className="text-red-400 font-bold font-mono">{det.val}</span>
-                                            </div>
-                                            <p className="text-slate-300 mb-4">{det.finding}</p>
-                                            <div className="bg-slate-900/50 p-3 rounded text-sm border border-brand/20">
-                                                <span className="text-brand font-bold">Solución:</span> {det.rec}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        );
-                    case 'gmb':
-                        return (
-                            <div className="space-y-8 animate-in fade-in duration-500">
-                                <div className="border-l-4 border-brand pl-4">
-                                    <h2 className="text-3xl font-serif font-bold text-white">{REPORT.gmb.title}</h2>
-                                    <p className="text-brand">{REPORT.gmb.intro}</p>
+                        )}
+
+                        {/* 2. COMPETENCIA */}
+                        {seccion === 'competencia' && (
+                            <div className="space-y-6">
+                                <p className="text-slate-400">{data.intro}</p>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left text-sm text-slate-300">
+                                        <thead className="bg-dark-panel text-brand uppercase font-bold">
+                                            <tr>
+                                                <th className="p-3">Dimensión</th>
+                                                <th className="p-3 text-red-300">VallBlanc (Nosotros)</th>
+                                                <th className="p-3 text-green-300">Competencia Top</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-dark-border">
+                                            {data.tabla.map((row, i) => (
+                                                <tr key={i} className="hover:bg-dark-panel/50">
+                                                    <td className="p-3 font-bold">{row.dim}</td>
+                                                    <td className="p-3 border-l border-red-900/30 bg-red-900/10">{row.us}</td>
+                                                    <td className="p-3 border-l border-green-900/30 bg-green-900/10">{row.them}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
                                 <div className="grid md:grid-cols-2 gap-6">
-                                    {REPORT.gmb.findings.map((f, i) => (
-                                        <div key={i} className="bg-dark-panel p-6 rounded-xl border border-dark-border">
-                                            <h3 className="text-lg font-bold text-white mb-2">{f.title}</h3>
-                                            <p className="text-slate-400 text-sm">{f.desc}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        );
-                    case 'organic':
-                        return (
-                            <div className="space-y-8 animate-in fade-in duration-500">
-                                <div className="border-l-4 border-brand pl-4">
-                                    <h2 className="text-3xl font-serif font-bold text-white">{REPORT.organic.title}</h2>
-                                    <p className="text-brand">{REPORT.organic.intro}</p>
-                                </div>
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-left text-sm text-slate-300">
-                                        <thead className="bg-slate-900 text-slate-500 uppercase font-bold">
-                                            <tr>
-                                                <th className="p-4">Oportunidad / Keyword</th>
-                                                <th className="p-4">Dato</th>
-                                                <th className="p-4">Diagnóstico</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-dark-border bg-dark-panel">
-                                            {REPORT.organic.opportunities.map((op, i) => (
-                                                <tr key={i}>
-                                                    <td className="p-4 font-bold text-white">{op.key}</td>
-                                                    <td className="p-4 text-red-400 font-mono">{op.data}</td>
-                                                    <td className="p-4">{op.diag}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        );
-                    case 'expat':
-                        return (
-                            <div className="space-y-8 animate-in fade-in duration-500">
-                                <div className="border-l-4 border-brand pl-4">
-                                    <h2 className="text-3xl font-serif font-bold text-white">{REPORT.expat.title}</h2>
-                                    <p className="text-brand">{REPORT.expat.intro}</p>
-                                </div>
-                                <div className="space-y-4">
-                                    {REPORT.expat.strategy.map((s, i) => (
-                                        <div key={i} className="bg-dark-panel p-6 rounded-xl border border-dark-border flex">
-                                            <div className="mr-4 text-brand font-bold text-xl">0{i+1}</div>
-                                            <div>
-                                                <h3 className="text-lg font-bold text-white mb-1">{s.title}</h3>
-                                                <p className="text-slate-400 text-sm">{s.desc}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        );
-                    case 'roadmap':
-                        return (
-                            <div className="space-y-8 animate-in fade-in duration-500">
-                                <div className="border-l-4 border-brand pl-4">
-                                    <h2 className="text-3xl font-serif font-bold text-white">{REPORT.roadmap.title}</h2>
-                                    <p className="text-brand">{REPORT.roadmap.intro}</p>
-                                </div>
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-left text-sm text-slate-300">
-                                        <thead className="bg-slate-900 text-slate-500 uppercase font-bold">
-                                            <tr>
-                                                <th className="p-4">Tarea</th>
-                                                <th className="p-4">Prioridad</th>
-                                                <th className="p-4">Impacto</th>
-                                                <th className="p-4">Esfuerzo</th>
-                                                <th className="p-4">Responsable</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-dark-border bg-dark-panel">
-                                            {REPORT.roadmap.tasks.map((t, i) => (
-                                                <tr key={i} className="hover:bg-slate-800/50">
-                                                    <td className="p-4 font-bold text-white">{t.task}</td>
-                                                    <td className="p-4"><span className={`px-2 py-1 rounded text-xs font-bold ${t.prio.includes('Crítica') || t.prio.includes('Alta') ? 'bg-brand text-white' : 'bg-slate-700'}`}>{t.prio}</span></td>
-                                                    <td className="p-4">{t.impact}</td>
-                                                    <td className="p-4">{t.effort}</td>
-                                                    <td className="p-4">{t.owner}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        );
-                    case 'extra':
-                        return (
-                            <div className="space-y-8 animate-in fade-in duration-500">
-                                <div className="border-l-4 border-brand pl-4">
-                                    <h2 className="text-3xl font-serif font-bold text-white">{REPORT.extra.title}</h2>
-                                </div>
-                                <div className="grid md:grid-cols-2 gap-8">
-                                    <div className="bg-dark-panel p-6 rounded-xl border border-dark-border">
-                                        <h3 className="text-xl font-bold text-white mb-4">Mapa Oportunidades</h3>
-                                        <div className="mb-4">
-                                            <strong className="text-brand block mb-1">Local Nativo:</strong>
-                                            <p className="text-slate-400 text-sm">{REPORT.extra.map.local}</p>
-                                        </div>
-                                        <div>
-                                            <strong className="text-brand block mb-1">Local Expat:</strong>
-                                            <p className="text-slate-400 text-sm">{REPORT.extra.map.expat}</p>
-                                        </div>
+                                    <div className="bg-dark-panel p-4 rounded border border-dark-border">
+                                        <h4 className="font-bold text-white mb-2">Gaps Detectados</h4>
+                                        <ul className="list-disc pl-4 space-y-2 text-sm text-slate-400">
+                                            {data.gaps.map((g, i) => <li key={i}>{g}</li>)}
+                                        </ul>
                                     </div>
-                                    <div className="bg-dark-panel p-6 rounded-xl border border-dark-border">
-                                        <h3 className="text-xl font-bold text-white mb-4">Arquitectura Silos</h3>
-                                        <ul className="space-y-2 font-mono text-sm text-slate-300">
-                                            {REPORT.extra.silos.map((s, i) => <li key={i}>{s}</li>)}
+                                    <div className="bg-dark-panel p-4 rounded border border-dark-border">
+                                        <h4 className="font-bold text-white mb-2">Estrategias Local Pack</h4>
+                                        <ul className="list-disc pl-4 space-y-2 text-sm text-slate-400">
+                                            {data.pack.map((p, i) => <li key={i}>{p}</li>)}
                                         </ul>
                                     </div>
                                 </div>
                             </div>
-                        );
-                    default: return null;
-                }
+                        )}
+
+                        {/* 3. TÉCNICA */}
+                        {seccion === 'tecnica' && (
+                            <div className="space-y-6">
+                                <p className="text-slate-400">{data.intro}</p>
+                                <div className="grid gap-4">
+                                    {data.metricas.map((m, i) => (
+                                        <div key={i} className="bg-dark-panel p-4 rounded border border-dark-border flex flex-col md:flex-row justify-between items-start md:items-center">
+                                            <div>
+                                                <div className="font-bold text-white text-lg">{m.k}</div>
+                                                <div className="text-sm text-slate-400">{m.d}</div>
+                                            </div>
+                                            <div className={`mt-2 md:mt-0 px-3 py-1 rounded font-mono font-bold ${m.s === 'critical' ? 'bg-red-900/30 text-red-400' : 'bg-yellow-900/30 text-yellow-400'}`}>
+                                                {m.v}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="bg-brand/10 p-6 rounded border border-brand/20">
+                                    <h4 className="font-bold text-brand mb-2">Acciones Correctoras</h4>
+                                    <ul className="list-decimal pl-4 space-y-2 text-slate-300">
+                                        {data.acciones.map((a, i) => <li key={i}>{a}</li>)}
+                                    </ul>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 5. ORGÁNICO */}
+                        {seccion === 'organico' && (
+                            <div className="space-y-6">
+                                <p className="text-slate-400">{data.intro}</p>
+                                <div className="grid gap-4">
+                                    {data.casos.map((c, i) => (
+                                        <div key={i} className="bg-dark-panel p-6 rounded border border-dark-border">
+                                            <div className="flex justify-between mb-2">
+                                                <h4 className="text-xl font-bold text-white">{c.t}</h4>
+                                                <span className="text-xs bg-dark-bg px-2 py-1 rounded text-red-400 font-mono">{c.d}</span>
+                                            </div>
+                                            <div className="text-sm text-brand font-bold uppercase mb-1">Diagnóstico & Acción</div>
+                                            <p className="text-slate-400 text-sm">{c.a}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 6. EXPAT */}
+                        {seccion === 'expat' && (
+                            <div className="space-y-6">
+                                <p className="text-slate-400">{data.intro}</p>
+                                <div className="space-y-4">
+                                    {data.fases.map((f, i) => (
+                                        <div key={i} className="flex bg-dark-panel p-4 rounded border border-dark-border">
+                                            <div className="mr-4 text-brand font-bold text-lg">{i+1}</div>
+                                            <div>
+                                                <h4 className="font-bold text-white">{f.f}</h4>
+                                                <p className="text-sm text-slate-400">{f.d}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 7. ROADMAP */}
+                        {seccion === 'roadmap' && (
+                            <div className="space-y-6">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left text-sm text-slate-300">
+                                        <thead className="bg-brand text-white uppercase font-bold">
+                                            <tr>
+                                                <th className="p-3">Tarea</th>
+                                                <th className="p-3">Prioridad</th>
+                                                <th className="p-3">Impacto</th>
+                                                <th className="p-3">Esfuerzo</th>
+                                                <th className="p-3">Lead</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-dark-border bg-dark-panel">
+                                            {data.tareas.map((t, i) => (
+                                                <tr key={i}>
+                                                    <td className="p-3 font-bold text-white">{t.t}</td>
+                                                    <td className="p-3"><span className={`px-2 py-0.5 rounded text-xs font-bold ${t.p === 'Crítica' ? 'bg-red-500 text-white' : 'bg-slate-700'}`}>{t.p}</span></td>
+                                                    <td className="p-3">{t.i}</td>
+                                                    <td className="p-3">{t.e}</td>
+                                                    <td className="p-3 text-brand">{t.r}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* EXTRA: ARQUITECTURA */}
+                        {seccion === 'extra' && (
+                            <div className="bg-dark-panel p-6 rounded border border-dark-border font-mono text-sm text-slate-300">
+                                <ul className="space-y-2">
+                                    {data.silos.map((s, i) => <li key={i}>{s}</li>)}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                );
             };
 
             return (
-                <div className="flex h-screen bg-dark-bg text-slate-200 overflow-hidden font-sans selection:bg-brand selection:text-white">
-                    {/* Sidebar Desktop */}
-                    <aside className="hidden md:flex flex-col w-72 bg-dark-panel border-r border-dark-border">
+                <div className="flex h-screen overflow-hidden bg-dark-bg text-slate-200">
+                    {/* Sidebar */}
+                    <aside className="w-64 bg-dark-panel border-r border-dark-border flex flex-col hidden md:flex">
                         <div className="p-6 border-b border-dark-border">
-                            <h1 className="text-2xl font-serif font-bold text-white tracking-tight">VallBlanc<span className="text-brand">.Audit</span></h1>
-                            <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-wider">Informe Integral 2026</p>
+                            <h1 className="text-xl font-bold text-white tracking-tight">VallBlanc<span className="text-brand">.Audit</span></h1>
+                            <p className="text-xs text-slate-500 mt-1 uppercase">Informe Integral 2026</p>
                         </div>
-                        <nav className="flex-1 overflow-y-auto p-4 space-y-1">
-                            {tabs.map(tab => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                                        activeTab === tab.id 
-                                        ? 'bg-brand text-white shadow-lg shadow-brand/20' 
-                                        : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                                    }`}
-                                >
-                                    {tab.icon}
-                                    <span>{tab.label}</span>
-                                </button>
-                            ))}
-                        </nav>
+                        <div className="flex-1 overflow-y-auto p-4">
+                            <Menu />
+                        </div>
                         <div className="p-4 border-t border-dark-border">
-                            <div className="flex items-center space-x-3 bg-slate-900/50 p-3 rounded-lg">
-                                <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white font-bold text-xs">FM</div>
+                            <div className="flex items-center">
+                                <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white font-bold text-xs mr-3">FM</div>
                                 <div>
-                                    <p className="text-[10px] text-slate-400 uppercase">Auditor SEO</p>
-                                    <p className="text-sm font-bold text-white">Ferran Martínez</p>
+                                    <div className="text-xs text-slate-500 uppercase">Auditor</div>
+                                    <div className="text-sm font-bold text-white">Ferran Martínez</div>
                                 </div>
                             </div>
                         </div>
@@ -498,42 +426,30 @@
                     {/* Main Content */}
                     <main className="flex-1 flex flex-col relative overflow-hidden">
                         {/* Mobile Header */}
-                        <header className="md:hidden bg-dark-panel p-4 flex justify-between items-center border-b border-dark-border z-50">
-                            <span className="font-bold text-white font-serif">VallBlanc Audit</span>
-                            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-slate-300">
-                                {isMenuOpen ? Icons.X : Icons.Menu}
-                            </button>
-                        </header>
+                        <div className="md:hidden bg-dark-panel p-4 border-b border-dark-border flex justify-between items-center z-10">
+                            <span className="font-bold text-white">VallBlanc Audit</span>
+                            <select 
+                                className="bg-dark-bg text-slate-200 text-sm border border-dark-border rounded p-1"
+                                value={seccion}
+                                onChange={(e) => setSeccion(e.target.value)}
+                            >
+                                <option value="resumen">Resumen</option>
+                                <option value="competencia">Competencia</option>
+                                <option value="tecnica">Técnica</option>
+                                <option value="organico">Orgánico</option>
+                                <option value="expat">Estrategia Expat</option>
+                                <option value="roadmap">Roadmap</option>
+                            </select>
+                        </div>
 
-                        {/* Mobile Menu */}
-                        {isMenuOpen && (
-                            <div className="absolute inset-0 bg-dark-bg z-40 p-4 animate-in slide-in-from-top-5">
-                                <nav className="space-y-2">
-                                    {tabs.map(tab => (
-                                        <button
-                                            key={tab.id}
-                                            onClick={() => { setActiveTab(tab.id); setIsMenuOpen(false); }}
-                                            className="w-full text-left p-4 rounded-lg bg-dark-panel border border-dark-border text-slate-300"
-                                        >
-                                            {tab.label}
-                                        </button>
-                                    ))}
-                                </nav>
+                        <div className="flex-1 overflow-y-auto p-6 md:p-12 relative">
+                            <div className="max-w-4xl mx-auto pb-20">
+                                <Contenido />
                             </div>
-                        )}
-
-                        {/* Content Scroll */}
-                        <div className="flex-1 overflow-y-auto p-4 md:p-10 relative">
-                             {/* Background Glow */}
-                             <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-brand/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
-                             
-                            <div className="max-w-5xl mx-auto relative z-10 pb-20">
-                                {renderContent()}
-                            </div>
-
-                            <footer className="mt-12 pt-8 border-t border-dark-border text-center text-slate-500 text-xs pb-8 relative z-10">
-                                <p>© 2026 Auditoría Estratégica VallBlanc. Documento Confidencial.</p>
-                                <p className="mt-2 text-brand font-bold">Ferran Martínez</p>
+                            
+                            <footer className="text-center text-xs text-slate-600 py-8 border-t border-dark-border mt-10">
+                                <p>© 2026 Auditoría Estratégica Digital - Documento Confidencial</p>
+                                <p className="mt-1 text-brand font-bold">Ferran Martínez</p>
                             </footer>
                         </div>
                     </main>
@@ -541,8 +457,7 @@
             );
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        ReactDOM.render(<App />, document.getElementById('root'));
     </script>
 </body>
 </html>
