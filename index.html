@@ -1,501 +1,439 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auditoria Estratègica VallBlanc 2026 | Drivim</title>
-    
-    <!-- TAILWIND CSS -->
+    <title>Auditoría Estratégica VallBlanc 2026 - Informe Integral</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- REACT & BABEL (Versiones estables per a execució local) -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <!-- FONTS -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            DEFAULT: '#D07D7D', 
-                            50: '#fbf5f5',
-                            100: '#f7ecec',
-                            500: '#D07D7D',
-                            600: '#b56b6b',
-                            900: '#4a1a1a',
-                        },
-                        dark: {
-                            bg: '#0B0F19', 
-                            panel: '#151B2B',
-                            border: '#2A3447'
-                        }
+                        brand: { DEFAULT: '#D07D7D', 50: '#fbf5f5', 900: '#4a1a1a' },
+                        dark: { bg: '#0B0F19', panel: '#151B2B', border: '#2A3447' }
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] }
                 }
             }
         }
     </script>
-
     <style>
         body { background-color: #0B0F19; color: #cbd5e1; }
+        .tab-active { background-color: #D07D7D; color: white; font-weight: bold; }
+        .tab-inactive { color: #94a3b8; }
+        .tab-inactive:hover { background-color: #1e293b; color: white; }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0B0F19; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #D07D7D; }
     </style>
 </head>
-<body>
-    <div id="root"></div>
+<body class="flex h-screen overflow-hidden">
 
-    <script type="text/babel">
-        const { useState } = React;
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex flex-col w-72 bg-dark-panel border-r border-dark-border">
+        <div class="p-8 border-b border-dark-border">
+            <h1 class="text-2xl font-serif font-bold text-white tracking-tight">VallBlanc<span class="text-brand">.Audit</span></h1>
+            <p class="text-[10px] text-slate-500 mt-2 uppercase tracking-widest">Informe Integral 2026</p>
+        </div>
+        <nav id="sidebar-nav" class="flex-1 overflow-y-auto p-4 space-y-2">
+            <!-- Buttons injected by JS -->
+        </nav>
+        <div class="p-6 border-t border-dark-border flex items-center gap-3">
+            <div class="w-10 h-10 bg-brand rounded-full flex items-center justify-center text-white font-bold text-xs">FM</div>
+            <div>
+                <p class="text-[10px] text-slate-500 uppercase">Auditor SEO</p>
+                <p class="text-sm font-bold text-white">Ferran Martínez</p>
+            </div>
+        </div>
+    </aside>
 
-        // --- ICONOS SVG NATIUS (Per evitar errors de càrrega) ---
-        const Icons = {
-            Alert: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-400"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>,
-            Check: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-400"><polyline points="20 6 9 17 4 12"/></svg>,
-            Graph: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>,
-            Zap: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></polygon>,
-            Target: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
-            Globe: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
-            Menu: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>,
-            X: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>,
-            Money: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>,
-            Search: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        };
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col relative h-full">
+        <!-- Mobile Header -->
+        <header class="md:hidden bg-dark-panel p-4 border-b border-dark-border flex justify-between items-center z-50">
+            <span class="font-bold text-white font-serif">VallBlanc Audit</span>
+            <button onclick="toggleMobileMenu()" class="text-white">☰</button>
+        </header>
 
-        // --- BASE DE DADES INTEGRAL (100% Contingut PDF) ---
-        const AUDIT_DATA = {
-            resumen: {
-                title: "1. Resum Executiu: Estat Crític",
-                content: [
-                    "L'anàlisi forense de vallblanc.com revela una patologia estructural severa. La clínica opera digitalment molt per sota de la seva capacitat real. Mentre la infraestructura física té tecnologia d'avantguarda, la digital pateix d'obsolescència tècnica i desordre arquitectònic.",
-                    "Hemorràgia de Trànsit Crítica: De ~17.000 usuaris actius (molts pagats via Google CPC/Social Ads), el 59,7% rebota a la Home. 6 de cada 10 usuaris són repel·lits per l'experiència abans d'interactuar.",
-                    "Conversió Anèmica: La taxa de conversió global és del 0,57%. Es necessiten gairebé 200 visites per generar 1 cita. Això infla desproporcionadament el CAC (Cost d'Adquisició de Client) i crema el pressupost publicitari.",
-                    "Invisibilitat Expat: La gestió d'idiomes via paràmetres (?lang=) en lloc de subdirectoris ha provocat que Google indexi 'clons', generant canibalització interna massiva en lloc de rellevància geolocalitzada."
-                ],
-                kpis: [
-                    { label: "Taxa Rebot (Home)", value: "59.7%", status: "critical", desc: "El 60% de la inversió en Ads es perd al primer segon." },
-                    { label: "Taxa Conversió", value: "0.57%", status: "critical", desc: "Molt baix. Estàndard dental BCN: 3-5%." },
-                    { label: "Trànsit Orgànic", value: "12.7%", status: "warning", desc: "Dependència perillosa de Meta/Ads." },
-                    { label: "Velocitat (TTFB)", value: "1.7s", status: "warning", desc: "Lentitud de servidor penalitzada per Google." }
-                ]
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden absolute inset-0 bg-dark-bg z-40 p-4 pt-16">
+            <nav id="mobile-nav" class="space-y-2"></nav>
+        </div>
+
+        <div id="content-area" class="flex-1 overflow-y-auto p-6 md:p-12 relative">
+            <!-- Content injected by JS -->
+        </div>
+    </main>
+
+    <!-- JAVASCRIPT LOGIC (NO REACT) -->
+    <script>
+        // --- BASE DE DATOS INTEGRAL (100% DATOS DEL PDF) ---
+        const REPORT_DATA = {
+            "resumen": {
+                title: "1. Resumen Ejecutivo",
+                subtitle: "Diagnóstico de Situación Crítica",
+                content: `
+                    <p class="mb-4 text-lg leading-relaxed text-slate-300">El análisis forense de la presencia digital de vallblanc.com revela una patología estructural severa. La clínica opera digitalmente muy por debajo de su capacidad clínica real. Mientras la infraestructura física cuenta con tecnología de vanguardia (CBCT, escáneres intraorales), la infraestructura digital padece de obsolescencia técnica en su Core Web Vitals y un desorden arquitectónico en su estrategia de internacionalización.</p>
+                    <p class="mb-4 text-lg leading-relaxed text-slate-300">Se ha detectado una <strong>hiperdependencia del tráfico de pago</strong> (Google Ads y Social Ads representan >45% del flujo útil) combinada con una web que actúa como un "colador". Estamos pagando por usuarios para luego expulsarlos con una mala experiencia de usuario (UX).</p>
+                    <div class="grid md:grid-cols-4 gap-4 mt-8">
+                        <div class="bg-dark-panel p-4 rounded-lg border border-red-500/30">
+                            <div class="text-xs uppercase text-slate-500 font-bold">Tasa Rebote (Home)</div>
+                            <div class="text-3xl font-bold text-white my-2">59.7%</div>
+                            <div class="text-xs text-red-400">Pérdida masiva de inversión publicitaria.</div>
+                        </div>
+                        <div class="bg-dark-panel p-4 rounded-lg border border-red-500/30">
+                            <div class="text-xs uppercase text-slate-500 font-bold">Conversión</div>
+                            <div class="text-3xl font-bold text-white my-2">0.57%</div>
+                            <div class="text-xs text-red-400">Objetivo sector: 3-5%. Muy bajo.</div>
+                        </div>
+                        <div class="bg-dark-panel p-4 rounded-lg border border-yellow-500/30">
+                            <div class="text-xs uppercase text-slate-500 font-bold">Tráfico Orgánico</div>
+                            <div class="text-3xl font-bold text-white my-2">12.7%</div>
+                            <div class="text-xs text-yellow-400">Dependencia crítica de Meta/Ads.</div>
+                        </div>
+                        <div class="bg-dark-panel p-4 rounded-lg border border-yellow-500/30">
+                            <div class="text-xs uppercase text-slate-500 font-bold">Velocidad (TTFB)</div>
+                            <div class="text-3xl font-bold text-white my-2">1.7s</div>
+                            <div class="text-xs text-yellow-400">Lentitud penalizada por Google.</div>
+                        </div>
+                    </div>
+                `
             },
-            competencia: {
-                title: "2. Auditoria de Competència (Benchmarking)",
-                intro: "Anàlisi comparativa directa contra l'elit: Turó Park (Líder Expat) i Clínica Blasi (Prestigi).",
-                data: [
-                    {
-                        dimensio: "Arquitectura Idiomes",
-                        vallblanc: "Paràmetres (?lang=) / Sense Hreflang. Google no entén la geo-orientació.",
-                        lider: "Subdirectoris natius (/en/, /fr/). Contingut específic per a 'Medical Tourism'."
-                    },
-                    {
-                        dimensio: "Estratègia Contingut",
-                        vallblanc: "Blog genèric, traduccions automàtiques aparents.",
-                        lider: "Guies d'assegurances internacionals, reemborsament, 'Concierge Medicine'."
-                    },
-                    {
-                        dimensio: "Velocitat Mobile",
-                        vallblanc: "LCP 2.2s / Bloat JS massiu (80% pes).",
-                        lider: "Optimitzat per a mòbils. Botons 'Fast Track' de cita ràpida."
-                    },
-                    {
-                        dimensio: "Captació Leads",
-                        vallblanc: "Formulari genèric 'Pide Cita' (Alt abandonament).",
-                        lider: "WhatsApp directe, Booking Online, Preus Públics, Portal Pacient."
-                    }
-                ],
-                gaps: [
-                    { title: "Falta d'Aterratge Suau Expat", desc: "No hi ha info sobre assegurances internacionals o logística. La competència explica com funciona el reemborsament." },
-                    { title: "Transparència de Preus", desc: "Turó Park publica llistes de preus. VallBlanc no, generant fricció i sospita en l'usuari anglosaxó." },
-                    { title: "Validació E-E-A-T", desc: "Falta traduir l'experiència de la Dra. Valverde en valor per a l'expat (ex: 'English Speaking Senior Orthodontist')." }
-                ]
+            "competencia": {
+                title: "2. Auditoría de Competencia",
+                subtitle: "Benchmarking: Turó Park vs. VallBlanc",
+                content: `
+                    <p class="mb-6 text-slate-300">Análisis comparativo directo contra el líder del segmento Expat (Turó Park Dental) y la competencia local de prestigio (Clínica Blasi).</p>
+                    
+                    <div class="overflow-x-auto rounded-lg border border-dark-border mb-8">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead class="bg-brand text-white uppercase font-bold">
+                                <tr>
+                                    <th class="p-4">Dimensión</th>
+                                    <th class="p-4">VallBlanc (Nosotros)</th>
+                                    <th class="p-4">Turó Park (Líder Expat)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-dark-border bg-dark-panel">
+                                <tr>
+                                    <td class="p-4 font-bold">Idiomas</td>
+                                    <td class="p-4 text-red-300">Parámetros (?lang=). Sin Hreflang. Invisible para Google.</td>
+                                    <td class="p-4 text-green-300">Subdirectorios (/en/, /fr/). Contenido nativo.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold">Estrategia</td>
+                                    <td class="p-4 text-red-300">Blog genérico. Traducción automática.</td>
+                                    <td class="p-4 text-green-300">"Medical Tourism", Seguros, Concierge.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold">Captación</td>
+                                    <td class="p-4 text-red-300">Formulario complejo. Tasa abandono 42%.</td>
+                                    <td class="p-4 text-green-300">Booking Online, WhatsApp directo.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="bg-dark-panel p-6 rounded-xl border border-dark-border">
+                        <h3 class="text-xl font-bold text-white mb-4">Gaps Detectados (Oportunidades Perdidas)</h3>
+                        <ul class="list-disc pl-5 space-y-3 text-slate-300">
+                            <li><strong>Falta de "Aterrizaje Suave" para Expats:</strong> No hay información sobre seguros internacionales, reemborsos o logística. La competencia explica paso a paso cómo funciona el sistema sanitario español para extranjeros.</li>
+                            <li><strong>Transparencia de Precios:</strong> Turó Park publica listas de precios base. VallBlanc no, generando fricción y sospecha en el usuario anglosajón que valora la transparencia.</li>
+                            <li><strong>Validación E-E-A-T:</strong> Falta traducir la experiencia de la Dra. Valverde en valor para el expat (ej: "English Speaking Senior Orthodontist" en lugar de solo "Odontóloga").</li>
+                        </ul>
+                    </div>
+                `
             },
-            tecnica: {
-                title: "3. Auditoria Tècnica: Diagnòstic Forense",
-                findings: [
-                    {
-                        title: "TTFB (Resposta del Servidor)",
-                        data: "1.7 segons (Límit recomanat < 0.8s)",
-                        analysis: "El servidor triga gairebé 2 segons a 'pensar' abans d'enviar res. Indica hosting compartit saturat o manca de memòria cau d'objectes.",
-                        impact: "Destrucció del Crawl Budget (Google rastreja menys pàgines) i frustració de l'usuari mòbil. SEO Internacional fracassa per latència.",
-                        solution: "Migrar a Cloud Hosting dedicat o implementar Redis/Varnish Cache + Cloudflare APO."
-                    },
-                    {
-                        title: "Script Bloat (Excés de JavaScript)",
-                        data: "80% del pes total és JS",
-                        analysis: "Es carreguen múltiples contenidors de GTM (170kB c/u), Litespeed JS (180kB) i Pixel FB abans que el contingut.",
-                        impact: "Bloqueig del fil principal del navegador. En mòbils, la pàgina es congela durant la càrrega, causant rebot.",
-                        solution: "Auditoria GTM urgent (neteja tags). Implementar 'Delay JS Execution' (només carregar scripts al fer scroll)."
-                    },
-                    {
-                        title: "LCP Mòbil (Càrrega Visual)",
-                        data: "2.2s (Al límit)",
-                        analysis: "Imatges d'alta resolució al Hero no optimitzades competeixen amb la càrrega de fonts.",
-                        impact: "Risc de caure en 'Poor Experience' a Core Web Vitals, perdent rànquing mòbil.",
-                        solution: "Preload de la imatge Hero + Formats WebP/AVIF + Servir fonts localment."
-                    }
-                ]
+            "tecnica": {
+                title: "3. Auditoría Técnica (WPO)",
+                subtitle: "La velocidad no es vanidad, es rentabilidad",
+                content: `
+                    <!-- TTFB -->
+                    <div class="bg-dark-panel border border-dark-border rounded-xl p-6 mb-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-white">1. TTFB (Respuesta del Servidor)</h3>
+                            <span class="bg-red-900/30 text-red-400 border border-red-500/30 px-3 py-1 rounded text-sm font-bold">DATO: 1.7s</span>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-500 uppercase mb-2">Análisis detallado</h4>
+                                <p class="text-slate-300 text-sm leading-relaxed mb-4">El servidor tarda casi 2 segundos en "pensar" antes de enviar el primer byte de datos. Esto suele indicar un hosting compartido saturado, falta de caché a nivel de servidor (Object Cache) o un WordPress sobrecargado.</p>
+                                <h4 class="text-xs font-bold text-red-400 uppercase mb-2">Impacto Económico</h4>
+                                <p class="text-slate-300 text-sm leading-relaxed">Destrucción del Crawl Budget. Googlebot rastrea menos páginas de tu web por sesión. Resultado: El contenido nuevo tarda semanas en indexarse y el SEO internacional fracasa por latencia.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-4 rounded border border-brand/20 flex flex-col justify-center">
+                                <h4 class="text-xs font-bold text-brand uppercase mb-2">Solución Técnica</h4>
+                                <ul class="list-disc pl-4 text-sm text-slate-200 space-y-2">
+                                    <li>Migrar a Cloud Hosting (AWS/DigitalOcean).</li>
+                                    <li>Implementar Redis/Varnish Cache.</li>
+                                    <li>Activar Cloudflare APO.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SCRIPT BLOAT -->
+                    <div class="bg-dark-panel border border-dark-border rounded-xl p-6 mb-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-white">2. Script Bloat (Exceso JS)</h3>
+                            <span class="bg-red-900/30 text-red-400 border border-red-500/30 px-3 py-1 rounded text-sm font-bold">DATO: 80% Peso Total</span>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-500 uppercase mb-2">Análisis detallado</h4>
+                                <p class="text-slate-300 text-sm leading-relaxed mb-4">Se cargan múltiples contenedores de GTM (170kB cada uno), Litespeed JS (180kB) y Pixel FB antes que el contenido visible. El hilo principal del navegador se bloquea.</p>
+                                <h4 class="text-xs font-bold text-red-400 uppercase mb-2">Impacto Económico</h4>
+                                <p class="text-slate-300 text-sm leading-relaxed">Aumento drástico de la Tasa de Rebote Móvil. El usuario con conexión 4G ve una pantalla blanca durante 3-4 segundos y abandona antes de ver la oferta.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-4 rounded border border-brand/20 flex flex-col justify-center">
+                                <h4 class="text-xs font-bold text-brand uppercase mb-2">Solución Técnica</h4>
+                                <ul class="list-disc pl-4 text-sm text-slate-200 space-y-2">
+                                    <li>Auditoría GTM (eliminar tags duplicados).</li>
+                                    <li>Implementar "Delay JS Execution" (cargar scripts solo al hacer scroll).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
             },
-            organico: {
-                title: "4. Rendiment Orgànic: La Veritat de les Dades",
-                findings: [
-                    {
-                        title: "Oportunitat: 'Periodoncia Barcelona'",
-                        data: "2.396 Impressions / 0 Clics",
-                        analysis: "Gairebé 2.400 persones han vist la nostra web a Google per aquesta cerca, però ningú ha fet clic.",
-                        impact: "Pèrdua massiva d'ingressos recurrents (pacient de manteniment). Estem regalant pacients perquè la nostra pàgina és genèrica.",
-                        solution: "Crear Power Page vertical: /tratamientos/periodoncia-barcelona/ amb estructura Símpotmes -> Solució -> Especialista."
-                    },
-                    {
-                        title: "Canibalització: 'Regeneración Ósea'",
-                        data: "Conflicte URLs (id=11 vs id=43)",
-                        analysis: "Múltiples pàgines (blog antic vs servei) competeixen per la mateixa keyword. Google alterna quina mostra.",
-                        impact: "Dilució d'autoritat. En lloc d'un Top 3, tenim dues pàgines mediocres a la pàgina 2.",
-                        solution: "Fusionar continguts en una URL mestra i aplicar redireccions 301."
-                    },
-                    {
-                        title: "Fuga de Conversió: '/pide-cita'",
-                        data: "42.2% Taxa d'Abandonament",
-                        analysis: "Gairebé la meitat dels usuaris amb intenció de compra (clic a 'Cita') marxen en veure el formulari.",
-                        impact: "CPL (Cost per Lead) disparat. Paguem el trànsit per perdre'l a l'últim pas.",
-                        solution: "Simplificar a Nom + Telèfon (Click-to-Call). Eliminar camps innecessaris."
-                    }
-                ]
+            "organico": {
+                title: "4. Oportunidades SEO (Deep Dive)",
+                subtitle: "Dónde estamos perdiendo dinero en la mesa",
+                content: `
+                    <!-- PERIODONCIA -->
+                    <div class="bg-dark-panel border border-dark-border rounded-xl p-6 mb-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-white">1. Oportunidad: "Periodoncia Barcelona"</h3>
+                            <span class="bg-yellow-900/30 text-yellow-400 border border-yellow-500/30 px-3 py-1 rounded text-sm font-bold">2.396 Impresiones / 0 Clics</span>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-500 uppercase mb-2">Análisis (Diagnóstico)</h4>
+                                <p class="text-slate-300 text-sm leading-relaxed mb-4">Grave desconexión. Casi 2.400 usuarios buscaron este servicio, Google mostró nuestra web, pero nadie hizo clic. Actualmente, esta búsqueda activa la Home genérica o una lista de servicios.</p>
+                                <h4 class="text-xs font-bold text-red-400 uppercase mb-2">Impacto Económico</h4>
+                                <p class="text-slate-300 text-sm leading-relaxed">Pérdida masiva de ingresos recurrentes de alto valor (LTV). El paciente periodontal requiere mantenimiento de por vida. Estamos regalando estos pacientes a la competencia.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-4 rounded border border-brand/20 flex flex-col justify-center">
+                                <h4 class="text-xs font-bold text-brand uppercase mb-2">Solución Técnica</h4>
+                                <p class="text-slate-200 text-sm">Crear <strong>Power Page Vertical</strong>: <code>/tratamientos/periodoncia-barcelona/</code>. Estructura: Síntomas (Sangrado) -> Solución (Curetaje) -> Especialista -> Precio.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CANIBALIZACION -->
+                    <div class="bg-dark-panel border border-dark-border rounded-xl p-6 mb-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-white">2. Canibalización: "Regeneración Ósea"</h3>
+                            <span class="bg-red-900/30 text-red-400 border border-red-500/30 px-3 py-1 rounded text-sm font-bold">Conflicto URLs (id=11 vs 43)</span>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-500 uppercase mb-2">Análisis (Diagnóstico)</h4>
+                                <p class="text-slate-300 text-sm leading-relaxed mb-4">Múltiples páginas (artículos de blog antiguos y páginas de servicio) compiten por la misma keyword. Google alterna cuál muestra, impidiendo que ninguna llegue a la Página 1.</p>
+                                <h4 class="text-xs font-bold text-red-400 uppercase mb-2">Impacto Económico</h4>
+                                <p class="text-slate-300 text-sm leading-relaxed">Dilución de autoridad del dominio. En lugar de un Top 3 fuerte, tenemos dos resultados mediocres en página 2 o 3.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-4 rounded border border-brand/20 flex flex-col justify-center">
+                                <h4 class="text-xs font-bold text-brand uppercase mb-2">Solución Técnica</h4>
+                                <p class="text-slate-200 text-sm">Fusión de contenidos en una URL Maestra y aplicar <strong>Redirección 301</strong> definitiva desde las URLs antiguas.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FUGA CITA -->
+                    <div class="bg-dark-panel border border-dark-border rounded-xl p-6 mb-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-white">3. Fuga Conversión: "/pide-cita"</h3>
+                            <span class="bg-red-900/30 text-red-400 border border-red-500/30 px-3 py-1 rounded text-sm font-bold">42.2% Abandono</span>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-500 uppercase mb-2">Análisis (Diagnóstico)</h4>
+                                <p class="text-slate-300 text-sm leading-relaxed mb-4">Casi la mitad de los usuarios que ya tienen intención de compra (hacen clic en 'Pedir Cita') se arrepienten al ver el formulario. Demasiados campos o diseño no responsive.</p>
+                                <h4 class="text-xs font-bold text-red-400 uppercase mb-2">Impacto Económico</h4>
+                                <p class="text-slate-300 text-sm leading-relaxed">CPL (Costo por Lead) disparado. Pagamos el tráfico para perderlo en el último paso del embudo.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-4 rounded border border-brand/20 flex flex-col justify-center">
+                                <h4 class="text-xs font-bold text-brand uppercase mb-2">Solución Técnica</h4>
+                                <p class="text-slate-200 text-sm">Simplificar a <strong>Nombre + Teléfono</strong> (Click-to-Call). Eliminar campos de seguro, dirección, etc. Pedir eso por teléfono después.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
             },
-            expat: {
-                title: "5. Estratègia 'Expat Barcelona'",
-                intro: "Full de ruta per al mercat internacional resident.",
-                steps: [
-                    {
-                        phase: "1. Infraestructura",
-                        action: "Implementar Hreflang Real",
-                        detail: "Abandonar ?lang=. Crear subdirectoris /en/, /fr/. És l'única manera que Google entengui la geo-orientació."
-                    },
-                    {
-                        phase: "2. Transaccional",
-                        action: "Landing 'Emergency Dentist'",
-                        detail: "Keyword: 'emergency dentist barcelona'. L'expat amb dolor busca inmediatez, no preu. Botó flotant WhatsApp."
-                    },
-                    {
-                        phase: "3. Confiança",
-                        action: "Social Proof Segmentat",
-                        detail: "Filtrar ressenyes GMB per idioma. Mostrar a la web anglesa NOMÉS ressenyes en anglès."
-                    }
-                ]
+            "expat": {
+                title: "5. Estrategia Expat",
+                subtitle: "Hoja de ruta internacional (Océano Azul)",
+                content: `
+                    <div class="space-y-6">
+                        <div class="flex bg-dark-panel p-6 rounded-xl border border-dark-border">
+                            <div class="mr-6">
+                                <div class="bg-brand/10 text-brand font-bold px-4 py-2 rounded text-sm border border-brand/20">FASE 1</div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white mb-2">Infraestructura Hreflang</h3>
+                                <p class="text-slate-300 text-sm"><strong>Acción:</strong> Abandonar parámetros ?lang=. Crear subdirectorios /en/ y /fr/. Implementar etiquetas Hreflang cruzadas.</p>
+                                <p class="text-slate-400 text-xs mt-2 italic">Motivo: Google no geolocaliza parámetros. Es la única forma de rankear en búsquedas locales en inglés.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex bg-dark-panel p-6 rounded-xl border border-dark-border">
+                            <div class="mr-6">
+                                <div class="bg-brand/10 text-brand font-bold px-4 py-2 rounded text-sm border border-brand/20">FASE 2</div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white mb-2">Landing 'Emergency Dentist'</h3>
+                                <p class="text-slate-300 text-sm"><strong>Acción:</strong> Crear landing agresiva para "Emergency dentist Barcelona". Botón flotante de WhatsApp.</p>
+                                <p class="text-slate-400 text-xs mt-2 italic">Motivo: El expat con dolor no compara precios, busca inmediatez. Es el lead de mayor conversión.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex bg-dark-panel p-6 rounded-xl border border-dark-border">
+                            <div class="mr-6">
+                                <div class="bg-brand/10 text-brand font-bold px-4 py-2 rounded text-sm border border-brand/20">FASE 3</div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white mb-2">Social Proof Segmentado</h3>
+                                <p class="text-slate-300 text-sm"><strong>Acción:</strong> Filtrar reseñas de GMB. Mostrar en la web inglesa SOLAMENTE las reseñas escritas en inglés.</p>
+                                <p class="text-slate-400 text-xs mt-2 italic">Motivo: Un expat confía en otro expat. Una reseña traducida automáticamente pierde credibilidad.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
             },
-            roadmap: {
-                title: "6. Full de Ruta (Roadmap Prioritzat)",
-                tasks: [
-                    { task: "Implementar Hreflang i URLs netes (/en/)", prio: "Crítica", impact: "Alt (SEO Int)", effort: "Alt", role: "Dev Web" },
-                    { task: "Optimitzar càrrega JS (Delay) i LCP", prio: "Crítica", impact: "Alt (UX/Rebot)", effort: "Mitjà", role: "Dev" },
-                    { task: "Auditoria GTM (Neteja tags duplicats)", prio: "Alta", impact: "Mitjà", effort: "Baix", role: "Analista" },
-                    { task: "Landing 'Emergency Dentist' + GMB", prio: "Alta", impact: "Alt (Leads)", effort: "Mitjà", role: "Content/SEO" },
-                    { task: "Simplificar Formulari 'Pide Cita'", prio: "Alta", impact: "Alt (Conv)", effort: "Baix", role: "UX/Dev" },
-                    { task: "Power Page 'Periodoncia' i 'Implantes'", prio: "Mitjana", impact: "Mitjà (SEO)", effort: "Alt", role: "Content" }
-                ]
+            "roadmap": {
+                title: "6. Hoja de Ruta (Roadmap)",
+                subtitle: "Priorización por Impacto x Esfuerzo",
+                content: `
+                    <div class="overflow-x-auto rounded-xl border border-dark-border">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead class="bg-brand text-white uppercase font-bold">
+                                <tr>
+                                    <th class="p-4">Tarea</th>
+                                    <th class="p-4">Prioridad</th>
+                                    <th class="p-4">Impacto</th>
+                                    <th class="p-4">Esfuerzo</th>
+                                    <th class="p-4">Responsable</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-dark-border bg-dark-panel">
+                                <tr>
+                                    <td class="p-4 font-bold text-white">Implementar Hreflang y URLs netas (/en/)</td>
+                                    <td class="p-4"><span class="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">CRÍTICA</span></td>
+                                    <td class="p-4">Alto (SEO Int)</td>
+                                    <td class="p-4">Alto</td>
+                                    <td class="p-4 text-brand font-mono">Dev</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-white">Optimizar Carga JS (Delay) y LCP</td>
+                                    <td class="p-4"><span class="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">CRÍTICA</span></td>
+                                    <td class="p-4">Alto (Rebot)</td>
+                                    <td class="p-4">Medio</td>
+                                    <td class="p-4 text-brand font-mono">Dev</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-white">Auditoría GTM (Limpieza Tags)</td>
+                                    <td class="p-4"><span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold">ALTA</span></td>
+                                    <td class="p-4">Mitjà</td>
+                                    <td class="p-4">Baix</td>
+                                    <td class="p-4 text-brand font-mono">Analista</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-white">Landing 'Emergency Dentist'</td>
+                                    <td class="p-4"><span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold">ALTA</span></td>
+                                    <td class="p-4">Alt (Leads)</td>
+                                    <td class="p-4">Mitjà</td>
+                                    <td class="p-4 text-brand font-mono">Content</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-white">Simplificar Formulario 'Pide Cita'</td>
+                                    <td class="p-4"><span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold">ALTA</span></td>
+                                    <td class="p-4">Alt (Conv)</td>
+                                    <td class="p-4">Baix</td>
+                                    <td class="p-4 text-brand font-mono">UX/Dev</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-white">Power Page 'Periodoncia'</td>
+                                    <td class="p-4"><span class="bg-slate-600 text-white px-2 py-1 rounded text-xs font-bold">MITJANA</span></td>
+                                    <td class="p-4">Mitjà</td>
+                                    <td class="p-4">Alt</td>
+                                    <td class="p-4 text-brand font-mono">Content</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `
             }
         };
 
-        // --- COMPONENTS VISUALS ---
+        // --- RENDER LOGIC ---
+        const navContainer = document.getElementById('sidebar-nav');
+        const mobileNavContainer = document.getElementById('mobile-nav');
+        const contentContainer = document.getElementById('content-area');
+        let activeSection = 'resumen';
 
-        const KpiCard = ({ label, value, status, desc }) => (
-            <div className={`p-5 rounded-xl border ${
-                status === 'critical' ? 'bg-red-900/20 border-red-500/40 text-red-100' : 
-                status === 'warning' ? 'bg-orange-900/20 border-orange-500/40 text-orange-100' : 
-                'bg-slate-800 border-dark-border text-slate-300'
-            }`}>
-                <div className="text-xs uppercase opacity-70 font-bold tracking-wider mb-2">{label}</div>
-                <div className="text-3xl font-bold mb-2">{value}</div>
-                <div className="text-xs opacity-80 leading-relaxed border-t border-white/10 pt-2 mt-2">{desc}</div>
-            </div>
-        );
-
-        const DeepDiveCard = ({ title, data, analysis, impact, solution }) => (
-            <div className="bg-dark-panel border border-dark-border rounded-xl p-6 mb-6 shadow-xl">
-                <div className="flex flex-col gap-4">
-                    {/* Header */}
-                    <div className="border-b border-dark-border pb-4">
-                        <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
-                            <span className="text-brand">●</span> {title}
-                        </h3>
-                        <div className="inline-block bg-slate-900 text-red-400 border border-red-500/30 px-3 py-1 rounded text-sm font-mono font-bold">
-                            EVIDÈNCIA: {data}
-                        </div>
-                    </div>
-                    
-                    {/* Grid Content */}
-                    <div className="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <h4 className="text-xs font-bold text-slate-500 uppercase mb-2">Diagnòstic (Analysis)</h4>
-                            <p className="text-slate-300 text-sm leading-relaxed text-justify mb-4">"{analysis}"</p>
-                            
-                            <h4 className="text-xs font-bold text-red-400 uppercase mb-2 flex items-center gap-2">
-                                <Icons.Money /> Impacte Econòmic
-                            </h4>
-                            <p className="text-slate-300 text-sm leading-relaxed text-justify">{impact}</p>
-                        </div>
-                        
-                        <div className="bg-slate-900/50 p-5 rounded-lg border border-brand/20 flex flex-col justify-center">
-                            <h4 className="text-xs font-bold text-brand uppercase mb-3 flex items-center gap-2">
-                                <Icons.Zap /> Solució Tècnica
-                            </h4>
-                            <p className="text-slate-200 text-sm font-medium">{solution}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-
-        // --- APP MAIN ---
-
-        const App = () => {
-            const [activeTab, setActiveTab] = useState('resumen');
-            const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+        function renderNav() {
             const tabs = [
-                { id: 'resumen', label: '1. Resum Executiu', icon: <Icons.Graph /> },
-                { id: 'competencia', label: '2. Competència', icon: <Icons.Target /> },
-                { id: 'tecnica', label: '3. Tècnica & WPO', icon: <Icons.Zap /> },
-                { id: 'organico', label: '4. Rendiment Orgànic', icon: <Icons.Search /> },
-                { id: 'expat', label: '5. Estratègia Expat', icon: <Icons.Globe /> },
-                { id: 'roadmap', label: '6. Full de Ruta', icon: <Icons.Check /> }
+                { id: 'resumen', label: '1. Resumen Ejecutivo' },
+                { id: 'competencia', label: '2. Competencia' },
+                { id: 'tecnica', label: '3. Auditoría Técnica' },
+                { id: 'organico', label: '4. Oportunidades SEO' },
+                { id: 'expat', label: '5. Estrategia Expat' },
+                { id: 'roadmap', label: '6. Hoja de Ruta' }
             ];
 
-            const renderContent = () => {
-                const data = AUDIT_DATA[activeTab];
-                
-                switch(activeTab) {
-                    case 'resumen':
-                        return (
-                            <div className="animate-fade-in space-y-8">
-                                <header className="border-l-4 border-brand pl-6">
-                                    <h2 className="text-3xl font-bold text-white mb-2">{data.title}</h2>
-                                    <p className="text-slate-400">Diagnòstic forense de la situació actual.</p>
-                                </header>
-                                <div className="space-y-4">
-                                    {data.content.map((p, i) => <p key={i} className="text-slate-300 leading-relaxed text-justify">{p}</p>)}
-                                </div>
-                                <div className="grid md:grid-cols-4 gap-4">
-                                    {data.kpis.map((k, i) => <KpiCard key={i} {...k} />)}
-                                </div>
-                            </div>
-                        );
-                    
-                    case 'competencia':
-                        return (
-                            <div className="animate-fade-in space-y-8">
-                                <header className="border-l-4 border-brand pl-6">
-                                    <h2 className="text-3xl font-bold text-white mb-2">{data.title}</h2>
-                                    <p className="text-slate-400">{data.intro}</p>
-                                </header>
-                                <div className="overflow-x-auto rounded-xl border border-dark-border shadow-xl">
-                                    <table className="w-full text-left text-sm text-slate-300">
-                                        <thead className="bg-dark-panel text-brand uppercase font-bold text-xs tracking-wider">
-                                            <tr>
-                                                <th className="p-4">Dimensió</th>
-                                                <th className="p-4 text-red-300 bg-red-900/10">VallBlanc (Nosaltres)</th>
-                                                <th className="p-4 text-green-300 bg-green-900/10">Líder (Turó Park)</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-dark-border bg-dark-panel">
-                                            {data.data.map((row, i) => (
-                                                <tr key={i} className="hover:bg-slate-800/50">
-                                                    <td className="p-4 font-bold text-white">{row.dimensio}</td>
-                                                    <td className="p-4 border-l border-dark-border">{row.vallblanc}</td>
-                                                    <td className="p-4 border-l border-dark-border">{row.lider}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div className="bg-dark-panel p-6 rounded-xl border border-dark-border">
-                                    <h3 className="text-xl font-bold text-white mb-4">GAPS Detectats</h3>
-                                    <div className="grid md:grid-cols-3 gap-6">
-                                        {data.gaps.map((g, i) => (
-                                            <div key={i} className="bg-slate-900 p-4 rounded border border-dark-border">
-                                                <div className="text-brand font-bold mb-2 text-sm">{g.title}</div>
-                                                <div className="text-xs text-slate-400 leading-relaxed">{g.desc}</div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        );
-
-                    case 'tecnica':
-                    case 'organico':
-                        return (
-                            <div className="animate-fade-in space-y-8">
-                                <header className="border-l-4 border-brand pl-6">
-                                    <h2 className="text-3xl font-bold text-white mb-2">{data.title}</h2>
-                                    <p className="text-slate-400">Anàlisi detallat: Problema, Impacte i Solució.</p>
-                                </header>
-                                <div>
-                                    {data.findings.map((item, i) => <DeepDiveCard key={i} {...item} />)}
-                                </div>
-                            </div>
-                        );
-
-                    case 'expat':
-                        return (
-                            <div className="animate-fade-in space-y-8">
-                                <header className="border-l-4 border-brand pl-6">
-                                    <h2 className="text-3xl font-bold text-white mb-2">{data.title}</h2>
-                                    <p className="text-slate-400">{data.intro}</p>
-                                </header>
-                                <div className="space-y-4">
-                                    {data.steps.map((step, i) => (
-                                        <div key={i} className="bg-dark-panel p-6 rounded-xl border border-dark-border flex flex-col md:flex-row gap-6 items-start">
-                                            <div className="bg-brand/10 text-brand font-bold px-4 py-2 rounded uppercase text-sm whitespace-nowrap border border-brand/20">
-                                                {step.phase}
-                                            </div>
-                                            <div>
-                                                <h3 className="text-xl font-bold text-white mb-2">{step.action}</h3>
-                                                <p className="text-slate-300 text-sm leading-relaxed">{step.detail}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        );
-
-                    case 'roadmap':
-                        return (
-                            <div className="animate-fade-in space-y-8">
-                                <header className="border-l-4 border-brand pl-6">
-                                    <h2 className="text-3xl font-bold text-white mb-2">{data.title}</h2>
-                                    <p className="text-slate-400">Pla d'acció prioritzat per impacte en negoci.</p>
-                                </header>
-                                <div className="overflow-x-auto rounded-xl border border-dark-border shadow-xl">
-                                    <table className="w-full text-left text-sm text-slate-300">
-                                        <thead className="bg-brand text-white uppercase font-bold text-xs tracking-wider">
-                                            <tr>
-                                                <th className="p-4">Tasca</th>
-                                                <th className="p-4">Prioritat</th>
-                                                <th className="p-4">Impacte</th>
-                                                <th className="p-4">Esforç</th>
-                                                <th className="p-4">Responsable</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-dark-border bg-dark-panel">
-                                            {data.tasks.map((t, i) => (
-                                                <tr key={i} className="hover:bg-slate-800/50 transition-colors">
-                                                    <td className="p-4 font-bold text-white">{t.task}</td>
-                                                    <td className="p-4">
-                                                        <span className={`px-2 py-1 rounded text-xs font-bold ${
-                                                            t.prio === 'Crítica' ? 'bg-red-500 text-white' : 
-                                                            t.prio === 'Alta' ? 'bg-orange-500 text-white' : 
-                                                            'bg-slate-700'
-                                                        }`}>
-                                                            {t.prio}
-                                                        </span>
-                                                    </td>
-                                                    <td className="p-4">{t.impact}</td>
-                                                    <td className="p-4">{t.effort}</td>
-                                                    <td className="p-4 text-brand font-mono text-xs">{t.role}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        );
-                }
+            const buildButtons = (container, isMobile) => {
+                container.innerHTML = tabs.map(tab => `
+                    <button 
+                        onclick="switchTab('${tab.id}')"
+                        class="w-full text-left px-4 py-3 rounded-lg text-sm transition-all mb-1 ${activeSection === tab.id ? 'tab-active shadow-lg shadow-brand/20' : 'tab-inactive'}"
+                    >
+                        ${tab.label}
+                    </button>
+                `).join('');
             };
 
-            return (
-                <div className="flex h-screen bg-dark-bg text-slate-200 overflow-hidden selection:bg-brand selection:text-white font-sans">
-                    {/* Sidebar Desktop */}
-                    <aside className="hidden md:flex flex-col w-72 bg-dark-panel border-r border-dark-border">
-                        <div className="p-8 border-b border-dark-border">
-                            <h1 className="text-2xl font-bold text-white tracking-tight">VallBlanc<span className="text-brand">.Audit</span></h1>
-                            <p className="text-xs text-slate-500 mt-2 uppercase tracking-widest">Informe Integral 2026</p>
-                        </div>
-                        <nav className="flex-1 overflow-y-auto p-4 space-y-2">
-                            {tabs.map(tab => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                                        activeTab === tab.id 
-                                        ? 'bg-brand text-white shadow-lg shadow-brand/20' 
-                                        : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                                    }`}
-                                >
-                                    {tab.icon}
-                                    <span>{tab.label}</span>
-                                </button>
-                            ))}
-                        </nav>
-                        <div className="p-6 border-t border-dark-border">
-                            <div className="flex items-center space-x-3 bg-slate-900/50 p-3 rounded-lg">
-                                <div className="w-10 h-10 bg-gradient-to-br from-brand to-slate-800 rounded-full flex items-center justify-center text-white font-bold text-xs border border-white/10">FM</div>
-                                <div>
-                                    <p className="text-[10px] text-slate-400 uppercase tracking-wider">Auditor SEO</p>
-                                    <p className="text-sm font-bold text-white">Ferran Martínez</p>
-                                </div>
-                            </div>
-                        </div>
-                    </aside>
+            buildButtons(navContainer, false);
+            buildButtons(mobileNavContainer, true);
+        }
 
-                    {/* Main Content */}
-                    <main className="flex-1 flex flex-col relative overflow-hidden">
-                        {/* Mobile Header */}
-                        <div className="md:hidden bg-dark-panel p-4 border-b border-dark-border flex justify-between items-center z-50">
-                            <span className="font-bold text-white">VallBlanc Audit</span>
-                            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white">
-                                {isMobileMenuOpen ? <Icons.X /> : <Icons.Menu />}
-                            </button>
-                        </div>
-
-                        {/* Mobile Menu Overlay */}
-                        {isMobileMenuOpen && (
-                            <div className="absolute inset-0 bg-dark-bg z-40 p-4 animate-fade-in">
-                                <nav className="space-y-2 mt-12">
-                                    {tabs.map(tab => (
-                                        <button
-                                            key={tab.id}
-                                            onClick={() => { setActiveTab(tab.id); setIsMobileMenuOpen(false); }}
-                                            className="w-full text-left p-4 bg-dark-panel rounded-lg border border-dark-border text-slate-200 mb-2"
-                                        >
-                                            {tab.label}
-                                        </button>
-                                    ))}
-                                </nav>
-                            </div>
-                        )}
-
-                        <div className="flex-1 overflow-y-auto p-6 md:p-12 relative">
-                            {/* Background Ambient Glow */}
-                            <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-brand/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
-                            
-                            <div className="max-w-6xl mx-auto relative z-10 pb-20">
-                                {renderContent()}
-                            </div>
-
-                            <footer className="mt-12 py-8 border-t border-dark-border text-center text-xs text-slate-600 relative z-10">
-                                <p>© 2026 Auditoria Estratègica Digital VallBlanc. Document Confidencial.</p>
-                                <p className="mt-2 text-brand font-bold">Ferran Martínez</p>
-                            </footer>
-                        </div>
-                    </main>
+        function renderContent() {
+            const data = REPORT_DATA[activeSection];
+            contentContainer.innerHTML = `
+                <div class="animate-fade-in max-w-5xl mx-auto">
+                    <header class="border-l-4 border-brand pl-6 mb-8">
+                        <h2 class="text-3xl md:text-4xl font-serif font-bold text-white mb-2">${data.title}</h2>
+                        <p class="text-brand text-lg">${data.subtitle || ''}</p>
+                    </header>
+                    <div class="space-y-6">
+                        ${data.content}
+                    </div>
+                    <footer class="mt-12 py-8 border-t border-dark-border text-center text-xs text-slate-600">
+                        <p>© 2026 Auditoría Estratégica VallBlanc. Documento Confidencial.</p>
+                        <p class="mt-2 text-brand font-bold">Ferran Martínez</p>
+                    </footer>
                 </div>
-            );
-        };
+            `;
+        }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        function switchTab(id) {
+            activeSection = id;
+            renderNav();
+            renderContent();
+            document.getElementById('mobile-menu').classList.add('hidden');
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        // Initialize
+        renderNav();
+        renderContent();
+
     </script>
 </body>
 </html>
