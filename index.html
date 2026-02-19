@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auditoría SEO 360º - VallBlanc</title>
+    <title>Auditoría SEO 360º VallBlanc</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,8 +18,8 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -28,18 +28,22 @@
                 extend: {
                     colors: {
                         brand: {
-                            DEFAULT: '#D07D7D', // VallBlanc Brand Color
-                            dim: 'rgba(208, 125, 125, 0.1)',
-                            hover: '#b56b6b'
+                            DEFAULT: '#D07D7D', 
+                            50: '#fbf5f5',
+                            100: '#f7ecec',
+                            500: '#D07D7D',
+                            600: '#b56b6b',
+                            900: '#4a1a1a',
                         },
                         dark: {
-                            bg: '#0f172a',
-                            card: '#1e293b',
-                            border: '#334155'
+                            bg: '#020617', // Slate 950
+                            card: '#0f172a', // Slate 900
+                            border: '#1e293b' // Slate 800
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
                     }
                 }
             }
@@ -47,9 +51,13 @@
     </script>
 
     <style>
-        body { background-color: #0f172a; color: #e2e8f0; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
+        body { background-color: #020617; color: #e2e8f0; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D07D7D; }
+        .glass-header { background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
@@ -57,494 +65,650 @@
 
     <script type="text/babel">
         const { useState, useEffect } = React;
-
-        // --- ICONOS (Mapping simple para React) ---
         const Icon = ({ name, size = 20, className = "" }) => {
             const icons = {
-                BarChart2: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>,
-                AlertTriangle: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>,
-                Activity: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>,
-                Globe: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>,
-                MapPin: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>,
-                Layers: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>,
-                List: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>,
-                Zap: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>,
-                Search: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>,
-                Target: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>,
-                PenTool: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>,
-                CheckCircle: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                LayoutDashboard: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg>,
+                Swords: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" /><line x1="13" x2="19" y1="19" y2="13" /><line x1="16" x2="20" y1="16" y2="20" /><line x1="19" x2="21" y1="21" y2="19" /><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5" /><line x1="5" x2="9" y1="14" y2="18" /><line x1="7" x2="4" y1="17" y2="20" /><line x1="3" x2="5" y1="19" y2="21" /></svg>,
+                Cpu: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" /><path d="M15 2v2" /><path d="M15 20v2" /><path d="M2 15h2" /><path d="M2 9h2" /><path d="M20 15h2" /><path d="M20 9h2" /><path d="M9 2v2" /><path d="M9 20v2" /></svg>,
+                MapPin: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M20 10c0 6-9 13-9 13s-9-7-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>,
+                Search: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>,
+                Globe: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" /></svg>,
+                ListTodo: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="5" width="6" height="6" rx="1" /><path d="m3 17 2 2 4-4" /><path d="M13 6h8" /><path d="M13 12h8" /><path d="M13 18h8" /></svg>,
+                Sitemap: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><line x1="7" x2="7" y1="10" y2="13" /><line x1="7" x2="17" y1="13" y2="13" /><line x1="17" x2="17" y1="10" y2="14" /></svg>,
+                AlertTriangle: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" /><line x1="12" x2="12" y1="9" y2="13" /><line x1="12" x2="12.01" y1="17" y2="17" /></svg>,
+                Menu: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
             };
             return icons[name] || null;
         };
 
         // --- COMPONENTES UI ---
 
-        const Card = ({ title, value, sub, alert, icon }) => (
-            <div className={`p-6 rounded-xl border ${alert ? 'border-red-500/50 bg-red-900/10' : 'border-dark-border bg-dark-card'} flex flex-col justify-between h-full`}>
-                <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-slate-400 text-sm font-medium uppercase tracking-wider">{title}</h3>
-                    <div className={`p-2 rounded-lg ${alert ? 'text-red-400 bg-red-500/20' : 'text-brand bg-brand-dim'}`}>
-                        <Icon name={icon} size={20} />
-                    </div>
-                </div>
-                <div>
-                    <div className="text-2xl font-bold text-white mb-1">{value}</div>
-                    <div className={`text-xs ${alert ? 'text-red-300' : 'text-slate-400'}`}>{sub}</div>
-                </div>
+        const Card = ({ children, className = "" }) => (
+            <div className={`bg-dark-card border border-dark-border rounded-xl p-6 shadow-lg ${className}`}>
+                {children}
             </div>
         );
 
-        const TableRow = ({ source, finding, impact, severity, rec }) => {
-            const severityColors = {
-                'Crítico': 'text-red-400 bg-red-900/20 border-red-500/30',
-                'Alto': 'text-orange-400 bg-orange-900/20 border-orange-500/30',
-                'Medio': 'text-yellow-400 bg-yellow-900/20 border-yellow-500/30',
-                'Bajo': 'text-blue-400 bg-blue-900/20 border-blue-500/30'
+        const Badge = ({ type, text }) => {
+            const styles = {
+                critical: "bg-red-900/30 text-red-400 border-red-500/30",
+                high: "bg-orange-900/30 text-orange-400 border-orange-500/30",
+                medium: "bg-yellow-900/30 text-yellow-400 border-yellow-500/30",
+                low: "bg-blue-900/30 text-blue-400 border-blue-500/30",
+                brand: "bg-brand/20 text-brand border-brand/40"
             };
-
             return (
-                <tr className="border-b border-dark-border hover:bg-slate-800/50 transition-colors">
-                    <td className="p-4 text-xs font-mono text-slate-500">{source}</td>
-                    <td className="p-4 text-sm text-slate-200 font-medium">{finding}</td>
-                    <td className="p-4 text-sm text-slate-400">{impact}</td>
-                    <td className="p-4">
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold border ${severityColors[severity] || 'text-slate-400'}`}>
-                            {severity}
-                        </span>
-                    </td>
-                    <td className="p-4 text-sm text-brand">{rec}</td>
-                </tr>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border ${styles[type] || styles.brand}`}>
+                    {text}
+                </span>
             );
         };
 
-        const SectionHeader = ({ title, subtitle }) => (
-            <div className="mb-8 border-l-4 border-brand pl-4">
-                <h2 className="text-3xl font-bold text-white mb-2">{title}</h2>
-                <p className="text-slate-400">{subtitle}</p>
+        const SectionTitle = ({ title, subtitle }) => (
+            <div className="mb-8 pb-4 border-b border-dark-border">
+                <h2 className="text-3xl font-bold text-white tracking-tight mb-2">{title}</h2>
+                <p className="text-slate-400 text-lg">{subtitle}</p>
             </div>
         );
 
-        // --- DATOS DEL INFORME (NO RESUMIDOS - INTEGRAL) ---
-        // Extraídos de los PDFs: GA4 Panorámico, Eventos, Pages, GMB Capture
-        
-        const AUDIT_DATA = {
-            executive: {
-                kpis: [
-                    { title: "Tasa de Rebote (Home)", value: "59.7%", sub: "Crítico: Pérdida masiva de tráfico pagado.", alert: true, icon: "Activity" },
-                    { title: "Fuga en Citas", value: "42.2%", sub: "Usuarios abandonan /pide-cita sin convertir.", alert: true, icon: "Target" },
-                    { title: "Engagement Time", value: "27s", sub: "Muy bajo. Contenido no retiene al usuario.", alert: true, icon: "BarChart2" },
-                    { title: "Tráfico Orgánico", value: "12.7%", sub: "Dependencia excesiva de Paid (13%) y Social (32%).", alert: true, icon: "Search" }
-                ],
-                summary: [
-                    "SITUACIÓN CRÍTICA DE RETENCIÓN: Aunque captamos 17k usuarios (gran parte de Social/Paid), el sitio web actúa como un 'colador'. El 60% rebota en la Home y el 42% abandona el formulario de cita.",
-                    "ARQUITECTURA DEFICIENTE: La web actual no segmenta la intención de búsqueda. Mezcla tráfico informativo (artículos de bruxismo) con transaccional sin caminos claros de conversión.",
-                    "OPORTUNIDAD EXPAT PERDIDA: No existe estructura /en/ ni /fr/. El tráfico internacional en Barcelona está siendo regalado a competidores como 'Turó Park' o 'English Dentist BCN'.",
-                    "DEPENDENCIA DE META/ADS: El tráfico 'Organic Video' (32.6%) y 'Paid Search' (13.4%) sostiene el negocio. Si se corta la inversión publicitaria, el flujo de pacientes cae drásticamente."
-                ]
-            },
-            competitors: [
-                {
-                    type: "Líder (Nativo)",
-                    name: "Clínica Dental Barcelona (Ejemplo)",
-                    strengths: ["Autoridad de Dominio alta", "Blog activo con enlazado interno", "Citas online integradas en GMB"],
-                    weaknesses: ["Diseño algo anticuado", "Poca personalización en respuestas de reseñas"],
-                    gap: "Tienen landings específicas por tratamiento ('Implantes Barcelona', 'Ortodoncia Gracia'). Nosotros solo tenemos genéricas."
-                },
-                {
-                    type: "Nicho Expat (Rival Directo)",
-                    name: "Turó Park Dental / English Dentist BCN",
-                    strengths: ["Web 100% en Inglés/Francés", "Equipo médico internacional visible", "Keywords: 'Emergency Dentist BCN'"],
-                    weaknesses: ["Precios percibidos como muy altos", "Menor presencia en barrio Vallcarca"],
-                    gap: "Atacan 'Emergency Dentist' (CPC alto, conversión inmediata). VallBlanc no tiene landing de urgencia en inglés."
-                },
-                {
-                    type: "Vecino (Barrio)",
-                    name: "Clínica Vallcarca (Ejemplo)",
-                    strengths: ["Proximidad física", "Reseñas de vecinos muy locales"],
-                    weaknesses: ["Web no responsive", "Sin estrategia SEO"],
-                    gap: "Podemos dominarlos en SEO Local si optimizamos las fichas de GMB y creamos páginas de geo-servicio."
-                }
-            ],
-            technical: [
-                { source: "PSI / Analytics", finding: "LCP Móvil > 2.5s (Estimado por Rebote)", impact: "Abandono antes de carga completa", severity: "Alto", rec: "Implementar WebP, Lazy Load y eliminar Slider JS pesado." },
-                { source: "GSC", finding: "Canibalización de Keywords", impact: "URLs compiten entre sí (Home vs Servicios)", severity: "Medio", rec: "Definir URL canónica y diferenciar H1s por intención." },
-                { source: "GA4 Events", finding: "Evento 'form_submit' bajo ratio", impact: "Ceguera en atribución de leads", severity: "Crítico", rec: "Configurar Thank You Page única para traqueo fiable." },
-                { source: "Manual", finding: "Jerarquía H1-H6 Rota", impact: "Google no entiende la prioridad del contenido", severity: "Medio", rec: "Reestructurar headers: H1 único > H2 Servicios > H3 Detalles." },
-                { source: "PSI", finding: "CLS (Cumulative Layout Shift) en carga", impact: "Mala UX, elementos se mueven", severity: "Medio", rec: "Fijar dimensiones (width/height) en imágenes y iframes." },
-                { source: "Rastreo", finding: "Falta de Datos Estructurados (Schema)", impact: "No aparecemos con Rich Snippets (Estrellas/FAQ)", severity: "Medio", rec: "Implementar Schema 'Dentist', 'LocalBusiness' y 'MedicalWebPage'." }
-            ],
-            gmb: [
-                { source: "GMB Capture", finding: "Título: 'VallBlanc Espai Dental i Fisioteràpia'", impact: "Diluye la keyword principal 'Dentista'", severity: "Medio", rec: "Testear 'VallBlanc - Dentista en Vallcarca' si no viola normas." },
-                { source: "GMB", finding: "Reseñas: 93 (4.9 estrellas)", impact: "Buena calidad, volumen mejorable vs líderes (200+)", severity: "Bajo", rec: "Campaña automatizada de solicitud de reseñas post-visita." },
-                { source: "Maps", finding: "Falta de Productos/Servicios visuales", impact: "Menor CTR en ficha", severity: "Medio", rec: "Subir catálogo de servicios (Implantes, Ortodoncia) con fotos reales." },
-                { source: "NAP", finding: "Consistencia NAP", impact: "Riesgo de confusión si hay directorios antiguos", severity: "Alto", rec: "Auditar directorios (Yelp, Páginas Amarillas) para igualar a 'Av. de Vallcarca, 68'." }
-            ],
-            organic: [
-                { source: "GA4 Landing", finding: "/tratamientos/fisioterapia-mandibular", impact: "Alto tráfico (1.1k sesiones), bajo cierre", severity: "Medio", rec: "Añadir CTA agresivo '¿Dolor ahora? Reserva hoy'." },
-                { source: "GA4 Landing", finding: "/promociones (2.1k visitas)", impact: "Tráfico de baja calidad / cazadores de ofertas", severity: "Bajo", rec: "Cualificar el lead. Enfocar en financiación, no en descuento." },
-                { source: "GSC", finding: "Oportunidad: 'Bruxismo síntomas'", impact: "Muchas impresiones informacionales", severity: "Medio", rec: "Crear Cluster de Contenidos: Artículo -> Servicio Férula -> Cita." },
-                { source: "GSC", finding: "Oportunidad: 'Urgencia dental vallcarca'", impact: "Intención transaccional pura desaprovechada", severity: "Alto", rec: "Crear Landing Page específica /urgencias-dentales-vallcarca/." }
-            ],
-            expat: [
-                { lang: "Inglés (EN)", keyword: "Emergency Dentist Barcelona", vol: "Alto", comp: "Alta", action: "Crear /en/emergency-dentist/ con botón WhatsApp flotante." },
-                { lang: "Inglés (EN)", keyword: "Dental Implants Cost Barcelona", vol: "Medio", comp: "Media", action: "Crear página comparativa de precios UK/US vs Barcelona." },
-                { lang: "Francés (FR)", keyword: "Dentiste francophone barcelone", vol: "Medio", comp: "Baja", action: "Landing específica para comunidad francesa en Gràcia/Sarrià." },
-                { lang: "Global", keyword: "Invisalign Barcelona English", vol: "Medio", comp: "Media", action: "Testimonios en vídeo de pacientes extranjeros." }
-            ],
-            roadmap: [
-                { task: "Arreglar Formulario Citas (Simplificar a Nombre/Telf)", priority: "Inmediata (24h)", impact: "Crítico", effort: "Bajo", owner: "Dev" },
-                { task: "Crear Landing 'Emergency Dentist' (EN)", priority: "Alta (1 semana)", impact: "Alto", effort: "Medio", owner: "Content" },
-                { task: "Optimización Core Web Vitals (Imágenes/JS)", priority: "Media (2 semanas)", impact: "Medio", effort: "Alto", owner: "Dev" },
-                { task: "Campaña de Reseñas GMB (QR en clínica)", priority: "Alta (Recurrente)", impact: "Alto", effort: "Bajo", owner: "Recepción" },
-                { task: "Estructura Silo (Implantes / Ortodoncia / Estética)", priority: "Media (1 mes)", impact: "Alto", effort: "Alto", owner: "SEO" }
-            ]
-        };
+        const AlertBox = ({ title, children, type = "warning" }) => (
+            <div className={`p-4 rounded-lg border flex items-start space-x-3 mb-6 ${type === 'danger' ? 'bg-red-950/30 border-red-900/50' : 'bg-yellow-950/30 border-yellow-900/50'}`}>
+                <Icon name="AlertTriangle" className={`shrink-0 mt-1 ${type === 'danger' ? 'text-red-400' : 'text-yellow-400'}`} />
+                <div>
+                    <h4 className={`font-bold ${type === 'danger' ? 'text-red-400' : 'text-yellow-400'}`}>{title}</h4>
+                    <div className="text-slate-300 text-sm mt-1 space-y-2">{children}</div>
+                </div>
+            </div>
+        );
 
-        // --- DASHBOARD PRINCIPAL ---
+        // --- VISTAS DE CONTENIDO (TEXTO ÍNTEGRO DEL INFORME) ---
 
-        const Dashboard = () => {
-            const [activeTab, setActiveTab] = useState('executive');
+        const ExecutiveSummary = () => (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <SectionTitle title="1. Resumen Ejecutivo de Situación" subtitle="Sin pelos en la lengua: Estado Crítico Actual" />
+                
+                <Card className="border-l-4 border-l-brand">
+                    <h3 className="text-xl font-bold text-white mb-4">1.1. Diagnóstico de Signos Vitales Digitales</h3>
+                    <div className="space-y-4 text-slate-300 leading-relaxed">
+                        <p>
+                            El análisis forense de la presencia digital de vallblanc.com revela una patología estructural severa común en clínicas locales con aspiraciones de crecimiento pero ejecución técnica deficiente: una hiperdependencia del tráfico de marca y de pago combinada con una infraestructura técnica que sabotea activamente la adquisición de nuevos pacientes orgánicos "fríos" (no referidos).
+                        </p>
+                        <p>
+                            La clínica opera digitalmente muy por debajo de su capacidad clínica real. Mientras la infraestructura física cuenta con tecnología de vanguardia (CBCT, escáneres intraorales), la infraestructura digital padece de obsolescencia técnica en su Core Web Vitals y un desorden arquitectónico en su estrategia de internacionalización.
+                        </p>
+                    </div>
+                </Card>
 
-            const renderContent = () => {
-                switch(activeTab) {
-                    case 'executive':
-                        return (
-                            <div className="space-y-6 animate-in fade-in duration-500">
-                                <SectionHeader title="Resumen Ejecutivo" subtitle="Diagnóstico de situación crítica y estado actual del negocio digital." />
-                                
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                                    {AUDIT_DATA.executive.kpis.map((kpi, i) => (
-                                        <Card key={i} {...kpi} />
-                                    ))}
-                                </div>
+                <div className="grid md:grid-cols-3 gap-6">
+                    <Card>
+                        <h4 className="font-bold text-red-400 mb-2 flex items-center"><Icon name="AlertTriangle" size={16} className="mr-2"/> Hemorragia de Tráfico</h4>
+                        <p className="text-sm text-slate-400 mb-3">De aproximadamente 17,000 usuarios activos registrados en el periodo analizado, la tasa de rebote en la página de inicio alcanza un crítico <span className="text-white font-bold">59.7%</span>.</p>
+                        <p className="text-sm text-slate-400">Esto indica estadísticamente que 6 de cada 10 visitantes, muchos de ellos adquiridos a través de campañas de pago costosas (Google CPC y Social Ads), son repelidos por la experiencia de carga, la propuesta de valor visual o la navegación antes de realizar una segunda interacción.</p>
+                    </Card>
+                    <Card>
+                        <h4 className="font-bold text-orange-400 mb-2 flex items-center"><Icon name="AlertTriangle" size={16} className="mr-2"/> Conversión Anémica</h4>
+                        <p className="text-sm text-slate-400 mb-3">La tasa de conversión global registrada es del <span className="text-white font-bold">0.57%</span>. Para una clínica dental en BCN, el estándar debería oscilar entre el 3% y el 5%.</p>
+                        <p className="text-sm text-slate-400">Actualmente, el sitio requiere casi 200 visitas para generar una sola conversión digital traqueada (cita/contacto), lo cual infla desproporcionadamente el CAC. Considerando que el tráfico de "Google CPC" representa 5,300 usuarios, la ineficiencia de la página de destino está quemando presupuesto publicitario.</p>
+                    </Card>
+                    <Card>
+                        <h4 className="font-bold text-yellow-400 mb-2 flex items-center"><Icon name="AlertTriangle" size={16} className="mr-2"/> Invisibilidad Expat</h4>
+                        <p className="text-sm text-slate-400 mb-3">A pesar de la ambición declarada de captar al mercado internacional residente, la arquitectura actual es disfuncional.</p>
+                        <p className="text-sm text-slate-400">La ausencia técnica de etiquetas hreflang y la gestión de idiomas mediante parámetros (?lang=) ha provocado que Google indexe "clones" de la página de inicio, generando canibalización interna masiva en lugar de relevancia geolocalizada.</p>
+                    </Card>
+                </div>
 
-                                <div className="bg-dark-card border border-dark-border rounded-xl p-8">
-                                    <h3 className="text-xl font-bold text-white mb-4 flex items-center">
-                                        <Icon name="AlertTriangle" className="text-brand mr-2" /> Hallazgos Principales (Sin Censura)
-                                    </h3>
-                                    <ul className="space-y-4">
-                                        {AUDIT_DATA.executive.summary.map((point, i) => (
-                                            <li key={i} className="flex items-start text-slate-300">
-                                                <span className="text-brand font-bold mr-3 mt-1">0{i+1}.</span>
-                                                <span className="leading-relaxed">{point}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
-                        );
+                <Card>
+                    <h3 className="text-xl font-bold text-white mb-4">1.2. La Brecha de Competencia: David contra Goliats Nucleares</h3>
+                    <div className="text-slate-300 space-y-4">
+                        <p>Al comparar vallblanc.com con competidores de élite identificados en la investigación como Turó Park Dental Clinic o Clínica Blasi, la brecha no es necesariamente médica, es de intencionalidad digital y arquitectura de negocio online.</p>
+                        <ul className="list-disc pl-5 space-y-2">
+                            <li><strong>Turó Park Dental Clinic:</strong> No se limita a traducir su web; crea ecosistemas digitales completos para cada idioma, posicionándose como una autoridad nativa para el paciente inglés, francés o neerlandés. Utilizan una arquitectura de servicios jerarquizada que responde a intenciones específicas ("Emergency Dentist", "International Patient").</li>
+                            <li><strong>VallBlanc (Situación Actual):</strong> Trata el idioma como una característica cosmética (un plugin de traducción), no como una unidad de negocio estratégica. Esto resulta en que términos transaccionales de alto valor como "emergency dentist barcelona" sean dominados por rivales.</li>
+                        </ul>
+                    </div>
+                </Card>
+
+                <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                    <h3 className="text-xl font-bold text-white mb-4">1.3. Pronóstico Clínico y Quick Wins (≤ 14 días)</h3>
+                    <p className="text-slate-400 mb-6">El pronóstico es reservado. Si no se interviene la arquitectura técnica y la estrategia de contenidos, vallblanc.com continuará perdiendo cuota de mercado frente a clínicas digitalmente agresivas. La dependencia del tráfico de pago (Google CPC representa el 31% de los usuarios activos) es insostenible si la web expulsa al 60% de ese tráfico.</p>
                     
-                    case 'competitors':
-                        return (
-                            <div className="space-y-6 animate-in fade-in duration-500">
-                                <SectionHeader title="Benchmarking Competencia" subtitle="Análisis de brechas contra Líderes, Vecinos y Nicho Expat." />
-                                <div className="grid md:grid-cols-3 gap-6">
-                                    {AUDIT_DATA.competitors.map((comp, i) => (
-                                        <div key={i} className="bg-dark-card border border-dark-border rounded-xl p-6 hover:border-brand/50 transition-colors">
-                                            <div className="text-xs text-brand font-bold uppercase tracking-wider mb-2">{comp.type}</div>
-                                            <h3 className="text-xl font-bold text-white mb-4">{comp.name}</h3>
-                                            
-                                            <div className="mb-4">
-                                                <strong className="text-green-400 text-xs uppercase">Fortalezas:</strong>
-                                                <ul className="list-disc list-inside text-sm text-slate-400 mt-1">
-                                                    {comp.strengths.map((s, j) => <li key={j}>{s}</li>)}
-                                                </ul>
-                                            </div>
-                                            
-                                            <div className="mb-4">
-                                                <strong className="text-red-400 text-xs uppercase">Debilidades:</strong>
-                                                <ul className="list-disc list-inside text-sm text-slate-400 mt-1">
-                                                    {comp.weaknesses.map((w, j) => <li key={j}>{w}</li>)}
-                                                </ul>
-                                            </div>
+                    <div className="grid md:grid-cols-3 gap-4">
+                        <div className="bg-slate-950 p-4 rounded border border-brand/30">
+                            <h5 className="text-brand font-bold mb-2">1. Desbloqueo de Rastreo (Crítico)</h5>
+                            <p className="text-xs text-slate-300">Habilitar acceso inmediato al sitemap_index.xml (actualmente bloqueado) para asegurar que Google descubra e indexe el contenido profundo.</p>
+                        </div>
+                        <div className="bg-slate-950 p-4 rounded border border-brand/30">
+                            <h5 className="text-brand font-bold mb-2">2. Compresión de Scripts (WPO)</h5>
+                            <p className="text-xs text-slate-300">Implementar carga diferida (defer/async) para los scripts de GTM y Litespeed que están bloqueando el renderizado inicial y causando un TTFB de 1.7s.</p>
+                        </div>
+                        <div className="bg-slate-950 p-4 rounded border border-brand/30">
+                            <h5 className="text-brand font-bold mb-2">3. Ajuste de Títulos SEO</h5>
+                            <p className="text-xs text-slate-300">Reescribir los Meta Titles de las 10 páginas con más impresiones y CTR &lt; 2% para incluir "Barcelona" y ganchos de conversión.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
 
-                                            <div className="p-3 bg-slate-800/50 rounded-lg border-l-2 border-brand">
-                                                <p className="text-xs text-slate-300"><strong className="text-white">GAP Detectado:</strong> {comp.gap}</p>
-                                            </div>
-                                        </div>
-                                    ))}
+        const CompetitorAnalysis = () => (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <SectionTitle title="2. Auditoría de Competencia (Benchmarking)" subtitle="Ingeniería Inversa de la Élite" />
+                
+                <p className="text-slate-300 mb-6">Para dominar el mercado de Barcelona, no basta con hacerlo "bien"; hay que diseccionar qué están haciendo los líderes para robarles la cuota de mercado. Hemos analizado tres perfiles de competidores que representan las amenazas directas.</p>
+
+                <div className="overflow-x-auto rounded-xl border border-dark-border shadow-2xl">
+                    <table className="w-full text-left text-sm">
+                        <thead className="bg-slate-900 text-slate-400 uppercase font-bold tracking-wider">
+                            <tr>
+                                <th className="p-4 border-b border-dark-border min-w-[150px]">Dimensión</th>
+                                <th className="p-4 border-b border-dark-border min-w-[200px] text-brand bg-brand/5">VallBlanc (Nosotros)</th>
+                                <th className="p-4 border-b border-dark-border min-w-[200px]">Turó Park (Líder Expat)</th>
+                                <th className="p-4 border-b border-dark-border min-w-[200px]">Clínica Blasi (Prestigio)</th>
+                                <th className="p-4 border-b border-dark-border min-w-[200px]">British Dental (Nicho)</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-dark-border bg-dark-card">
+                            <tr className="hover:bg-slate-800/50">
+                                <td className="p-4 font-bold text-slate-300">Arquitectura de Idiomas</td>
+                                <td className="p-4 text-red-300 bg-red-900/10">Parámetros (?lang=) / Inconsistente / Sin Hreflang</td>
+                                <td className="p-4 text-slate-400">Subdirectorios robustos / Perfiles con banderas</td>
+                                <td className="p-4 text-slate-400">Subdirectorios claros /en/ con contenido nativo</td>
+                                <td className="p-4 text-slate-400">Sitio nativo en Inglés (enfoque total)</td>
+                            </tr>
+                            <tr className="hover:bg-slate-800/50">
+                                <td className="p-4 font-bold text-slate-300">Enfoque SEO Local</td>
+                                <td className="p-4 text-slate-300 bg-brand/5">"Vallcarca", "Gràcia" (Hiperlocal)</td>
+                                <td className="p-4 text-slate-400">"Barcelona", "English speaking", "Sarrià"</td>
+                                <td className="p-4 text-slate-400">"Barcelona", "Upper Diagonal" (Barrio Rico)</td>
+                                <td className="p-4 text-slate-400">"Barcelona", "Heart of the city", "Expat"</td>
+                            </tr>
+                            <tr className="hover:bg-slate-800/50">
+                                <td className="p-4 font-bold text-slate-300">Estrategia Contenido</td>
+                                <td className="p-4 text-slate-300 bg-brand/5">Blog genérico, traducciones automáticas aparentes</td>
+                                <td className="p-4 text-slate-400">"Concierge Medicine", "Medical Tourism", Guías de seguros</td>
+                                <td className="p-4 text-slate-400">Casos clínicos Antes/Después, Tecnología (USA trained)</td>
+                                <td className="p-4 text-slate-400">Testimonios verificados, Enfoque "UK Standards"</td>
+                            </tr>
+                            <tr className="hover:bg-slate-800/50">
+                                <td className="p-4 font-bold text-slate-300">Velocidad (Mobile)</td>
+                                <td className="p-4 text-red-300 bg-red-900/10">LCP 2.2s / Script Bloat masivo (80% peso JS)</td>
+                                <td className="p-4 text-slate-400">Optimizado para móviles ("Fast Track" buttons)</td>
+                                <td className="p-4 text-slate-400">Alta carga visual, pero UX fluida</td>
+                                <td className="p-4 text-slate-400">Funcional, enfoque en texto y velocidad</td>
+                            </tr>
+                            <tr className="hover:bg-slate-800/50">
+                                <td className="p-4 font-bold text-slate-300">Captación Leads</td>
+                                <td className="p-4 text-red-300 bg-red-900/10">Formulario genérico "Pide Cita" (Alto abandono)</td>
+                                <td className="p-4 text-slate-400">WhatsApp directo, Booking Online, Portal Paciente</td>
+                                <td className="p-4 text-slate-400">Formulario detallado, Teléfono destacado, "Budget"</td>
+                                <td className="p-4 text-slate-400">Widget "Need Help?", Citas Sábados, WhatsApp</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-8 mt-8">
+                    <Card>
+                        <h3 className="text-xl font-bold text-white mb-4">2.2. Gap de Contenidos</h3>
+                        <ul className="space-y-4 text-slate-300 text-sm">
+                            <li className="p-3 bg-slate-900 rounded border border-slate-800">
+                                <strong className="block text-brand mb-1">Páginas de "Aterrizaje Suave" para Expats</strong>
+                                Competencia: Páginas de "Medical Tourism", reembolso de seguros. VallBlanc carece de info sobre seguros internacionales o facilidades logísticas.
+                            </li>
+                            <li className="p-3 bg-slate-900 rounded border border-slate-800">
+                                <strong className="block text-brand mb-1">Transparencia Radical en Precios</strong>
+                                Competencia: Turó Park publica lista de precios detallada. VallBlanc carece de un tarifario base visible, generando fricción.
+                            </li>
+                            <li className="p-3 bg-slate-900 rounded border border-slate-800">
+                                <strong className="block text-brand mb-1">Páginas de Servicio Hiper-Segmentadas</strong>
+                                Faltan páginas para long-tail keywords transaccionales como "Implantes carga inmediata Barcelona" o "Sedación consciente".
+                            </li>
+                        </ul>
+                    </Card>
+                    <Card>
+                        <h3 className="text-xl font-bold text-white mb-4">2.3. Estrategias Local Pack</h3>
+                        <ul className="space-y-4 text-slate-300 text-sm">
+                            <li className="p-3 bg-slate-900 rounded border border-slate-800">
+                                <strong className="block text-white mb-1">Categorización Agresiva</strong>
+                                Los líderes explotan las 10 categorías secundarias (e.g., "Emergency dental service"). VallBlanc debe auditar esto urgente.
+                            </li>
+                            <li className="p-3 bg-slate-900 rounded border border-slate-800">
+                                <strong className="block text-white mb-1">Reseñas como Contenido SEO</strong>
+                                Las reseñas de la competencia contienen keywords semánticas ("root canal", "implant").
+                            </li>
+                            <li className="p-3 bg-slate-900 rounded border border-slate-800">
+                                <strong className="block text-white mb-1">Fotos que Venden Confianza</strong>
+                                Gap: VallBlanc debe evitar fotos de stock y saturar su perfil con la realidad de sus instalaciones.
+                            </li>
+                        </ul>
+                    </Card>
+                </div>
+            </div>
+        );
+
+        const TechnicalAudit = () => (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <SectionTitle title="3. Auditoría Técnica (PageSpeed & Core Vitals)" subtitle="Diagnóstico de la Infraestructura" />
+                
+                <AlertBox title="Contradicción Peligrosa" type="warning">
+                    La salud técnica de vallblanc.com presenta métricas de campo aceptables (CrUX) que enmascaran una arquitectura de código ineficiente y pesada (Lab Data), sosteniendo un rendimiento "bueno" solo por la potencia de los dispositivos modernos, no por la optimización del sitio.
+                </AlertBox>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                    <Card>
+                        <h3 className="text-lg font-bold text-white mb-4">3.1. Diagnóstico Línea por Línea</h3>
+                        <div className="space-y-6">
+                            <div>
+                                <div className="flex justify-between items-center mb-1">
+                                    <span className="font-bold text-slate-300">LCP (Móvil)</span>
+                                    <Badge type="medium" text="2.2s - Límite" />
                                 </div>
+                                <p className="text-xs text-slate-400">Aunque técnicamente "pasa", está al límite. Afectado negativamente por imágenes de alta resolución no optimizadas en el hero section.</p>
+                                <p className="text-xs text-brand mt-1">Rec: Preload imagen principal + Formatos WebP/AVIF.</p>
                             </div>
-                        );
-
-                    case 'technical':
-                        return (
-                            <div className="space-y-6 animate-in fade-in duration-500">
-                                <SectionHeader title="Auditoría Técnica" subtitle="Análisis forense de PageSpeed, Rastreo e Indexación." />
-                                <div className="overflow-x-auto rounded-xl border border-dark-border">
-                                    <table className="w-full text-left bg-dark-card">
-                                        <thead className="bg-slate-900 text-slate-400 uppercase text-xs font-bold">
-                                            <tr>
-                                                <th className="p-4">Fuente</th>
-                                                <th className="p-4">Hallazgo Técnico</th>
-                                                <th className="p-4">Impacto Negocio</th>
-                                                <th className="p-4">Severidad</th>
-                                                <th className="p-4">Recomendación Exacta</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-dark-border">
-                                            {AUDIT_DATA.technical.map((item, i) => (
-                                                <TableRow key={i} {...item} />
-                                            ))}
-                                        </tbody>
-                                    </table>
+                            <div className="border-t border-slate-800 pt-4">
+                                <div className="flex justify-between items-center mb-1">
+                                    <span className="font-bold text-slate-300">TTFB (Time to First Byte)</span>
+                                    <Badge type="critical" text="1.7s - Crítico" />
                                 </div>
+                                <p className="text-xs text-slate-400">El servidor tarda casi 2 segundos en responder. Indica procesamiento PHP lento o hosting deficiente. Mata el SEO internacional.</p>
+                                <p className="text-xs text-brand mt-1">Rec: Activar Object Cache/Redis, Cloudflare APO.</p>
                             </div>
-                        );
-
-                    case 'organic':
-                        return (
-                            <div className="space-y-6 animate-in fade-in duration-500">
-                                <SectionHeader title="Rendimiento Orgánico" subtitle="Análisis de Search Console, Analytics y Oportunidades SEO." />
-                                <div className="grid md:grid-cols-2 gap-6 mb-8">
-                                    <div className="bg-dark-card border border-dark-border p-6 rounded-xl">
-                                        <h3 className="text-lg font-bold text-white mb-4">Adquisición de Tráfico (GA4)</h3>
-                                        <div className="space-y-4">
-                                            <div>
-                                                <div className="flex justify-between text-sm text-slate-300 mb-1">
-                                                    <span>Organic Video (Meta/TikTok)</span>
-                                                    <span className="font-bold">32.6%</span>
-                                                </div>
-                                                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                                                    <div className="h-full bg-purple-500" style={{width: '32.6%'}}></div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div className="flex justify-between text-sm text-slate-300 mb-1">
-                                                    <span>Cross-network (PMax/Ads)</span>
-                                                    <span className="font-bold">14.5%</span>
-                                                </div>
-                                                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                                                    <div className="h-full bg-blue-500" style={{width: '14.5%'}}></div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div className="flex justify-between text-sm text-slate-300 mb-1">
-                                                    <span>Paid Search (CPC)</span>
-                                                    <span className="font-bold">13.4%</span>
-                                                </div>
-                                                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                                                    <div className="h-full bg-orange-500" style={{width: '13.4%'}}></div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div className="flex justify-between text-sm text-slate-300 mb-1">
-                                                    <span>Organic Search (SEO)</span>
-                                                    <span className="font-bold text-red-400">12.7% (Bajo)</span>
-                                                </div>
-                                                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                                                    <div className="h-full bg-green-500" style={{width: '12.7%'}}></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="bg-dark-card border border-dark-border p-6 rounded-xl">
-                                        <h3 className="text-lg font-bold text-white mb-4">Páginas con Mayor Fuga</h3>
-                                        <ul className="space-y-3">
-                                            <li className="flex justify-between items-center p-3 bg-slate-900 rounded border border-red-900/30">
-                                                <span className="text-sm text-slate-300">/ (Home)</span>
-                                                <span className="text-red-400 font-bold">59.7% Rebote</span>
-                                            </li>
-                                            <li className="flex justify-between items-center p-3 bg-slate-900 rounded border border-red-900/30">
-                                                <span className="text-sm text-slate-300">/pide-cita</span>
-                                                <span className="text-red-400 font-bold">42.2% Abandono</span>
-                                            </li>
-                                        </ul>
-                                    </div>
+                            <div className="border-t border-slate-800 pt-4">
+                                <div className="flex justify-between items-center mb-1">
+                                    <span className="font-bold text-slate-300">Bloatware JavaScript</span>
+                                    <Badge type="critical" text="80% Peso Total" />
                                 </div>
-
-                                <div className="overflow-x-auto rounded-xl border border-dark-border">
-                                    <table className="w-full text-left bg-dark-card">
-                                        <thead className="bg-slate-900 text-slate-400 uppercase text-xs font-bold">
-                                            <tr>
-                                                <th className="p-4">Fuente</th>
-                                                <th className="p-4">Hallazgo / Keyword</th>
-                                                <th className="p-4">Impacto</th>
-                                                <th className="p-4">Severidad</th>
-                                                <th className="p-4">Acción Requerida</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-dark-border">
-                                            {AUDIT_DATA.organic.map((item, i) => (
-                                                <TableRow key={i} {...item} />
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                <p className="text-xs text-slate-400">Litespeed JS (180kB), GTM Múltiple (170kB c/u), Facebook Pixel (92kB). El hilo principal se satura.</p>
+                                <p className="text-xs text-brand mt-1">Rec: Auditoría GTM Urgente. Consolidar etiquetas. Delay JS.</p>
                             </div>
-                        );
+                        </div>
+                    </Card>
+                    
+                    <Card>
+                        <h3 className="text-lg font-bold text-white mb-4">3.2. Impacto Real en Ranking</h3>
+                        <p className="text-slate-300 mb-4 text-sm">La "experiencia de página" es un factor de ranking oficial. Con un TTFB de 1.7s, Googlebot rastrea menos páginas por sesión de rastreo asignada (Crawl Budget desperdiciado). Para un sitio que aspira a tener cientos de URLs (blog + idiomas), esto significa que el contenido nuevo tardará semanas en indexarse.</p>
+                        
+                        <h4 className="font-bold text-white mt-6 mb-2">Quick Wins (≤ 14 días)</h4>
+                        <ul className="space-y-2 text-sm text-slate-400">
+                            <li className="flex items-start"><span className="text-brand mr-2">1.</span> Plugin de Imágenes: ShortPixel o Imagify para WebP auto.</li>
+                            <li className="flex items-start"><span className="text-brand mr-2">2.</span> Delay JS: Retrasar Pixel FB y scripts no esenciales hasta interacción.</li>
+                        </ul>
+                    </Card>
+                </div>
+            </div>
+        );
 
-                    case 'expat':
-                        return (
-                            <div className="space-y-6 animate-in fade-in duration-500">
-                                <SectionHeader title="Estrategia Expat (Barcelona)" subtitle="Plan de ataque para el mercado internacional residente (Alto poder adquisitivo)." />
-                                
-                                <div className="grid md:grid-cols-4 gap-4 mb-6">
-                                    {AUDIT_DATA.expat.map((item, i) => (
-                                        <div key={i} className="bg-dark-card p-6 rounded-xl border border-dark-border hover:bg-slate-800 transition-colors group">
-                                            <div className="flex justify-between items-start mb-4">
-                                                <span className="text-xs font-bold bg-slate-700 text-white px-2 py-1 rounded">{item.lang}</span>
-                                                <Icon name="Globe" className="text-slate-500 group-hover:text-brand" />
-                                            </div>
-                                            <h4 className="text-white font-bold mb-2 text-lg leading-tight">"{item.keyword}"</h4>
-                                            <div className="flex justify-between text-xs text-slate-400 mb-4">
-                                                <span>Vol: {item.vol}</span>
-                                                <span>Comp: {item.comp}</span>
-                                            </div>
-                                            <p className="text-sm text-brand border-t border-slate-700 pt-3">{item.action}</p>
-                                        </div>
-                                    ))}
-                                </div>
+        const GMBAudit = () => (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <SectionTitle title="4. Auditoría Google My Business" subtitle="El Corazón del SEO Local" />
+                
+                <div className="grid md:grid-cols-2 gap-6">
+                    <Card>
+                        <h3 className="text-lg font-bold text-white mb-4 flex items-center"><Icon name="MapPin" className="mr-2 text-brand"/> NAP & Datos</h3>
+                        <div className="space-y-4 text-sm">
+                            <div className="p-3 bg-red-900/10 border border-red-900/30 rounded">
+                                <strong className="text-red-400 block mb-1">Inconsistencia Detectada</strong>
+                                <p className="text-slate-400">Aparece como "VallBlanc", "VallBlanc Espai Dental", "Clínica Dental VallBlanc".</p>
+                                <p className="text-slate-300 mt-2 font-bold">Acción: Estandarizar estrictamente a "VallBlanc Espai Dental" en todos los directorios.</p>
                             </div>
-                        );
-
-                    case 'gmb':
-                        return (
-                            <div className="space-y-6 animate-in fade-in duration-500">
-                                <SectionHeader title="Auditoría SEO Local (GMB)" subtitle="Análisis de la ficha de Google My Business y Reputación." />
-                                <div className="overflow-x-auto rounded-xl border border-dark-border">
-                                    <table className="w-full text-left bg-dark-card">
-                                        <thead className="bg-slate-900 text-slate-400 uppercase text-xs font-bold">
-                                            <tr>
-                                                <th className="p-4">Fuente</th>
-                                                <th className="p-4">Hallazgo</th>
-                                                <th className="p-4">Impacto</th>
-                                                <th className="p-4">Severidad</th>
-                                                <th className="p-4">Recomendación</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-dark-border">
-                                            {AUDIT_DATA.gmb.map((item, i) => (
-                                                <TableRow key={i} {...item} />
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <div>
+                                <strong className="text-white block mb-1">Dirección Estratégica</strong>
+                                <p className="text-slate-400">Av. de Vallcarca, 68. Activo estratégico. Explotar keywords de barrio: "Dentista Vallcarca", "Gràcia Norte".</p>
                             </div>
-                        );
-
-                    case 'roadmap':
-                        return (
-                            <div className="space-y-6 animate-in fade-in duration-500">
-                                <SectionHeader title="Hoja de Ruta (Roadmap)" subtitle="Plan de Acción Priorizado para los próximos 90 días." />
-                                <div className="overflow-x-auto rounded-xl border border-dark-border">
-                                    <table className="w-full text-left bg-dark-card">
-                                        <thead className="bg-slate-900 text-slate-400 uppercase text-xs font-bold">
-                                            <tr>
-                                                <th className="p-4">Tarea / Acción</th>
-                                                <th className="p-4">Prioridad</th>
-                                                <th className="p-4">Impacto</th>
-                                                <th className="p-4">Esfuerzo</th>
-                                                <th className="p-4">Responsable</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-dark-border">
-                                            {AUDIT_DATA.roadmap.map((task, i) => (
-                                                <tr key={i} className="border-b border-dark-border hover:bg-slate-800/50">
-                                                    <td className="p-4 text-white font-medium">{task.task}</td>
-                                                    <td className="p-4">
-                                                        <span className={`px-2 py-1 rounded text-xs font-bold ${task.priority.includes('Inmediata') || task.priority.includes('Alta') ? 'bg-brand text-white' : 'bg-slate-700 text-slate-300'}`}>
-                                                            {task.priority}
-                                                        </span>
-                                                    </td>
-                                                    <td className="p-4 text-sm text-slate-400">{task.impact}</td>
-                                                    <td className="p-4 text-sm text-slate-400">{task.effort}</td>
-                                                    <td className="p-4 text-sm text-slate-500 font-mono">{task.owner}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <div>
+                                <strong className="text-white block mb-1">Categorías (Oportunidad)</strong>
+                                <p className="text-slate-400">Ampliar espectro. Añadir: "Implantes dentales periodoncista", "Ortodoncista", "Clínica dental infantil", "Servicio de urgencias dentales".</p>
                             </div>
-                        );
+                        </div>
+                    </Card>
 
-                    default:
-                        return null;
+                    <Card>
+                        <h3 className="text-lg font-bold text-white mb-4">Estrategia de Reseñas y Fotos</h3>
+                        <div className="space-y-4 text-sm">
+                            <div>
+                                <strong className="text-white block mb-1">Reseñas SEO</strong>
+                                <p className="text-slate-400">El problema es cualitativo: carecen de palabras clave. Responder introduciendo keywords: "Gracias María por confiar en VallBlanc para tu implante en Vallcarca".</p>
+                            </div>
+                            <div>
+                                <strong className="text-white block mb-1">Fotos = Confianza</strong>
+                                <p className="text-slate-400">Google favorece la actividad visual. Subir fotos del equipo, tecnología (CBCT) y entrada regularmente.</p>
+                            </div>
+                            <div className="mt-4 p-3 bg-slate-900 rounded border border-brand/30">
+                                <strong className="text-brand block mb-1">Quick Win</strong>
+                                <p className="text-slate-300">Añadir 5 categorías secundarias en GMB hoy mismo (Emergency, Paediatric, etc).</p>
+                            </div>
+                        </div>
+                    </Card>
+                </div>
+            </div>
+        );
+
+        const OrganicPerformance = () => (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <SectionTitle title="5. Rendimiento Orgánico (GSC & GA4)" subtitle="La Verdad de los Datos" />
+                
+                <div className="bg-dark-card p-6 rounded-xl border border-dark-border mb-6">
+                    <h3 className="text-lg font-bold text-white mb-6">5.1. Keywords de Oportunidad (El Cementerio de Impresiones)</h3>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm text-left">
+                            <thead className="text-slate-500 border-b border-dark-border">
+                                <tr>
+                                    <th className="pb-2">Keyword</th>
+                                    <th className="pb-2">Datos</th>
+                                    <th className="pb-2">Diagnóstico</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-dark-border text-slate-300">
+                                <tr>
+                                    <td className="py-3 font-bold">"Periodoncia Barcelona"</td>
+                                    <td className="py-3">2,396 Impresiones | 0 Clics</td>
+                                    <td className="py-3 text-red-400">Falta Power Page específica. Oportunidad masiva perdida.</td>
+                                </tr>
+                                <tr>
+                                    <td className="py-3 font-bold">"Precio Implante Dental"</td>
+                                    <td className="py-3">1,835 Impresiones | 0 Clics</td>
+                                    <td className="py-3 text-red-400">Intención transaccional pura. Falta página de precios visible.</td>
+                                </tr>
+                                <tr>
+                                    <td className="py-3 font-bold">"Implant Dentaire Barcelone"</td>
+                                    <td className="py-3">1,967 Impresiones | 0 Clics</td>
+                                    <td className="py-3 text-orange-400">Demanda francesa activa. Página en francés invisible o irrelevante.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                    <Card>
+                        <h3 className="text-lg font-bold text-white mb-4">5.2. Canibalizaciones</h3>
+                        <ul className="space-y-3 text-sm text-slate-400">
+                            <li><strong className="text-white">Regeneración Ósea:</strong> Rankean URLs dispares (11, 43, 61). Google no sabe cuál es la canónica. <span className="text-brand">Solución:</span> Power Page + Redirecciones 301.</li>
+                            <li><strong className="text-white">Conflicto de Idiomas:</strong> URLs en árabe (/ar/) y ruso (/ru/) compiten por términos de marca puros "VallBlanc". Diluye la autoridad de la home.</li>
+                        </ul>
+                    </Card>
+                    <Card>
+                        <h3 className="text-lg font-bold text-white mb-4">5.3. Fugas de Conversión</h3>
+                        <ul className="space-y-3 text-sm text-slate-400">
+                            <li><strong className="text-red-400">Rebote Home (59.7%):</strong> Inaceptable. Propuesta de valor no clara en el primer pantallazo móvil.</li>
+                            <li><strong className="text-red-400">Fuga en "Pide Cita" (42.2%):</strong> El formulario pide demasiados datos o no inspira confianza. <span className="text-brand">Acción:</span> Simplificar a Nombre + Teléfono.</li>
+                            <li><strong className="text-green-400">Engagement Fisio (18% Rebote):</strong> Funciona y retiene. Potenciar para cross-selling dental.</li>
+                        </ul>
+                    </Card>
+                </div>
+            </div>
+        );
+
+        const ExpatStrategy = () => (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <SectionTitle title="6. Estrategia 'Expat Barcelona'" subtitle="El Océano Azul" />
+                
+                <div className="grid md:grid-cols-3 gap-6 mb-8">
+                    <Card className="border-t-4 border-t-blue-500">
+                        <h4 className="font-bold text-white mb-2">Mercado Francés</h4>
+                        <p className="text-sm text-slate-400 mb-2">Potencial desperdiciado (2k imp/mes sin clics).</p>
+                        <p className="text-xs text-blue-400 font-bold">Acción: Página /fr/dentiste-barcelone/ optimizada.</p>
+                    </Card>
+                    <Card className="border-t-4 border-t-purple-500">
+                        <h4 className="font-bold text-white mb-2">Nicho Ruso</h4>
+                        <p className="text-sm text-slate-400 mb-2">Consultas de "fisioterapia ATM" en ruso tienen buen rendimiento (CTR 5.3%).</p>
+                        <p className="text-xs text-purple-400 font-bold">Acción: Potenciar contenido técnico alta calidad.</p>
+                    </Card>
+                    <Card className="border-t-4 border-t-green-500">
+                        <h4 className="font-bold text-white mb-2">Mercado Inglés</h4>
+                        <p className="text-sm text-slate-400 mb-2">Competencia feroz. No atacar genéricos.</p>
+                        <p className="text-xs text-green-400 font-bold">Acción: Atacar Long-Tail Transaccional y Urgencia.</p>
+                    </Card>
+                </div>
+
+                <Card>
+                    <h3 className="text-lg font-bold text-white mb-4">6.2. Propuesta Keywords Transaccionales (Silos)</h3>
+                    <div className="space-y-4">
+                        <div className="flex items-start">
+                            <Icon name="Search" className="text-brand mr-3 mt-1" size={16}/>
+                            <div>
+                                <strong className="text-white block">"Emergency Dentist Barcelona"</strong>
+                                <p className="text-sm text-slate-400">Página con botón de llamada flotante, texto "We speak English - Same day appointment".</p>
+                            </div>
+                        </div>
+                        <div className="flex items-start">
+                            <Icon name="Search" className="text-brand mr-3 mt-1" size={16}/>
+                            <div>
+                                <strong className="text-white block">"Dental Implants Barcelona Price"</strong>
+                                <p className="text-sm text-slate-400">Comparativa precios UK/USA vs BCN. Enfocada en calidad/precio.</p>
+                            </div>
+                        </div>
+                        <div className="flex items-start">
+                            <Icon name="Search" className="text-brand mr-3 mt-1" size={16}/>
+                            <div>
+                                <strong className="text-white block">"English Speaking Dentist Gracia"</strong>
+                                <p className="text-sm text-slate-400">Hiper-localización para el residente del barrio.</p>
+                            </div>
+                        </div>
+                    </div>
+                </Card>
+            </div>
+        );
+
+        const Roadmap = () => (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <SectionTitle title="7. Hoja de Ruta (Plan de Acción)" subtitle="Dominación Local y Expat" />
+                
+                <div className="overflow-x-auto rounded-xl border border-dark-border shadow-2xl">
+                    <table className="w-full text-left text-sm">
+                        <thead className="bg-slate-900 text-slate-400 uppercase font-bold tracking-wider">
+                            <tr>
+                                <th className="p-4 border-b border-dark-border">Tarea</th>
+                                <th className="p-4 border-b border-dark-border">Prioridad</th>
+                                <th className="p-4 border-b border-dark-border">Impacto</th>
+                                <th className="p-4 border-b border-dark-border">Esfuerzo</th>
+                                <th className="p-4 border-b border-dark-border">Responsable</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-dark-border bg-dark-card text-slate-300">
+                            <tr className="hover:bg-slate-800/50">
+                                <td className="p-4 font-bold">Implementar Hreflang y reestructurar URLs (/es/, /en/)</td>
+                                <td className="p-4"><Badge type="critical" text="Crítica" /></td>
+                                <td className="p-4">Alto (SEO Int.)</td>
+                                <td className="p-4">Alto</td>
+                                <td className="p-4">Dev Web</td>
+                            </tr>
+                            <tr className="hover:bg-slate-800/50">
+                                <td className="p-4 font-bold">Optimizar carga JS (Defer/Async) y LCP</td>
+                                <td className="p-4"><Badge type="critical" text="Crítica" /></td>
+                                <td className="p-4">Alto (UX/SEO)</td>
+                                <td className="p-4">Medio</td>
+                                <td className="p-4">Dev</td>
+                            </tr>
+                            <tr className="hover:bg-slate-800/50">
+                                <td className="p-4 font-bold">Auditoría y Fusión de GTM/Pixels</td>
+                                <td className="p-4"><Badge type="high" text="Alta" /></td>
+                                <td className="p-4">Medio (Velocidad)</td>
+                                <td className="p-4">Bajo</td>
+                                <td className="p-4">Analista</td>
+                            </tr>
+                            <tr className="hover:bg-slate-800/50">
+                                <td className="p-4 font-bold">Crear Landing "Emergency Dentist" + GMB Opt</td>
+                                <td className="p-4"><Badge type="high" text="Alta" /></td>
+                                <td className="p-4">Alto (Leads)</td>
+                                <td className="p-4">Medio</td>
+                                <td className="p-4">Content / SEO</td>
+                            </tr>
+                            <tr className="hover:bg-slate-800/50">
+                                <td className="p-4 font-bold">Simplificar Formulario "Pide Cita"</td>
+                                <td className="p-4"><Badge type="high" text="Alta" /></td>
+                                <td className="p-4">Alto (Conversión)</td>
+                                <td className="p-4">Bajo</td>
+                                <td className="p-4">Dev / UX</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="bg-slate-900 p-6 rounded-xl border border-slate-800 mt-8">
+                    <h3 className="text-lg font-bold text-white mb-4">7.1. Datos Pendientes de Input</h3>
+                    <ul className="space-y-2 text-sm text-slate-400">
+                        <li>• <strong>Informe de Cobertura Indexación (GSC):</strong> Necesario exportar "Páginas > Sin indexar" para detectar URLs zombis.</li>
+                        <li>• <strong>Crawl Completo (Screaming Frog):</strong> Al estar bloqueado el sitemap, necesitamos un rastreo para identificar huérfanas.</li>
+                    </ul>
+                </div>
+            </div>
+        );
+
+        const ExtraArchitecture = () => (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <SectionTitle title="Extra: Mapa de Arquitectura" subtitle="Estructura de Silos Recomendada" />
+                
+                <div className="grid md:grid-cols-2 gap-8">
+                    <Card>
+                        <h3 className="font-bold text-white mb-4">Mapa de Oportunidades</h3>
+                        <div className="space-y-4 text-sm">
+                            <div>
+                                <strong className="text-brand block">Local Nativo (ES/CA)</strong>
+                                <p className="text-slate-400">"Dentista Vallcarca", "Implantes dentales Gràcia", "Urgencias dentales Barcelona", "Periodoncia precio Barcelona".</p>
+                            </div>
+                            <div>
+                                <strong className="text-brand block">Local Expat (EN/FR)</strong>
+                                <p className="text-slate-400">"English speaking dentist Barcelona", "Emergency dentist Barcelona", "Dental implants Barcelona cost", "Invisalign Barcelona English".</p>
+                            </div>
+                        </div>
+                    </Card>
+                    <Card>
+                        <h3 className="font-bold text-white mb-4">Arquitectura de Silos</h3>
+                        <ul className="space-y-2 text-sm text-slate-300 font-mono">
+                            <li>/es/ (Home Optimizada)</li>
+                            <li className="pl-4">/es/tratamientos/ (Hub)</li>
+                            <li className="pl-8 text-brand">/es/tratamientos/implantes-dentales/</li>
+                            <li className="pl-8">/es/tratamientos/ortodoncia-invisible/</li>
+                            <li className="pl-4 text-brand">/es/urgencias-dentales/ (Landing)</li>
+                            <li className="pl-4">/es/barrio/vallcarca/</li>
+                            <br/>
+                            <li>/en/ (Home Expat)</li>
+                            <li className="pl-4 text-brand">/en/emergency-dentist/</li>
+                            <li className="pl-4">/en/dental-implants/</li>
+                            <li className="pl-4">/en/international-patients/</li>
+                        </ul>
+                    </Card>
+                </div>
+            </div>
+        );
+
+        const App = () => {
+            const [section, setSection] = useState('resumen');
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+            const navItems = [
+                { id: 'resumen', label: '1. Resumen Ejecutivo', icon: 'LayoutDashboard' },
+                { id: 'competencia', label: '2. Competencia', icon: 'Swords' },
+                { id: 'tecnica', label: '3. Auditoría Técnica', icon: 'Cpu' },
+                { id: 'gmb', label: '4. Google My Business', icon: 'MapPin' },
+                { id: 'organico', label: '5. Rendimiento Orgánico', icon: 'Search' },
+                { id: 'expat', label: '6. Estrategia Expat', icon: 'Globe' },
+                { id: 'roadmap', label: '7. Hoja de Ruta', icon: 'ListTodo' },
+                { id: 'arquitectura', label: 'Extra: Arquitectura', icon: 'Sitemap' },
+            ];
+
+            const renderSection = () => {
+                switch(section) {
+                    case 'resumen': return <ExecutiveSummary />;
+                    case 'competencia': return <CompetitorAnalysis />;
+                    case 'tecnica': return <TechnicalAudit />;
+                    case 'gmb': return <GMBAudit />;
+                    case 'organico': return <OrganicPerformance />;
+                    case 'expat': return <ExpatStrategy />;
+                    case 'roadmap': return <Roadmap />;
+                    case 'arquitectura': return <ExtraArchitecture />;
+                    default: return <ExecutiveSummary />;
                 }
             };
 
             return (
-                <div className="flex h-screen bg-dark-bg overflow-hidden font-sans">
-                    {/* SIDEBAR */}
-                    <div className="w-64 bg-slate-900 border-r border-dark-border flex flex-col hidden md:flex">
+                <div className="flex h-screen bg-dark-bg text-slate-200 overflow-hidden font-sans selection:bg-brand selection:text-white">
+                    {/* Sidebar Desktop */}
+                    <aside className="hidden md:flex flex-col w-72 bg-dark-card border-r border-dark-border">
                         <div className="p-6 border-b border-dark-border">
-                            <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 bg-brand rounded-lg flex items-center justify-center shadow-lg shadow-brand/20">
-                                    <span className="text-white font-bold text-xl">V</span>
-                                </div>
-                                <div>
-                                    <h1 className="text-white font-bold text-lg leading-none">VallBlanc</h1>
-                                    <span className="text-xs text-brand uppercase tracking-wider">SEO Audit Pro</span>
-                                </div>
-                            </div>
+                            <h1 className="text-xl font-bold text-white tracking-tight">VallBlanc<span className="text-brand">.Audit</span></h1>
+                            <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider">Informe Integral 360º</p>
                         </div>
-                        
-                        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-                            {[
-                                { id: 'executive', label: 'Resumen Ejecutivo', icon: 'Activity' },
-                                { id: 'competitors', label: 'Competencia', icon: 'Target' },
-                                { id: 'technical', label: 'Auditoría Técnica', icon: 'Zap' },
-                                { id: 'gmb', label: 'SEO Local (GMB)', icon: 'MapPin' },
-                                { id: 'organic', label: 'Orgánico (GA4/GSC)', icon: 'BarChart2' },
-                                { id: 'expat', label: 'Estrategia Expat', icon: 'Globe' },
-                                { id: 'roadmap', label: 'Hoja de Ruta', icon: 'List' },
-                            ].map((item) => (
+                        <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+                            {navItems.map(item => (
                                 <button
                                     key={item.id}
-                                    onClick={() => setActiveTab(item.id)}
-                                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${activeTab === item.id ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
+                                    onClick={() => setSection(item.id)}
+                                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                        section === item.id 
+                                        ? 'bg-brand text-white shadow-lg shadow-brand/20' 
+                                        : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                                    }`}
                                 >
                                     <Icon name={item.icon} size={18} />
                                     <span>{item.label}</span>
                                 </button>
                             ))}
                         </nav>
-
                         <div className="p-4 border-t border-dark-border">
-                            <div className="bg-slate-800/50 p-3 rounded-lg flex items-center space-x-3">
-                                <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs text-white">FM</div>
+                            <div className="flex items-center space-x-3 bg-slate-900/50 p-3 rounded-lg">
+                                <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white font-bold text-xs">FM</div>
                                 <div>
-                                    <p className="text-xs text-slate-300 font-medium">Auditor:</p>
-                                    <p className="text-xs text-brand font-bold">Ferran Martínez</p>
+                                    <p className="text-xs text-slate-400">Auditor SEO</p>
+                                    <p className="text-sm font-bold text-white">Ferran Martínez</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </aside>
 
-                    {/* MAIN CONTENT */}
-                    <div className="flex-1 flex flex-col overflow-hidden relative">
+                    {/* Main Content */}
+                    <main className="flex-1 flex flex-col relative overflow-hidden">
                         {/* Mobile Header */}
-                        <div className="md:hidden bg-slate-900 p-4 border-b border-dark-border flex items-center justify-between">
+                        <header className="md:hidden glass-header p-4 flex justify-between items-center z-50">
                             <span className="font-bold text-white">VallBlanc Audit</span>
-                            <div className="text-xs text-brand">Ferran Martínez</div>
-                        </div>
+                            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-slate-300">
+                                <Icon name="Menu" />
+                            </button>
+                        </header>
 
-                        <div className="flex-1 overflow-y-auto p-4 md:p-8 relative">
-                            {/* Background decoration */}
-                            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
-                            
-                            <div className="relative z-10 max-w-7xl mx-auto">
-                                {renderContent()}
+                        {/* Mobile Menu Overlay */}
+                        {mobileMenuOpen && (
+                            <div className="absolute inset-0 bg-dark-bg z-40 p-4 animate-in slide-in-from-top-10">
+                                <div className="flex justify-end mb-4">
+                                    <button onClick={() => setMobileMenuOpen(false)} className="text-slate-400">Cerrar</button>
+                                </div>
+                                <nav className="space-y-2">
+                                    {navItems.map(item => (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => { setSection(item.id); setMobileMenuOpen(false); }}
+                                            className={`w-full text-left p-4 rounded-lg border ${section === item.id ? 'border-brand text-brand bg-brand/10' : 'border-dark-border text-slate-300'}`}
+                                        >
+                                            {item.label}
+                                        </button>
+                                    ))}
+                                </nav>
+                            </div>
+                        )}
+
+                        {/* Scrollable Area */}
+                        <div className="flex-1 overflow-y-auto p-4 md:p-10 relative">
+                             {/* Background Glow */}
+                             <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-brand/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
+                             
+                            <div className="max-w-5xl mx-auto relative z-10 pb-20">
+                                {renderSection()}
                             </div>
 
-                            {/* FOOTER */}
-                            <footer className="mt-12 pt-8 border-t border-dark-border text-center pb-8">
-                                <p className="text-slate-500 text-sm">
-                                    Auditoría realizada para <span className="text-white font-bold">VallBlanc Espai Dental</span> • {new Date().getFullYear()}
-                                </p>
-                                <p className="text-brand text-sm font-medium mt-2 flex items-center justify-center">
-                                    <Icon name="PenTool" size={14} className="mr-2" />
-                                    Ferran Martínez
-                                </p>
+                            <footer className="mt-12 pt-8 border-t border-dark-border text-center text-slate-500 text-sm pb-8 relative z-10">
+                                <p>© 2026 Informe de Auditoría Digital para VallBlanc.</p>
+                                <p className="mt-2 text-brand font-medium">Ferran Martínez</p>
                             </footer>
                         </div>
-                    </div>
+                    </main>
                 </div>
             );
         };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<Dashboard />);
+        root.render(<App />);
     </script>
 </body>
 </html>
