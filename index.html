@@ -1,15 +1,26 @@
 <!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="VallBlanc Espai Dental - Dentista en Vallcarca, Barcelona. Urgencias 24h, Implantes y Estética. English Speaking Dentist.">
-    <title>VallBlanc Espai Dental | Clínica Dental Barcelona</title>
+    <title>Auditoría SEO 360º - VallBlanc | Ferran Martínez</title>
     
-    <!-- 1. Tailwind CSS (CDN para no instalar nada) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. Configuración de Marca (Color #D07D7D) -->
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -17,18 +28,14 @@
                 extend: {
                     colors: {
                         brand: {
-                            DEFAULT: '#D07D7D',
-                            50: '#fbf5f5',
-                            100: '#f7ecec',
-                            200: '#edd9d9',
-                            300: '#e0baba',
-                            400: '#D07D7D', // Color Base Auditoría
-                            500: '#bf5d5d',
-                            600: '#aa4646',
-                            900: '#4a1a1a',
+                            DEFAULT: '#D07D7D', // VallBlanc Brand Color
+                            dim: 'rgba(208, 125, 125, 0.1)',
+                            hover: '#b56b6b'
                         },
-                        slate: {
-                            950: '#020617', // Fondo Dark Mode Profundo
+                        dark: {
+                            bg: '#0f172a',
+                            card: '#1e293b',
+                            border: '#334155'
                         }
                     },
                     fontFamily: {
@@ -39,405 +46,505 @@
         }
     </script>
 
-    <!-- 3. React & ReactDOM (CDNs) -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- 4. Babel (Para compilar JSX en el navegador) -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <!-- Fuente Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        /* Animaciones personalizadas */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-        .animate-float { animation: float 6s ease-in-out infinite; }
+        body { background-color: #0f172a; color: #e2e8f0; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 antialiased selection:bg-brand selection:text-white">
-
-    <!-- Contenedor Raíz de React -->
+<body>
     <div id="root"></div>
 
-    <!-- LÓGICA DE LA APP -->
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // --- ICONOS SVG (Inline para evitar dependencias externas rotas) ---
-        const Icon = ({ path, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                {path}
-            </svg>
-        );
-
-        const Icons = {
-            Phone: <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />,
-            MapPin: <><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></>,
-            Clock: <><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></>,
-            Menu: <><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></>,
-            X: <><path d="M18 6 6 18" /><path d="m6 6 12 12" /></>,
-            ChevronRight: <path d="m9 18 6-6-6-6" />,
-            Star: <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />,
-            Globe: <><circle cx="12" cy="12" r="10" /><line x1="2" x2="22" y1="12" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></>,
-            Check: <polyline points="20 6 9 17 4 12" />,
-            ArrowRight: <><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></>,
-            Shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />,
-            Zap: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        // --- ICONOS (Mapping simple para React) ---
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const icons = {
+                BarChart2: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>,
+                AlertTriangle: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>,
+                Activity: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>,
+                Globe: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>,
+                MapPin: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>,
+                Layers: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>,
+                List: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>,
+                Zap: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>,
+                Search: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>,
+                Target: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>,
+                PenTool: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>,
+                CheckCircle: <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            };
+            return icons[name] || null;
         };
 
-        // --- COMPONENTE PRINCIPAL ---
-        function App() {
-            const [isMenuOpen, setIsMenuOpen] = useState(false);
-            const [lang, setLang] = useState('es'); // 'es' | 'en'
-            const [scrolled, setScrolled] = useState(false);
+        // --- COMPONENTES UI ---
 
-            // Efecto Scroll para Header Sticky
-            useEffect(() => {
-                const handleScroll = () => setScrolled(window.scrollY > 20);
-                window.addEventListener('scroll', handleScroll);
-                return () => window.removeEventListener('scroll', handleScroll);
-            }, []);
+        const Card = ({ title, value, sub, alert, icon }) => (
+            <div className={`p-6 rounded-xl border ${alert ? 'border-red-500/50 bg-red-900/10' : 'border-dark-border bg-dark-card'} flex flex-col justify-between h-full`}>
+                <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-slate-400 text-sm font-medium uppercase tracking-wider">{title}</h3>
+                    <div className={`p-2 rounded-lg ${alert ? 'text-red-400 bg-red-500/20' : 'text-brand bg-brand-dim'}`}>
+                        <Icon name={icon} size={20} />
+                    </div>
+                </div>
+                <div>
+                    <div className="text-2xl font-bold text-white mb-1">{value}</div>
+                    <div className={`text-xs ${alert ? 'text-red-300' : 'text-slate-400'}`}>{sub}</div>
+                </div>
+            </div>
+        );
 
-            // Textos según idioma (Auditoría: Estrategia Expat)
-            const t = {
-                es: {
-                    slogan: "Sonrisas Reales. Sin Dolor.",
-                    subSlogan: "Expertos en Implantología y Estética en Vallcarca. Tecnología avanzada para tratamientos mínimamente invasivos.",
-                    ctaPrimary: "Agendar Cita",
-                    ctaSecondary: "Llamar Ahora",
-                    formTitle: "Pide tu diagnóstico",
-                    formName: "Nombre completo",
-                    formPhone: "Teléfono",
-                    formBtn: "Solicitar Llamada",
-                    menu: ["Tratamientos", "Pacientes Internacionales", "Precios", "Equipo", "Urgencias"],
-                    trust: ["1ª Visita Gratis", "Financiación 0%", "Hablamos Inglés"],
-                    stats: ["Pacientes Felices", "Años Experiencia", "Garantía Implantes", "Valoración Google"],
-                    expatTitle: "English Speaking Dentist in Barcelona",
-                    expatDesc: "Are you an expat living in Barcelona? We understand that visiting a dentist in a foreign country can be stressful. At VallBlanc, we provide top-tier dental care in your language.",
-                    urgency: "Urgencias: Lun-Dom"
-                },
-                en: {
-                    slogan: "Real Smiles. Pain Free.",
-                    subSlogan: "English speaking dentist in Barcelona. Specialists in Implants, Invisalign and Cosmetic Dentistry. Pain-free treatments in Gràcia.",
-                    ctaPrimary: "Book Appointment",
-                    ctaSecondary: "Call Now",
-                    formTitle: "Get your diagnosis",
-                    formName: "Full Name",
-                    formPhone: "Phone Number",
-                    formBtn: "Request Callback",
-                    menu: ["Treatments", "International Patients", "Pricing", "Team", "Emergency"],
-                    trust: ["Free 1st Visit", "0% Financing", "English Speaking"],
-                    stats: ["Happy Patients", "Years Experience", "Implants Warranty", "Google Rating"],
-                    expatTitle: "English Speaking Dentist in Barcelona",
-                    expatDesc: "We provide full dental services in English, French and Russian. Insurance paperwork assistance included.",
-                    urgency: "Emergency: Mon-Sun"
-                }
+        const TableRow = ({ source, finding, impact, severity, rec }) => {
+            const severityColors = {
+                'Crítico': 'text-red-400 bg-red-900/20 border-red-500/30',
+                'Alto': 'text-orange-400 bg-orange-900/20 border-orange-500/30',
+                'Medio': 'text-yellow-400 bg-yellow-900/20 border-yellow-500/30',
+                'Bajo': 'text-blue-400 bg-blue-900/20 border-blue-500/30'
             };
 
-            const content = t[lang];
-
             return (
-                <div className="min-h-screen flex flex-col">
+                <tr className="border-b border-dark-border hover:bg-slate-800/50 transition-colors">
+                    <td className="p-4 text-xs font-mono text-slate-500">{source}</td>
+                    <td className="p-4 text-sm text-slate-200 font-medium">{finding}</td>
+                    <td className="p-4 text-sm text-slate-400">{impact}</td>
+                    <td className="p-4">
+                        <span className={`px-2 py-1 rounded-full text-xs font-bold border ${severityColors[severity] || 'text-slate-400'}`}>
+                            {severity}
+                        </span>
+                    </td>
+                    <td className="p-4 text-sm text-brand">{rec}</td>
+                </tr>
+            );
+        };
+
+        const SectionHeader = ({ title, subtitle }) => (
+            <div className="mb-8 border-l-4 border-brand pl-4">
+                <h2 className="text-3xl font-bold text-white mb-2">{title}</h2>
+                <p className="text-slate-400">{subtitle}</p>
+            </div>
+        );
+
+        // --- DATOS DEL INFORME (NO RESUMIDOS - INTEGRAL) ---
+        // Extraídos de los PDFs: GA4 Panorámico, Eventos, Pages, GMB Capture
+        
+        const AUDIT_DATA = {
+            executive: {
+                kpis: [
+                    { title: "Tasa de Rebote (Home)", value: "59.7%", sub: "Crítico: Pérdida masiva de tráfico pagado.", alert: true, icon: "Activity" },
+                    { title: "Fuga en Citas", value: "42.2%", sub: "Usuarios abandonan /pide-cita sin convertir.", alert: true, icon: "Target" },
+                    { title: "Engagement Time", value: "27s", sub: "Muy bajo. Contenido no retiene al usuario.", alert: true, icon: "BarChart2" },
+                    { title: "Tráfico Orgánico", value: "12.7%", sub: "Dependencia excesiva de Paid (13%) y Social (32%).", alert: true, icon: "Search" }
+                ],
+                summary: [
+                    "SITUACIÓN CRÍTICA DE RETENCIÓN: Aunque captamos 17k usuarios (gran parte de Social/Paid), el sitio web actúa como un 'colador'. El 60% rebota en la Home y el 42% abandona el formulario de cita.",
+                    "ARQUITECTURA DEFICIENTE: La web actual no segmenta la intención de búsqueda. Mezcla tráfico informativo (artículos de bruxismo) con transaccional sin caminos claros de conversión.",
+                    "OPORTUNIDAD EXPAT PERDIDA: No existe estructura /en/ ni /fr/. El tráfico internacional en Barcelona está siendo regalado a competidores como 'Turó Park' o 'English Dentist BCN'.",
+                    "DEPENDENCIA DE META/ADS: El tráfico 'Organic Video' (32.6%) y 'Paid Search' (13.4%) sostiene el negocio. Si se corta la inversión publicitaria, el flujo de pacientes cae drásticamente."
+                ]
+            },
+            competitors: [
+                {
+                    type: "Líder (Nativo)",
+                    name: "Clínica Dental Barcelona (Ejemplo)",
+                    strengths: ["Autoridad de Dominio alta", "Blog activo con enlazado interno", "Citas online integradas en GMB"],
+                    weaknesses: ["Diseño algo anticuado", "Poca personalización en respuestas de reseñas"],
+                    gap: "Tienen landings específicas por tratamiento ('Implantes Barcelona', 'Ortodoncia Gracia'). Nosotros solo tenemos genéricas."
+                },
+                {
+                    type: "Nicho Expat (Rival Directo)",
+                    name: "Turó Park Dental / English Dentist BCN",
+                    strengths: ["Web 100% en Inglés/Francés", "Equipo médico internacional visible", "Keywords: 'Emergency Dentist BCN'"],
+                    weaknesses: ["Precios percibidos como muy altos", "Menor presencia en barrio Vallcarca"],
+                    gap: "Atacan 'Emergency Dentist' (CPC alto, conversión inmediata). VallBlanc no tiene landing de urgencia en inglés."
+                },
+                {
+                    type: "Vecino (Barrio)",
+                    name: "Clínica Vallcarca (Ejemplo)",
+                    strengths: ["Proximidad física", "Reseñas de vecinos muy locales"],
+                    weaknesses: ["Web no responsive", "Sin estrategia SEO"],
+                    gap: "Podemos dominarlos en SEO Local si optimizamos las fichas de GMB y creamos páginas de geo-servicio."
+                }
+            ],
+            technical: [
+                { source: "PSI / Analytics", finding: "LCP Móvil > 2.5s (Estimado por Rebote)", impact: "Abandono antes de carga completa", severity: "Alto", rec: "Implementar WebP, Lazy Load y eliminar Slider JS pesado." },
+                { source: "GSC", finding: "Canibalización de Keywords", impact: "URLs compiten entre sí (Home vs Servicios)", severity: "Medio", rec: "Definir URL canónica y diferenciar H1s por intención." },
+                { source: "GA4 Events", finding: "Evento 'form_submit' bajo ratio", impact: "Ceguera en atribución de leads", severity: "Crítico", rec: "Configurar Thank You Page única para traqueo fiable." },
+                { source: "Manual", finding: "Jerarquía H1-H6 Rota", impact: "Google no entiende la prioridad del contenido", severity: "Medio", rec: "Reestructurar headers: H1 único > H2 Servicios > H3 Detalles." },
+                { source: "PSI", finding: "CLS (Cumulative Layout Shift) en carga", impact: "Mala UX, elementos se mueven", severity: "Medio", rec: "Fijar dimensiones (width/height) en imágenes y iframes." },
+                { source: "Rastreo", finding: "Falta de Datos Estructurados (Schema)", impact: "No aparecemos con Rich Snippets (Estrellas/FAQ)", severity: "Medio", rec: "Implementar Schema 'Dentist', 'LocalBusiness' y 'MedicalWebPage'." }
+            ],
+            gmb: [
+                { source: "GMB Capture", finding: "Título: 'VallBlanc Espai Dental i Fisioteràpia'", impact: "Diluye la keyword principal 'Dentista'", severity: "Medio", rec: "Testear 'VallBlanc - Dentista en Vallcarca' si no viola normas." },
+                { source: "GMB", finding: "Reseñas: 93 (4.9 estrellas)", impact: "Buena calidad, volumen mejorable vs líderes (200+)", severity: "Bajo", rec: "Campaña automatizada de solicitud de reseñas post-visita." },
+                { source: "Maps", finding: "Falta de Productos/Servicios visuales", impact: "Menor CTR en ficha", severity: "Medio", rec: "Subir catálogo de servicios (Implantes, Ortodoncia) con fotos reales." },
+                { source: "NAP", finding: "Consistencia NAP", impact: "Riesgo de confusión si hay directorios antiguos", severity: "Alto", rec: "Auditar directorios (Yelp, Páginas Amarillas) para igualar a 'Av. de Vallcarca, 68'." }
+            ],
+            organic: [
+                { source: "GA4 Landing", finding: "/tratamientos/fisioterapia-mandibular", impact: "Alto tráfico (1.1k sesiones), bajo cierre", severity: "Medio", rec: "Añadir CTA agresivo '¿Dolor ahora? Reserva hoy'." },
+                { source: "GA4 Landing", finding: "/promociones (2.1k visitas)", impact: "Tráfico de baja calidad / cazadores de ofertas", severity: "Bajo", rec: "Cualificar el lead. Enfocar en financiación, no en descuento." },
+                { source: "GSC", finding: "Oportunidad: 'Bruxismo síntomas'", impact: "Muchas impresiones informacionales", severity: "Medio", rec: "Crear Cluster de Contenidos: Artículo -> Servicio Férula -> Cita." },
+                { source: "GSC", finding: "Oportunidad: 'Urgencia dental vallcarca'", impact: "Intención transaccional pura desaprovechada", severity: "Alto", rec: "Crear Landing Page específica /urgencias-dentales-vallcarca/." }
+            ],
+            expat: [
+                { lang: "Inglés (EN)", keyword: "Emergency Dentist Barcelona", vol: "Alto", comp: "Alta", action: "Crear /en/emergency-dentist/ con botón WhatsApp flotante." },
+                { lang: "Inglés (EN)", keyword: "Dental Implants Cost Barcelona", vol: "Medio", comp: "Media", action: "Crear página comparativa de precios UK/US vs Barcelona." },
+                { lang: "Francés (FR)", keyword: "Dentiste francophone barcelone", vol: "Medio", comp: "Baja", action: "Landing específica para comunidad francesa en Gràcia/Sarrià." },
+                { lang: "Global", keyword: "Invisalign Barcelona English", vol: "Medio", comp: "Media", action: "Testimonios en vídeo de pacientes extranjeros." }
+            ],
+            roadmap: [
+                { task: "Arreglar Formulario Citas (Simplificar a Nombre/Telf)", priority: "Inmediata (24h)", impact: "Crítico", effort: "Bajo", owner: "Dev" },
+                { task: "Crear Landing 'Emergency Dentist' (EN)", priority: "Alta (1 semana)", impact: "Alto", effort: "Medio", owner: "Content" },
+                { task: "Optimización Core Web Vitals (Imágenes/JS)", priority: "Media (2 semanas)", impact: "Medio", effort: "Alto", owner: "Dev" },
+                { task: "Campaña de Reseñas GMB (QR en clínica)", priority: "Alta (Recurrente)", impact: "Alto", effort: "Bajo", owner: "Recepción" },
+                { task: "Estructura Silo (Implantes / Ortodoncia / Estética)", priority: "Media (1 mes)", impact: "Alto", effort: "Alto", owner: "SEO" }
+            ]
+        };
+
+        // --- DASHBOARD PRINCIPAL ---
+
+        const Dashboard = () => {
+            const [activeTab, setActiveTab] = useState('executive');
+
+            const renderContent = () => {
+                switch(activeTab) {
+                    case 'executive':
+                        return (
+                            <div className="space-y-6 animate-in fade-in duration-500">
+                                <SectionHeader title="Resumen Ejecutivo" subtitle="Diagnóstico de situación crítica y estado actual del negocio digital." />
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                                    {AUDIT_DATA.executive.kpis.map((kpi, i) => (
+                                        <Card key={i} {...kpi} />
+                                    ))}
+                                </div>
+
+                                <div className="bg-dark-card border border-dark-border rounded-xl p-8">
+                                    <h3 className="text-xl font-bold text-white mb-4 flex items-center">
+                                        <Icon name="AlertTriangle" className="text-brand mr-2" /> Hallazgos Principales (Sin Censura)
+                                    </h3>
+                                    <ul className="space-y-4">
+                                        {AUDIT_DATA.executive.summary.map((point, i) => (
+                                            <li key={i} className="flex items-start text-slate-300">
+                                                <span className="text-brand font-bold mr-3 mt-1">0{i+1}.</span>
+                                                <span className="leading-relaxed">{point}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        );
                     
-                    {/* --- TOP BAR (NAP Consistency) --- */}
-                    <div className="bg-slate-900 border-b border-slate-800 py-2 hidden md:block text-xs">
-                        <div className="container mx-auto px-4 flex justify-between items-center text-slate-400">
-                            <div className="flex items-center space-x-6">
-                                <span className="flex items-center hover:text-brand transition-colors cursor-pointer">
-                                    <Icon path={Icons.MapPin} className="w-3 h-3 mr-1" /> Av. de Vallcarca, 68, Barcelona
-                                </span>
-                                <span className="flex items-center hover:text-brand transition-colors cursor-pointer">
-                                    <Icon path={Icons.Phone} className="w-3 h-3 mr-1" /> 932 11 11 11
-                                </span>
-                            </div>
-                            <div className="flex items-center space-x-4">
-                                <span className="flex items-center text-brand font-medium">
-                                    <Icon path={Icons.Clock} className="w-3 h-3 mr-1" /> {content.urgency}
-                                </span>
-                                <div className="flex items-center space-x-2 border-l border-slate-800 pl-4">
-                                    <button onClick={() => setLang('es')} className={`px-2 transition-colors ${lang === 'es' ? 'text-white font-bold' : 'text-slate-500'}`}>ES</button>
-                                    <button onClick={() => setLang('en')} className={`px-2 transition-colors ${lang === 'en' ? 'text-white font-bold' : 'text-slate-500'}`}>EN</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    case 'competitors':
+                        return (
+                            <div className="space-y-6 animate-in fade-in duration-500">
+                                <SectionHeader title="Benchmarking Competencia" subtitle="Análisis de brechas contra Líderes, Vecinos y Nicho Expat." />
+                                <div className="grid md:grid-cols-3 gap-6">
+                                    {AUDIT_DATA.competitors.map((comp, i) => (
+                                        <div key={i} className="bg-dark-card border border-dark-border rounded-xl p-6 hover:border-brand/50 transition-colors">
+                                            <div className="text-xs text-brand font-bold uppercase tracking-wider mb-2">{comp.type}</div>
+                                            <h3 className="text-xl font-bold text-white mb-4">{comp.name}</h3>
+                                            
+                                            <div className="mb-4">
+                                                <strong className="text-green-400 text-xs uppercase">Fortalezas:</strong>
+                                                <ul className="list-disc list-inside text-sm text-slate-400 mt-1">
+                                                    {comp.strengths.map((s, j) => <li key={j}>{s}</li>)}
+                                                </ul>
+                                            </div>
+                                            
+                                            <div className="mb-4">
+                                                <strong className="text-red-400 text-xs uppercase">Debilidades:</strong>
+                                                <ul className="list-disc list-inside text-sm text-slate-400 mt-1">
+                                                    {comp.weaknesses.map((w, j) => <li key={j}>{w}</li>)}
+                                                </ul>
+                                            </div>
 
-                    {/* --- HEADER --- */}
-                    <header className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-slate-950/95 backdrop-blur-md border-b border-slate-800 py-3 shadow-lg' : 'bg-transparent py-6'}`}>
-                        <div className="container mx-auto px-4 flex justify-between items-center">
-                            {/* Logo */}
-                            <div className="flex items-center space-x-2 z-50">
-                                <div className="w-10 h-10 bg-brand rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(208,125,125,0.4)]">
-                                    <span className="text-white font-bold text-xl">V</span>
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="text-xl font-bold tracking-tight text-white leading-none">VallBlanc</span>
-                                    <span className="text-[10px] uppercase tracking-widest text-slate-400">Espai Dental</span>
-                                </div>
-                            </div>
-
-                            {/* Nav Desktop */}
-                            <nav className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
-                                <a href="#tratamientos" className="hover:text-brand transition-colors">{content.menu[0]}</a>
-                                <a href="#expats" className="hover:text-brand transition-colors flex items-center">
-                                    <Icon path={Icons.Globe} className="w-4 h-4 mr-1 text-brand" /> {content.menu[1]}
-                                </a>
-                                <a href="#precios" className="hover:text-brand transition-colors">{content.menu[2]}</a>
-                                <a href="#urgencias" className="text-red-400 hover:text-red-300 animate-pulse font-semibold">{content.menu[4]}</a>
-                            </nav>
-
-                            {/* CTA Desktop */}
-                            <div className="hidden md:block">
-                                <button className="bg-brand hover:bg-brand-500 text-white px-6 py-2.5 rounded-full font-bold transition-all shadow-lg shadow-brand/20 hover:shadow-brand/40 hover:-translate-y-0.5">
-                                    {content.ctaPrimary}
-                                </button>
-                            </div>
-
-                            {/* Mobile Toggle */}
-                            <button className="md:hidden text-white z-50" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                                <Icon path={isMenuOpen ? Icons.X : Icons.Menu} className="w-7 h-7" />
-                            </button>
-                        </div>
-                        
-                        {/* Mobile Menu */}
-                        {isMenuOpen && (
-                            <div className="fixed inset-0 bg-slate-950 z-40 flex flex-col items-center justify-center space-y-8 animate-in slide-in-from-right duration-300">
-                                {content.menu.map((item, idx) => (
-                                    <a key={idx} href="#" onClick={() => setIsMenuOpen(false)} className="text-2xl font-light hover:text-brand text-white">{item}</a>
-                                ))}
-                                <div className="flex space-x-4 pt-8">
-                                    <button onClick={() => setLang('es')} className="text-xl font-bold text-white border border-slate-700 px-4 py-2 rounded">ES</button>
-                                    <button onClick={() => setLang('en')} className="text-xl font-bold text-white border border-slate-700 px-4 py-2 rounded">EN</button>
-                                </div>
-                            </div>
-                        )}
-                    </header>
-
-                    {/* --- HERO SECTION (High Bounce Rate Fix) --- */}
-                    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden flex-grow">
-                        {/* Background Effects */}
-                        <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-slate-950 via-slate-900 to-[#2a1a1a] z-0"></div>
-                        <div className="absolute top-0 right-[-10%] w-[50%] h-[50%] bg-brand rounded-full blur-[120px] opacity-10 animate-pulse"></div>
-
-                        <div className="container mx-auto px-4 relative z-10 grid md:grid-cols-2 gap-12 items-center">
-                            
-                            {/* Text Content */}
-                            <div className="space-y-6">
-                                <div className="inline-flex items-center px-3 py-1 rounded-full border border-brand/30 bg-brand/10 text-brand text-xs font-bold uppercase tracking-wider mb-2">
-                                    <Icon path={Icons.Star} className="w-3 h-3 mr-1 fill-current" /> Clínica Top Rated Gràcia
-                                </div>
-                                
-                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-white">
-                                    {lang === 'es' ? <>Sonrisas Reales.<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-[#f0a6a6]">Sin Dolor.</span></> : <>Real Smiles.<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-[#f0a6a6]">Pain Free.</span></>}
-                                </h1>
-                                
-                                <p className="text-lg text-slate-400 max-w-lg leading-relaxed">
-                                    {content.subSlogan}
-                                </p>
-
-                                <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                                    <button className="bg-brand hover:bg-brand-500 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg shadow-brand/20 transition-all hover:-translate-y-1 flex justify-center items-center">
-                                        {content.ctaPrimary} <Icon path={Icons.ChevronRight} className="w-5 h-5 ml-2" />
-                                    </button>
-                                    <button className="bg-slate-800 hover:bg-slate-700 text-white px-8 py-4 rounded-xl font-medium border border-slate-700 transition-all flex justify-center items-center group">
-                                        <Icon path={Icons.Phone} className="w-5 h-5 mr-2 text-brand group-hover:animate-bounce" />
-                                        {content.ctaSecondary}
-                                    </button>
-                                </div>
-
-                                <div className="flex flex-wrap items-center gap-6 pt-4 text-sm text-slate-500 font-medium">
-                                    {content.trust.map((item, i) => (
-                                        <div key={i} className="flex items-center">
-                                            <Icon path={Icons.Check} className="w-4 h-4 mr-2 text-brand" /> {item}
+                                            <div className="p-3 bg-slate-800/50 rounded-lg border-l-2 border-brand">
+                                                <p className="text-xs text-slate-300"><strong className="text-white">GAP Detectado:</strong> {comp.gap}</p>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
                             </div>
+                        );
 
-                            {/* Form Card (Audit: Fix 42% Dropoff with simplified form) */}
-                            <div className="relative">
-                                <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 p-8 rounded-3xl shadow-2xl relative z-20 max-w-md mx-auto md:ml-auto">
-                                    <div className="flex items-center justify-between mb-6">
-                                        <h3 className="text-xl font-bold text-white">{content.formTitle}</h3>
-                                        <span className="bg-green-500/10 text-green-400 text-xs px-2 py-1 rounded font-bold flex items-center">
-                                            <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
-                                            Online
-                                        </span>
-                                    </div>
-                                    
-                                    <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                                        <div>
-                                            <label className="block text-xs font-medium text-slate-400 mb-1 ml-1">{content.formName}</label>
-                                            <input type="text" className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all" placeholder="Ej: Maria García" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-medium text-slate-400 mb-1 ml-1">{content.formPhone}</label>
-                                            <input type="tel" className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all" placeholder="+34 600 000 000" />
-                                        </div>
-                                        <div className="pt-2">
-                                            <button type="button" className="w-full bg-white text-slate-900 hover:bg-slate-200 font-bold py-4 rounded-xl transition-colors flex justify-center items-center group">
-                                                {content.formBtn}
-                                                <Icon path={Icons.ArrowRight} className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-                                            </button>
-                                            <p className="text-[10px] text-slate-500 text-center mt-3">
-                                                *Datos protegidos por RGPD médico.
-                                            </p>
-                                        </div>
-                                    </form>
+                    case 'technical':
+                        return (
+                            <div className="space-y-6 animate-in fade-in duration-500">
+                                <SectionHeader title="Auditoría Técnica" subtitle="Análisis forense de PageSpeed, Rastreo e Indexación." />
+                                <div className="overflow-x-auto rounded-xl border border-dark-border">
+                                    <table className="w-full text-left bg-dark-card">
+                                        <thead className="bg-slate-900 text-slate-400 uppercase text-xs font-bold">
+                                            <tr>
+                                                <th className="p-4">Fuente</th>
+                                                <th className="p-4">Hallazgo Técnico</th>
+                                                <th className="p-4">Impacto Negocio</th>
+                                                <th className="p-4">Severidad</th>
+                                                <th className="p-4">Recomendación Exacta</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-dark-border">
+                                            {AUDIT_DATA.technical.map((item, i) => (
+                                                <TableRow key={i} {...item} />
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
-                                {/* Decor */}
-                                <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-brand rounded-full blur-[40px] opacity-20 z-10"></div>
+                            </div>
+                        );
+
+                    case 'organic':
+                        return (
+                            <div className="space-y-6 animate-in fade-in duration-500">
+                                <SectionHeader title="Rendimiento Orgánico" subtitle="Análisis de Search Console, Analytics y Oportunidades SEO." />
+                                <div className="grid md:grid-cols-2 gap-6 mb-8">
+                                    <div className="bg-dark-card border border-dark-border p-6 rounded-xl">
+                                        <h3 className="text-lg font-bold text-white mb-4">Adquisición de Tráfico (GA4)</h3>
+                                        <div className="space-y-4">
+                                            <div>
+                                                <div className="flex justify-between text-sm text-slate-300 mb-1">
+                                                    <span>Organic Video (Meta/TikTok)</span>
+                                                    <span className="font-bold">32.6%</span>
+                                                </div>
+                                                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                                                    <div className="h-full bg-purple-500" style={{width: '32.6%'}}></div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className="flex justify-between text-sm text-slate-300 mb-1">
+                                                    <span>Cross-network (PMax/Ads)</span>
+                                                    <span className="font-bold">14.5%</span>
+                                                </div>
+                                                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                                                    <div className="h-full bg-blue-500" style={{width: '14.5%'}}></div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className="flex justify-between text-sm text-slate-300 mb-1">
+                                                    <span>Paid Search (CPC)</span>
+                                                    <span className="font-bold">13.4%</span>
+                                                </div>
+                                                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                                                    <div className="h-full bg-orange-500" style={{width: '13.4%'}}></div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className="flex justify-between text-sm text-slate-300 mb-1">
+                                                    <span>Organic Search (SEO)</span>
+                                                    <span className="font-bold text-red-400">12.7% (Bajo)</span>
+                                                </div>
+                                                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                                                    <div className="h-full bg-green-500" style={{width: '12.7%'}}></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="bg-dark-card border border-dark-border p-6 rounded-xl">
+                                        <h3 className="text-lg font-bold text-white mb-4">Páginas con Mayor Fuga</h3>
+                                        <ul className="space-y-3">
+                                            <li className="flex justify-between items-center p-3 bg-slate-900 rounded border border-red-900/30">
+                                                <span className="text-sm text-slate-300">/ (Home)</span>
+                                                <span className="text-red-400 font-bold">59.7% Rebote</span>
+                                            </li>
+                                            <li className="flex justify-between items-center p-3 bg-slate-900 rounded border border-red-900/30">
+                                                <span className="text-sm text-slate-300">/pide-cita</span>
+                                                <span className="text-red-400 font-bold">42.2% Abandono</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div className="overflow-x-auto rounded-xl border border-dark-border">
+                                    <table className="w-full text-left bg-dark-card">
+                                        <thead className="bg-slate-900 text-slate-400 uppercase text-xs font-bold">
+                                            <tr>
+                                                <th className="p-4">Fuente</th>
+                                                <th className="p-4">Hallazgo / Keyword</th>
+                                                <th className="p-4">Impacto</th>
+                                                <th className="p-4">Severidad</th>
+                                                <th className="p-4">Acción Requerida</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-dark-border">
+                                            {AUDIT_DATA.organic.map((item, i) => (
+                                                <TableRow key={i} {...item} />
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        );
+
+                    case 'expat':
+                        return (
+                            <div className="space-y-6 animate-in fade-in duration-500">
+                                <SectionHeader title="Estrategia Expat (Barcelona)" subtitle="Plan de ataque para el mercado internacional residente (Alto poder adquisitivo)." />
+                                
+                                <div className="grid md:grid-cols-4 gap-4 mb-6">
+                                    {AUDIT_DATA.expat.map((item, i) => (
+                                        <div key={i} className="bg-dark-card p-6 rounded-xl border border-dark-border hover:bg-slate-800 transition-colors group">
+                                            <div className="flex justify-between items-start mb-4">
+                                                <span className="text-xs font-bold bg-slate-700 text-white px-2 py-1 rounded">{item.lang}</span>
+                                                <Icon name="Globe" className="text-slate-500 group-hover:text-brand" />
+                                            </div>
+                                            <h4 className="text-white font-bold mb-2 text-lg leading-tight">"{item.keyword}"</h4>
+                                            <div className="flex justify-between text-xs text-slate-400 mb-4">
+                                                <span>Vol: {item.vol}</span>
+                                                <span>Comp: {item.comp}</span>
+                                            </div>
+                                            <p className="text-sm text-brand border-t border-slate-700 pt-3">{item.action}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+
+                    case 'gmb':
+                        return (
+                            <div className="space-y-6 animate-in fade-in duration-500">
+                                <SectionHeader title="Auditoría SEO Local (GMB)" subtitle="Análisis de la ficha de Google My Business y Reputación." />
+                                <div className="overflow-x-auto rounded-xl border border-dark-border">
+                                    <table className="w-full text-left bg-dark-card">
+                                        <thead className="bg-slate-900 text-slate-400 uppercase text-xs font-bold">
+                                            <tr>
+                                                <th className="p-4">Fuente</th>
+                                                <th className="p-4">Hallazgo</th>
+                                                <th className="p-4">Impacto</th>
+                                                <th className="p-4">Severidad</th>
+                                                <th className="p-4">Recomendación</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-dark-border">
+                                            {AUDIT_DATA.gmb.map((item, i) => (
+                                                <TableRow key={i} {...item} />
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        );
+
+                    case 'roadmap':
+                        return (
+                            <div className="space-y-6 animate-in fade-in duration-500">
+                                <SectionHeader title="Hoja de Ruta (Roadmap)" subtitle="Plan de Acción Priorizado para los próximos 90 días." />
+                                <div className="overflow-x-auto rounded-xl border border-dark-border">
+                                    <table className="w-full text-left bg-dark-card">
+                                        <thead className="bg-slate-900 text-slate-400 uppercase text-xs font-bold">
+                                            <tr>
+                                                <th className="p-4">Tarea / Acción</th>
+                                                <th className="p-4">Prioridad</th>
+                                                <th className="p-4">Impacto</th>
+                                                <th className="p-4">Esfuerzo</th>
+                                                <th className="p-4">Responsable</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-dark-border">
+                                            {AUDIT_DATA.roadmap.map((task, i) => (
+                                                <tr key={i} className="border-b border-dark-border hover:bg-slate-800/50">
+                                                    <td className="p-4 text-white font-medium">{task.task}</td>
+                                                    <td className="p-4">
+                                                        <span className={`px-2 py-1 rounded text-xs font-bold ${task.priority.includes('Inmediata') || task.priority.includes('Alta') ? 'bg-brand text-white' : 'bg-slate-700 text-slate-300'}`}>
+                                                            {task.priority}
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-4 text-sm text-slate-400">{task.impact}</td>
+                                                    <td className="p-4 text-sm text-slate-400">{task.effort}</td>
+                                                    <td className="p-4 text-sm text-slate-500 font-mono">{task.owner}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        );
+
+                    default:
+                        return null;
+                }
+            };
+
+            return (
+                <div className="flex h-screen bg-dark-bg overflow-hidden font-sans">
+                    {/* SIDEBAR */}
+                    <div className="w-64 bg-slate-900 border-r border-dark-border flex flex-col hidden md:flex">
+                        <div className="p-6 border-b border-dark-border">
+                            <div className="flex items-center space-x-3">
+                                <div className="w-10 h-10 bg-brand rounded-lg flex items-center justify-center shadow-lg shadow-brand/20">
+                                    <span className="text-white font-bold text-xl">V</span>
+                                </div>
+                                <div>
+                                    <h1 className="text-white font-bold text-lg leading-none">VallBlanc</h1>
+                                    <span className="text-xs text-brand uppercase tracking-wider">SEO Audit Pro</span>
+                                </div>
                             </div>
                         </div>
-                    </section>
-
-                    {/* --- STATS STRIP --- */}
-                    <div className="bg-slate-900 border-y border-slate-800 py-10">
-                        <div className="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
+                        
+                        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                             {[
-                                { val: "+5,000", label: content.stats[0] },
-                                { val: "15+", label: content.stats[1] },
-                                { val: "100%", label: content.stats[2] },
-                                { val: "4.9/5", label: content.stats[3] }
-                            ].map((stat, i) => (
-                                <div key={i} className="text-center">
-                                    <p className="text-3xl md:text-4xl font-bold text-white mb-1">{stat.val}</p>
-                                    <p className="text-xs md:text-sm text-slate-400 uppercase tracking-wider">{stat.label}</p>
-                                </div>
+                                { id: 'executive', label: 'Resumen Ejecutivo', icon: 'Activity' },
+                                { id: 'competitors', label: 'Competencia', icon: 'Target' },
+                                { id: 'technical', label: 'Auditoría Técnica', icon: 'Zap' },
+                                { id: 'gmb', label: 'SEO Local (GMB)', icon: 'MapPin' },
+                                { id: 'organic', label: 'Orgánico (GA4/GSC)', icon: 'BarChart2' },
+                                { id: 'expat', label: 'Estrategia Expat', icon: 'Globe' },
+                                { id: 'roadmap', label: 'Hoja de Ruta', icon: 'List' },
+                            ].map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => setActiveTab(item.id)}
+                                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${activeTab === item.id ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
+                                >
+                                    <Icon name={item.icon} size={18} />
+                                    <span>{item.label}</span>
+                                </button>
                             ))}
+                        </nav>
+
+                        <div className="p-4 border-t border-dark-border">
+                            <div className="bg-slate-800/50 p-3 rounded-lg flex items-center space-x-3">
+                                <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs text-white">FM</div>
+                                <div>
+                                    <p className="text-xs text-slate-300 font-medium">Auditor:</p>
+                                    <p className="text-xs text-brand font-bold">Ferran Martínez</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    {/* --- SERVICES GRID (Silos) --- */}
-                    <section id="tratamientos" className="py-20 md:py-32 bg-slate-950 relative">
-                        <div className="container mx-auto px-4">
-                            <div className="text-center max-w-2xl mx-auto mb-16">
-                                <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Tratamientos Integrales</h2>
-                                <p className="text-slate-400">
-                                    Cubrimos todas las especialidades en un solo centro en Vallcarca. Sin derivaciones.
+                    {/* MAIN CONTENT */}
+                    <div className="flex-1 flex flex-col overflow-hidden relative">
+                        {/* Mobile Header */}
+                        <div className="md:hidden bg-slate-900 p-4 border-b border-dark-border flex items-center justify-between">
+                            <span className="font-bold text-white">VallBlanc Audit</span>
+                            <div className="text-xs text-brand">Ferran Martínez</div>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto p-4 md:p-8 relative">
+                            {/* Background decoration */}
+                            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
+                            
+                            <div className="relative z-10 max-w-7xl mx-auto">
+                                {renderContent()}
+                            </div>
+
+                            {/* FOOTER */}
+                            <footer className="mt-12 pt-8 border-t border-dark-border text-center pb-8">
+                                <p className="text-slate-500 text-sm">
+                                    Auditoría realizada para <span className="text-white font-bold">VallBlanc Espai Dental</span> • {new Date().getFullYear()}
                                 </p>
-                            </div>
-
-                            <div className="grid md:grid-cols-3 gap-6">
-                                {[
-                                    { t: "Implantes Dentales", d: "Recupera tu sonrisa en 24h. Carga inmediata.", p: "Desde 50€/mes", i: Icons.Shield },
-                                    { t: "Ortodoncia Invisible", d: "Alineadores transparentes. Invisalign Platinum Provider.", p: "Escáner 3D Gratis", i: Icons.Star },
-                                    { t: "Estética Dental", d: "Carillas de porcelana y blanqueamiento Philips Zoom.", p: "Resultados naturales", i: Icons.Zap },
-                                    { t: "Urgencias / Emergency", d: "Dolor agudo, fracturas o infecciones. Atención prioritaria.", p: "Cita Inmediata", i: Icons.Phone, highlight: true }
-                                ].map((s, i) => (
-                                    <div key={i} className={`p-8 rounded-3xl border transition-all duration-300 group hover:-translate-y-2 ${s.highlight ? 'bg-brand/10 border-brand/50' : 'bg-slate-900 border-slate-800 hover:border-brand/50'}`}>
-                                        <div className="mb-6 p-4 bg-slate-950 rounded-2xl w-fit border border-slate-800 text-brand">
-                                            <Icon path={s.i} className="w-8 h-8" />
-                                        </div>
-                                        <h3 className="text-xl font-bold text-white mb-3">{s.t}</h3>
-                                        <p className="text-slate-400 text-sm mb-6 leading-relaxed">{s.d}</p>
-                                        <div className="flex items-center justify-between mt-auto">
-                                            <span className="text-xs font-bold text-brand bg-brand/10 px-3 py-1 rounded-full">{s.p}</span>
-                                            <Icon path={Icons.ArrowRight} className="w-5 h-5 text-slate-500 group-hover:text-white transition-colors" />
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* --- EXPAT SECTION (Audit Recommendation) --- */}
-                    <section id="expats" className="py-20 bg-slate-900 border-y border-slate-800">
-                        <div className="container mx-auto px-4 grid md:grid-cols-2 gap-16 items-center">
-                            <div>
-                                <div className="inline-flex items-center px-3 py-1 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 text-xs font-bold uppercase tracking-wider mb-6">
-                                    <Icon path={Icons.Globe} className="w-3 h-3 mr-2" /> International Patients
-                                </div>
-                                <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                                    {content.expatTitle}
-                                </h2>
-                                <p className="text-slate-400 text-lg mb-8 leading-relaxed">
-                                    {content.expatDesc}
+                                <p className="text-brand text-sm font-medium mt-2 flex items-center justify-center">
+                                    <Icon name="PenTool" size={14} className="mr-2" />
+                                    Ferran Martínez
                                 </p>
-                                <button className="bg-white text-slate-900 hover:bg-slate-200 px-8 py-3 rounded-full font-bold transition-colors inline-flex items-center">
-                                    Book Expat Consultation <Icon path={Icons.ArrowRight} className="w-4 h-4 ml-2" />
-                                </button>
-                            </div>
-                            <div className="relative">
-                                {/* Doctor Card */}
-                                <div className="bg-slate-800 p-2 rounded-3xl rotate-2 hover:rotate-0 transition-transform duration-500 border border-slate-700 max-w-sm mx-auto">
-                                    <div className="aspect-[4/3] bg-slate-700 rounded-2xl flex items-center justify-center overflow-hidden relative group">
-                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent opacity-60"></div>
-                                        <div className="text-center z-10 p-4">
-                                            <div className="w-16 h-16 bg-slate-600 rounded-full mx-auto mb-2 flex items-center justify-center text-2xl">👩‍⚕️</div>
-                                            <p className="text-white font-bold">Dra. Ana Valverde</p>
-                                            <p className="text-slate-400 text-xs">Medical Director</p>
-                                        </div>
-                                    </div>
-                                    <div className="p-6">
-                                        <div className="flex justify-center space-x-4 text-2xl grayscale hover:grayscale-0 transition-all">
-                                            <span>🇪🇸</span><span>🇬🇧</span><span>🇫🇷</span><span>🇷🇺</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            </footer>
                         </div>
-                    </section>
-
-                    {/* --- FOOTER (NAP + Legal) --- */}
-                    <footer className="bg-slate-950 pt-20 border-t border-slate-900 mt-auto">
-                        <div className="container mx-auto px-4">
-                            <div className="grid md:grid-cols-4 gap-12 mb-16">
-                                <div className="col-span-1 md:col-span-1">
-                                    <div className="flex items-center space-x-2 mb-6">
-                                        <div className="w-8 h-8 bg-brand rounded-md flex items-center justify-center">
-                                            <span className="text-white font-bold">V</span>
-                                        </div>
-                                        <span className="text-xl font-bold text-white">VallBlanc</span>
-                                    </div>
-                                    <div className="space-y-4 text-slate-400 text-sm">
-                                        <p className="flex items-start">
-                                            <Icon path={Icons.MapPin} className="w-4 h-4 mr-2 mt-0.5 text-brand shrink-0" />
-                                            VallBlanc Espai Dental<br/>Av. de Vallcarca, 68<br/>08023 Barcelona
-                                        </p>
-                                        <p className="flex items-center">
-                                            <Icon path={Icons.Phone} className="w-4 h-4 mr-2 text-brand" /> 932 11 11 11
-                                        </p>
-                                    </div>
-                                </div>
-                                <div>
-                                    <h4 className="text-white font-bold mb-6">Tratamientos</h4>
-                                    <ul className="space-y-3 text-slate-400 text-sm">
-                                        <li><a href="#" className="hover:text-brand">Implantes</a></li>
-                                        <li><a href="#" className="hover:text-brand">Ortodoncia</a></li>
-                                        <li><a href="#" className="hover:text-brand">Estética</a></li>
-                                    </ul>
-                                </div>
-                                <div>
-                                    <h4 className="text-white font-bold mb-6">Horario</h4>
-                                    <ul className="space-y-3 text-slate-400 text-sm">
-                                        <li className="flex justify-between border-b border-slate-900 pb-2"><span>L-V</span><span>9:00 - 20:00</span></li>
-                                        <li className="flex justify-between text-brand"><span>Urgencias</span><span>Cita Previa</span></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div className="border-t border-slate-900 py-8 text-center text-slate-600 text-xs">
-                                <p>© 2026 VallBlanc Espai Dental. Todos los derechos reservados.</p>
-                            </div>
-                        </div>
-                    </footer>
-                    
-                    {/* WhatsApp Float */}
-                    <a href="https://wa.me/34600000000" className="fixed bottom-6 right-6 z-50 bg-green-500 text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition-all hover:scale-110 flex items-center justify-center animate-bounce">
-                        <Icon path={Icons.Phone} className="w-6 h-6" />
-                    </a>
+                    </div>
                 </div>
             );
-        }
+        };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        root.render(<Dashboard />);
     </script>
 </body>
 </html>
