@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="ca">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auditoria Estratègica VallBlanc 2026 - Informe Integral</title>
+    <title>Auditoria Estratègica VallBlanc 2026 | Ferran Martínez</title>
+    
+    <!-- TAILWIND CSS VIA CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+
+    <!-- CONFIGURACIÓ DE TAILWIND -->
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -13,521 +19,712 @@
                 extend: {
                     colors: {
                         brand: { DEFAULT: '#D07D7D', 50: '#fbf5f5', 900: '#4a1a1a' },
-                        dark: { bg: '#0F172A', panel: '#1E293B', border: '#334155' }
+                        dark: { bg: '#0B0F19', panel: '#151B2B', border: '#2A3447' }
                     },
-                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] }
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
                 }
             }
         }
     </script>
+
+    <!-- ESTILS CUSTOM -->
     <style>
-        body { background-color: #0F172A; color: #cbd5e1; }
-        .nav-item { cursor: pointer; border-left: 3px solid transparent; transition: all 0.2s; }
-        .nav-item:hover { background-color: #1e293b; color: white; }
-        .nav-item.active { border-left-color: #D07D7D; background-color: #1e293b; color: white; font-weight: 600; }
-        .prose-custom h3 { color: white; font-size: 1.25rem; font-weight: 700; margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid #334155; padding-bottom: 0.5rem; }
+        body { background-color: #0B0F19; color: #cbd5e1; }
+        
+        /* Sistema de pestanyes infal·lible */
+        .content-section { display: none; animation: fadeIn 0.4s ease-out; }
+        .content-section.active { display: block; }
+        
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        .nav-btn { width: 100%; text-align: left; padding: 1rem; border-radius: 0.5rem; color: #94a3b8; transition: all 0.2s; font-weight: 500; font-size: 0.875rem; }
+        .nav-btn:hover { background-color: #1e293b; color: white; }
+        .nav-btn.active { background-color: #D07D7D; color: white; font-weight: 600; box-shadow: 0 4px 14px 0 rgba(208,125,125,0.39); }
+        
+        /* Tipografia de l'informe */
+        .prose-custom h3 { color: white; font-size: 1.25rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #2A3447; }
         .prose-custom h4 { color: #D07D7D; font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
-        .prose-custom p { margin-bottom: 1rem; line-height: 1.7; text-align: justify; }
-        .prose-custom ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; color: #cbd5e1; }
-        .prose-custom li { margin-bottom: 0.5rem; }
-        .prose-custom strong { color: #f1f5f9; font-weight: 600; }
-        .data-box { background: rgba(15, 23, 42, 0.6); border: 1px solid #334155; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
-        .stat-card { background: #1E293B; border: 1px solid #334155; padding: 1.5rem; border-radius: 0.5rem; }
+        .prose-custom p { margin-bottom: 1.25rem; line-height: 1.7; text-align: justify; }
+        .prose-custom ul { list-style-type: none; padding-left: 0; margin-bottom: 1.5rem; }
+        .prose-custom li { position: relative; padding-left: 1.5rem; margin-bottom: 0.75rem; line-height: 1.6; }
+        .prose-custom li::before { content: "•"; color: #D07D7D; font-weight: bold; position: absolute; left: 0; }
+        .prose-custom strong { color: #f8fafc; }
+
+        /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0F172A; }
-        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: #0B0F19; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D07D7D; }
+
+        /* Targetes de dades */
+        .data-card { background-color: #1E293B; border: 1px solid #334155; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden font-sans">
 
-    <!-- SIDEBAR -->
-    <aside class="hidden md:flex flex-col w-80 bg-dark-panel border-r border-dark-border flex-shrink-0">
-        <div class="p-6 border-b border-dark-border">
-            <h1 class="text-xl font-bold text-white tracking-tight">VallBlanc<span class="text-brand">.Audit</span></h1>
-            <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest">Informe Integral 2026</p>
+    <!-- SIDEBAR DESKTOP -->
+    <aside class="hidden md:flex flex-col w-80 bg-dark-panel border-r border-dark-border flex-shrink-0 z-20">
+        <div class="p-8 border-b border-dark-border">
+            <h1 class="text-2xl font-serif font-bold text-white tracking-tight">VallBlanc<span class="text-brand">.Audit</span></h1>
+            <p class="text-[10px] text-slate-500 mt-2 uppercase tracking-widest font-bold">Informe Integral 2026</p>
         </div>
-        <nav class="flex-1 overflow-y-auto p-4 space-y-1" id="sidebar-menu">
-            <!-- JS Injected -->
+        
+        <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+            <button onclick="switchTab('sec-1')" id="btn-sec-1" class="nav-btn active">1. Resum Executiu</button>
+            <button onclick="switchTab('sec-2')" id="btn-sec-2" class="nav-btn">2. Auditoria Competència</button>
+            <button onclick="switchTab('sec-3')" id="btn-sec-3" class="nav-btn">3. Tècnica & PageSpeed</button>
+            <button onclick="switchTab('sec-4')" id="btn-sec-4" class="nav-btn">4. SEO Local (GMB)</button>
+            <button onclick="switchTab('sec-5')" id="btn-sec-5" class="nav-btn">5. Rendiment Orgànic</button>
+            <button onclick="switchTab('sec-6')" id="btn-sec-6" class="nav-btn">6. Estratègia Expat</button>
+            <button onclick="switchTab('sec-7')" id="btn-sec-7" class="nav-btn">7. Full de Ruta (Roadmap)</button>
+            <button onclick="switchTab('sec-8')" id="btn-sec-8" class="nav-btn">Extra: Arquitectura</button>
         </nav>
-        <div class="p-4 border-t border-dark-border flex items-center gap-3 bg-dark-bg/30">
-            <div class="w-8 h-8 bg-brand rounded-full flex items-center justify-center text-white font-bold text-xs">FM</div>
+
+        <div class="p-6 border-t border-dark-border flex items-center gap-3 bg-dark-bg/30">
+            <div class="w-10 h-10 bg-brand rounded-full flex items-center justify-center text-white font-bold text-xs shadow-lg">FM</div>
             <div>
-                <p class="text-[10px] text-slate-500 uppercase">Auditor SEO</p>
-                <p class="text-xs font-bold text-white">Ferran Martínez</p>
+                <p class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Auditor SEO</p>
+                <p class="text-sm font-bold text-white">Ferran Martínez</p>
             </div>
         </div>
     </aside>
 
     <!-- MAIN CONTENT -->
-    <main class="flex-1 flex flex-col min-w-0 bg-dark-bg relative">
-        <!-- Mobile Header -->
-        <header class="md:hidden bg-dark-panel p-4 border-b border-dark-border flex justify-between items-center z-50">
-            <span class="font-bold text-white">VallBlanc Audit</span>
-            <button onclick="toggleMobileMenu()" class="text-slate-300">
+    <main class="flex-1 flex flex-col min-w-0 bg-dark-bg relative h-full">
+        
+        <!-- MOBILE HEADER -->
+        <header class="md:hidden bg-dark-panel p-4 border-b border-dark-border flex justify-between items-center z-50 relative">
+            <span class="font-bold text-white font-serif">VallBlanc Audit</span>
+            <button onclick="toggleMobileMenu()" class="text-slate-300 p-2">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
         </header>
 
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden absolute inset-0 bg-dark-bg z-40 p-4 pt-20">
-            <nav id="mobile-nav" class="space-y-2"></nav>
+        <!-- MOBILE MENU OVERLAY -->
+        <div id="mobile-menu" class="hidden absolute top-[68px] left-0 right-0 bottom-0 bg-dark-bg z-40 p-4 overflow-y-auto">
+            <nav class="space-y-2">
+                <button onclick="switchTab('sec-1')" id="mbtn-sec-1" class="nav-btn active">1. Resum Executiu</button>
+                <button onclick="switchTab('sec-2')" id="mbtn-sec-2" class="nav-btn">2. Auditoria Competència</button>
+                <button onclick="switchTab('sec-3')" id="mbtn-sec-3" class="nav-btn">3. Tècnica & PageSpeed</button>
+                <button onclick="switchTab('sec-4')" id="mbtn-sec-4" class="nav-btn">4. SEO Local (GMB)</button>
+                <button onclick="switchTab('sec-5')" id="mbtn-sec-5" class="nav-btn">5. Rendiment Orgànic</button>
+                <button onclick="switchTab('sec-6')" id="mbtn-sec-6" class="nav-btn">6. Estratègia Expat</button>
+                <button onclick="switchTab('sec-7')" id="mbtn-sec-7" class="nav-btn">7. Full de Ruta (Roadmap)</button>
+                <button onclick="switchTab('sec-8')" id="mbtn-sec-8" class="nav-btn">Extra: Arquitectura</button>
+            </nav>
         </div>
 
-        <!-- Scrollable Content -->
-        <div id="content-container" class="flex-1 overflow-y-auto p-6 md:p-12">
-            <!-- Content Injected Here -->
-        </div>
-    </main>
+        <!-- SCROLLABLE CONTENT AREA -->
+        <div class="flex-1 overflow-y-auto p-6 md:p-12 relative z-10 scroll-smooth">
+            <div class="max-w-5xl mx-auto pb-20">
 
-    <!-- JAVASCRIPT & DATA -->
-    <script>
-        // --- 100% CONTENIDO INTEGRAL DEL PDF ---
-        const AUDIT_CONTENT = {
-            "1": {
-                title: "1. Resumen Ejecutivo de Situación",
-                subtitle: "Sin pelos en la lengua: Estado Crítico Actual",
-                html: `
-                    <div class="prose-custom">
-                        <h3>1.1. Diagnóstico de Signos Vitales Digitales</h3>
-                        <p>El análisis forense de la presencia digital de vallblanc.com revela una patología estructural severa común en clínicas locales con aspiraciones de crecimiento pero ejecución técnica deficiente: una hiperdependencia del tráfico de marca y de pago combinada con una infraestructura técnica que sabotea activamente la adquisición de nuevos pacientes orgánicos "fríos" (no referidos). La clínica opera digitalmente muy por debajo de su capacidad clínica real.</p>
-                        <p>Mientras la infraestructura física cuenta con tecnología de vanguardia (CBCT, escáneres intraorales), la infraestructura digital padece de obsolescencia técnica en su Core Web Vitals y un desorden arquitectónico en su estrategia de internacionalización.</p>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 my-6">
-                            <div class="stat-card border-red-500/50 bg-red-900/10">
-                                <div class="text-xs text-red-400 uppercase font-bold">Hemorragia Tráfico</div>
-                                <div class="text-2xl font-bold text-white my-2">59.7%</div>
-                                <div class="text-xs text-slate-400">Tasa de Rebote en Home. 6 de cada 10 usuarios se van sin interactuar.</div>
-                            </div>
-                            <div class="stat-card border-red-500/50 bg-red-900/10">
-                                <div class="text-xs text-red-400 uppercase font-bold">Conversión</div>
-                                <div class="text-2xl font-bold text-white my-2">0.57%</div>
-                                <div class="text-xs text-slate-400">Se necesitan ~200 visitas para 1 cita. Estándar: 3-5%.</div>
-                            </div>
-                            <div class="stat-card border-yellow-500/50 bg-yellow-900/10">
-                                <div class="text-xs text-yellow-400 uppercase font-bold">Tráfico Orgánico</div>
-                                <div class="text-2xl font-bold text-white my-2">12.7%</div>
-                                <div class="text-xs text-slate-400">Dependencia crítica de Meta/Ads (45% del tráfico).</div>
-                            </div>
-                            <div class="stat-card border-yellow-500/50 bg-yellow-900/10">
-                                <div class="text-xs text-yellow-400 uppercase font-bold">Invisibilidad Expat</div>
-                                <div class="text-2xl font-bold text-white my-2">Crítica</div>
-                                <div class="text-xs text-slate-400">Gestión por parámetros (?lang=) genera canibalización masiva.</div>
-                            </div>
+                <!-- SECCIÓN 1: RESUMEN EJECUTIVO -->
+                <section id="sec-1" class="content-section active prose-custom">
+                    <header class="mb-10 border-l-4 border-brand pl-6">
+                        <h2 class="text-4xl font-serif font-bold text-white mb-2">1. Resum Executiu de Situació</h2>
+                        <p class="text-brand text-xl">Sense pèls a la llengua: Estat Crític Actual</p>
+                    </header>
+
+                    <h3>1.1. Diagnòstic de Signes Vitals Digitals</h3>
+                    <p>L'anàlisi forense de la presència digital de vallblanc.com revela una patologia estructural severa comuna en clíniques locals amb aspiracions de creixement però execució tècnica deficient: una hiperdependència del trànsit de marca i de pagament combinada amb una infraestructura tècnica que saboteja activament l'adquisició de nous pacients orgànics "freds" (no referits). La clínica opera digitalment molt per sota de la seva capacitat clínica real.</p>
+                    <p>Mentre la infraestructura física compta amb tecnologia d'avantguarda (CBCT, escàners intraorals), la infraestructura digital pateix d'obsolescència tècnica en el seu Core Web Vitals i un desordre arquitectònic en la seva estratègia d'internacionalització.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+                        <div class="bg-red-900/10 border border-red-500/30 p-6 rounded-xl">
+                            <h4 class="text-red-400 mt-0 mb-2">Hemorràgia de Trànsit Crítica</h4>
+                            <div class="text-3xl font-bold text-white mb-2">59.7% Rebot</div>
+                            <p class="text-sm text-slate-400 m-0">De ~17.000 usuaris actius (molts pagats per Ads), 6 de cada 10 visitants són repel·lits per l'experiència de càrrega abans d'interactuar.</p>
                         </div>
-
-                        <h3>1.2. La Brecha de Competencia: David contra Goliats Nucleares</h3>
-                        <p>Al comparar vallblanc.com con competidores de élite identificados en la investigación como Turó Park Dental Clinic o Clínica Blasi, la brecha no es necesariamente médica, es de intencionalidad digital y arquitectura de negocio online.</p>
-                        <ul>
-                            <li><strong>Turó Park Dental Clinic:</strong> No se limita a traducir su web; crea ecosistemas digitales completos para cada idioma, posicionándose como una autoridad nativa para el paciente inglés, francés o neerlandés. Utilizan una arquitectura de servicios jerarquizada que responde a intenciones específicas ("Emergency Dentist", "International Patient").</li>
-                            <li><strong>VallBlanc (Nosotros):</strong> Trata el idioma como una característica cosmética (un plugin de traducción), no como una unidad de negocio estratégica. Esto resulta en que términos transaccionales de alto valor como "emergency dentist barcelona" sean dominados por rivales.</li>
-                        </ul>
-
-                        <h3>1.3. Pronóstico Clínico y Quick Wins</h3>
-                        <p>El pronóstico es reservado. Si no se interviene la arquitectura técnica y la estrategia de contenidos, vallblanc.com continuará perdiendo cuota de mercado. La dependencia del tráfico de pago es insostenible si la plataforma de destino expulsa al 60% de ese tráfico.</p>
-                        
-                        <div class="data-box mt-4">
-                            <h4 style="margin-top:0">Quick Wins (≤ 14 días)</h4>
-                            <ul class="mb-0">
-                                <li><strong>1. Desbloqueo de Rastreo (Crítico):</strong> Habilitar acceso inmediato al sitemap_index.xml (actualmente bloqueado).</li>
-                                <li><strong>2. Compresión de Scripts (WPO):</strong> Implementar carga diferida (defer/async) para GTM y Litespeed (TTFB 1.7s).</li>
-                                <li><strong>3. Ajuste de Títulos SEO:</strong> Reescribir Meta Titles de las 10 páginas con más impresiones y CTR < 2%.</li>
-                            </ul>
+                        <div class="bg-red-900/10 border border-red-500/30 p-6 rounded-xl">
+                            <h4 class="text-red-400 mt-0 mb-2">Conversió Anèmica</h4>
+                            <div class="text-3xl font-bold text-white mb-2">0.57%</div>
+                            <p class="text-sm text-slate-400 m-0">Es requereixen gairebé 200 visites per generar 1 cita traquejada. El CAC s'infla desproporcionadament.</p>
+                        </div>
+                        <div class="bg-yellow-900/10 border border-yellow-500/30 p-6 rounded-xl">
+                            <h4 class="text-yellow-400 mt-0 mb-2">Invisibilitat Expat</h4>
+                            <div class="text-3xl font-bold text-white mb-2">Paràmetres ?lang=</div>
+                            <p class="text-sm text-slate-400 m-0">Genera canibalització interna massiva en lloc de rellevància geolocalitzada. Google no entén l'idioma.</p>
                         </div>
                     </div>
-                `
-            },
-            "2": {
-                title: "2. Auditoría de Competencia",
-                subtitle: "Benchmarking: Ingeniería Inversa de la Élite",
-                html: `
-                    <div class="prose-custom">
-                        <p>Para dominar el mercado de Barcelona, no basta con hacerlo "bien"; hay que diseccionar qué están haciendo los líderes para robarles la cuota de mercado.</p>
 
-                        <h3>2.1. Tabla Comparativa (Nosotros vs. Top 3)</h3>
-                        <div class="overflow-x-auto rounded-lg border border-dark-border mb-8">
-                            <table class="w-full text-left text-sm text-slate-300">
-                                <thead class="bg-brand text-white uppercase font-bold text-xs">
-                                    <tr>
-                                        <th class="p-4">Dimensión</th>
-                                        <th class="p-4 bg-red-900/20 w-1/3">VallBlanc (Nosotros)</th>
-                                        <th class="p-4 bg-green-900/20 w-1/3">Turó Park (Líder Expat)</th>
-                                        <th class="p-4 bg-slate-800 w-1/3">Clínica Blasi (Prestigio)</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-dark-border bg-dark-panel">
-                                    <tr>
-                                        <td class="p-4 font-bold text-white">Arquitectura Idiomas</td>
-                                        <td class="p-4 text-red-300">Parámetros (?lang=) / Inconsistente / Sin Hreflang.</td>
-                                        <td class="p-4 text-green-300">Subdirectorios robustos / Perfiles con banderas.</td>
-                                        <td class="p-4">Subdirectorios claros /en/ con contenido nativo.</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-4 font-bold text-white">Enfoque Local</td>
-                                        <td class="p-4 text-red-300">"Vallcarca", "Gràcia" (Hiperlocal).</td>
-                                        <td class="p-4 text-green-300">"Barcelona", "English speaking", "Sarrià".</td>
-                                        <td class="p-4">"Barcelona", "Upper Diagonal" (Barrio Rico).</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-4 font-bold text-white">Estrategia Contenido</td>
-                                        <td class="p-4 text-red-300">Blog genérico, traducciones automáticas.</td>
-                                        <td class="p-4 text-green-300">"Concierge Medicine", "Medical Tourism", Guías seguros.</td>
-                                        <td class="p-4">Casos clínicos Antes/Después, Tecnología (USA trained).</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-4 font-bold text-white">Velocidad Mobile</td>
-                                        <td class="p-4 text-red-300">LCP 2.2s / Script Bloat (80% peso JS).</td>
-                                        <td class="p-4 text-green-300">Optimizado para móviles ("Fast Track").</td>
-                                        <td class="p-4">Alta carga visual pero UX fluida.</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-4 font-bold text-white">Captación</td>
-                                        <td class="p-4 text-red-300">Formulario genérico "Pide Cita" (Alto abandono).</td>
-                                        <td class="p-4 text-green-300">WhatsApp directo, Booking Online, Portal Paciente.</td>
-                                        <td class="p-4">Formulario detallado, Teléfono destacado.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <h3>1.2. La Bretxa de Competència: David contra Goliats Nuclears</h3>
+                    <p>En comparar vallblanc.com amb competidors d'elit identificats (Turó Park Dental Clinic o Clínica Blasi), la bretxa no és mèdica, és d'intencionalitat digital i arquitectura de negoci.</p>
+                    <ul>
+                        <li><strong>Turó Park Dental Clinic:</strong> No es limita a traduir la seva web; crea ecosistemes digitals complets per a cada idioma, posicionant-se com una autoritat nativa. Utilitzen una arquitectura jerarquitzada per a intencions específiques ("Emergency Dentist", "International Patient").</li>
+                        <li><strong>VallBlanc (Nosaltres):</strong> Tracta l'idioma com una característica cosmètica, no com una unitat de negoci estratègica. Resultat: rivals dominen termes d'alt valor.</li>
+                    </ul>
 
-                        <h3>2.2. Análisis de "Gap de Contenidos"</h3>
-                        <div class="space-y-4">
-                            <div class="data-box">
-                                <h4 style="margin-top:0">1. Páginas de "Aterrizaje Suave" para Expats</h4>
-                                <p class="text-sm mb-2"><strong>Competencia:</strong> Turó Park tiene páginas de "Medical Tourism" y reembolso de seguros.</p>
-                                <p class="text-sm text-red-300"><strong>VallBlanc Gap:</strong> Carece de info sobre seguros internacionales o facilidades logísticas.</p>
-                            </div>
-                            <div class="data-box">
-                                <h4 style="margin-top:0">2. Transparencia Radical en Precios</h4>
-                                <p class="text-sm mb-2"><strong>Competencia:</strong> Turó Park publica lista de precios detallada.</p>
-                                <p class="text-sm text-red-300"><strong>VallBlanc Gap:</strong> Carece de tarifario base visible, generando fricción y desconfianza.</p>
-                            </div>
-                            <div class="data-box">
-                                <h4 style="margin-top:0">3. Validación de Expertos (E-E-A-T)</h4>
-                                <p class="text-sm mb-2"><strong>Competencia:</strong> Destacan "American Board Certified" y listan banderas de idiomas por doctor.</p>
-                                <p class="text-sm text-red-300"><strong>VallBlanc Gap:</strong> Necesita "traducir" la experiencia de la Dra. Valverde para el expat (e.g., "English Speaking Senior Orthodontist").</p>
-                            </div>
-                        </div>
-
-                        <h3>2.3. Estrategias Local Pack (GMB)</h3>
-                        <ul>
-                            <li><strong>Categorización Agresiva:</strong> Los líderes explotan las 10 categorías (Emergency, Pediatric, etc.). VallBlanc debe auditar esto urgente.</li>
-                            <li><strong>Reseñas SEO:</strong> Las reseñas de la competencia contienen keywords semánticas ("root canal", "implant") insertadas por usuarios.</li>
-                            <li><strong>Fotos de Confianza:</strong> Blasi y Turó Park muestran tecnología real. VallBlanc debe evitar fotos de stock.</li>
+                    <h3>1.3. Pronòstic Clínic i Quick Wins (≤ 14 dies)</h3>
+                    <p>El pronòstic és reservat. Si no s'intervé l'arquitectura tècnica, vallblanc.com continuarà perdent quota de mercat. La dependència del trànsit de pagament (Meta/Ads = 45%) és insostenible.</p>
+                    <div class="data-card border-l-4 border-l-brand">
+                        <ul class="m-0">
+                            <li><strong>Desbloqueig de Rastreig (Crític):</strong> Habilitar accés immediat al <code>sitemap_index.xml</code> (actualment bloquejat per evitar indexació profunda).</li>
+                            <li><strong>Compressió d'Scripts (WPO):</strong> Implementar càrrega diferida (defer/async) per als scripts de GTM i Litespeed que causen el TTFB d'1.7s.</li>
+                            <li><strong>Ajust de Títols SEO:</strong> Reescriure els Meta Titles de les 10 pàgines amb més impressions i CTR < 2% per afegir "Barcelona" i ganxos de conversió.</li>
                         </ul>
                     </div>
-                `
-            },
-            "3": {
-                title: "3. Auditoría Técnica (PageSpeed)",
-                subtitle: "Diagnóstico de la Infraestructura",
-                html: `
-                    <div class="prose-custom">
-                        <p>La salud técnica presenta una contradicción peligrosa: métricas de campo aceptables (CrUX) que enmascaran una arquitectura ineficiente (Lab Data).</p>
+                </section>
 
-                        <h3>3.1. Diagnóstico Línea por Línea</h3>
-                        
-                        <div class="data-box border-l-4 border-l-red-500">
-                            <h4 style="margin-top:0" class="text-white flex justify-between">
-                                1. TTFB (Time to First Byte)
-                                <span class="bg-red-900 px-2 rounded text-sm">1.7s (Crítico)</span>
-                            </h4>
-                            <p class="text-sm"><strong>Hallazgo:</strong> El servidor tarda casi 2 segundos en responder. Indica procesamiento PHP lento o hosting deficiente.</p>
-                            <p class="text-sm"><strong>Impacto:</strong> Destruye el SEO internacional y frustra al usuario móvil. Mata el Crawl Budget.</p>
-                            <p class="text-sm text-brand"><strong>Solución Exacta:</strong> Activar Object Cache/Redis y migrar a Cloud Hosting o activar Cloudflare APO.</p>
-                        </div>
+                <!-- SECCIÓN 2: COMPETENCIA -->
+                <section id="sec-2" class="content-section prose-custom">
+                    <header class="mb-10 border-l-4 border-brand pl-6">
+                        <h2 class="text-4xl font-serif font-bold text-white mb-2">2. Auditoria de Competència</h2>
+                        <p class="text-brand text-xl">Benchmarking i Enginyeria Inversa de l'Elit</p>
+                    </header>
 
-                        <div class="data-box border-l-4 border-l-red-500">
-                            <h4 style="margin-top:0" class="text-white flex justify-between">
-                                2. Bloatware JavaScript
-                                <span class="bg-red-900 px-2 rounded text-sm">80% Peso Total</span>
-                            </h4>
-                            <p class="text-sm"><strong>Hallazgo:</strong> Scripts de marketing (GTM, Litespeed, Facebook Pixel) saturan el hilo principal.</p>
-                            <p class="text-sm"><strong>Impacto:</strong> Bloqueo del renderizado. Tasa de rebote móvil alta.</p>
-                            <p class="text-sm text-brand"><strong>Solución Exacta:</strong> Auditoría GTM Urgente. Implementar "Delay JavaScript Execution" hasta interacción del usuario.</p>
-                        </div>
-
-                        <div class="data-box border-l-4 border-l-yellow-500">
-                            <h4 style="margin-top:0" class="text-white flex justify-between">
-                                3. LCP Móvil
-                                <span class="bg-yellow-900 px-2 rounded text-sm">2.2s (Límite)</span>
-                            </h4>
-                            <p class="text-sm"><strong>Hallazgo:</strong> Afectado por imágenes de alta resolución no optimizadas en el hero.</p>
-                            <p class="text-sm"><strong>Impacto:</strong> Riesgo de caída en ranking móvil.</p>
-                            <p class="text-sm text-brand"><strong>Solución Exacta:</strong> Implementar preload para la imagen principal y formatos WebP/AVIF.</p>
-                        </div>
-
-                        <h3>3.2. Impacto Real en Ranking</h3>
-                        <p>La "experiencia de página" es factor de ranking. Con un TTFB de 1.7s, Googlebot rastrea menos páginas. El contenido nuevo tardará semanas en indexarse.</p>
-                    </div>
-                `
-            },
-            "4": {
-                title: "4. Auditoría GMB (SEO Local)",
-                subtitle: "El Corazón del Negocio Local",
-                html: `
-                    <div class="prose-custom">
-                        <h3>4.1. Optimización de Ficha y NAP</h3>
-                        <ul>
-                            <li><strong>Nombre (Name):</strong> Inconsistencias graves ("VallBlanc" vs "VallBlanc Espai Dental" vs "Clínica Dental"). Diluye autoridad. <strong>Acción:</strong> Estandarizar estrictamente a "VallBlanc Espai Dental" en todos los directorios.</li>
-                            <li><strong>Dirección:</strong> Av. de Vallcarca, 68. Activo estratégico. Explotar keywords de barrio: "Dentista Vallcarca", "Gràcia Norte".</li>
-                            <li><strong>Categorías:</strong> Faltan categorías secundarias clave. <strong>Acción:</strong> Añadir "Emergency dental service", "Pediatric dentist", "Dental implants periodontist".</li>
-                        </ul>
-
-                        <h3>4.2. Estrategia de Reseñas y Fotos</h3>
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div class="data-box">
-                                <h4 style="margin-top:0">Reseñas SEO</h4>
-                                <p class="text-sm">El problema es cualitativo: carecen de keywords. <strong>Acción:</strong> Responder introduciendo keywords ("Gracias por confiar en VallBlanc para tu implante en Vallcarca").</p>
-                            </div>
-                            <div class="data-box">
-                                <h4 style="margin-top:0">Fotos = Confianza</h4>
-                                <p class="text-sm">Faltan fotos reales. <strong>Acción:</strong> Subir 10 fotos nuevas de alta calidad (equipo, tecnología CBCT) para vender confianza.</p>
-                            </div>
-                        </div>
-                    </div>
-                `
-            },
-            "5": {
-                title: "5. Rendimiento Orgánico",
-                subtitle: "GSC & Analytics: La Verdad de los Datos",
-                html: `
-                    <div class="prose-custom">
-                        <h3>5.1. Keywords de Oportunidad (El Cementerio de Impresiones)</h3>
-                        <p>Términos con alto volumen de impresiones pero CTR nulo. Google nos muestra, pero el usuario no hace clic.</p>
-                        
-                        <div class="space-y-4">
-                            <div class="data-box border border-l-4 border-l-brand">
-                                <div class="flex justify-between font-bold text-white">"Periodoncia Barcelona" <span>2,396 Impresiones | 0 Clics</span></div>
-                                <p class="text-sm mt-2"><strong>Diagnóstico:</strong> Falta Power Page específica. El usuario busca especialista, no generalista.</p>
-                                <p class="text-sm text-brand"><strong>Acción:</strong> Crear página vertical /tratamientos/periodoncia-barcelona/.</p>
-                            </div>
-                            <div class="data-box border border-l-4 border-l-brand">
-                                <div class="flex justify-between font-bold text-white">"Precio Implante Dental" <span>1,835 Impresiones | 0 Clics</span></div>
-                                <p class="text-sm mt-2"><strong>Diagnóstico:</strong> Intención transaccional pura. Falta página de precios visible.</p>
-                                <p class="text-sm text-brand"><strong>Acción:</strong> Crear landing de precios/financiación.</p>
-                            </div>
-                            <div class="data-box border border-l-4 border-l-brand">
-                                <div class="flex justify-between font-bold text-white">"Implant Dentaire Barcelone" <span>1,967 Impresiones | 0 Clics</span></div>
-                                <p class="text-sm mt-2"><strong>Diagnóstico:</strong> Demanda francesa activa. Página en francés invisible o irrelevante.</p>
-                            </div>
-                        </div>
-
-                        <h3>5.2. Canibalizaciones y Fugas</h3>
-                        <ul>
-                            <li><strong>Regeneración Ósea:</strong> Conflicto de URLs (id=11 vs id=43). Google alterna cuál muestra. <strong>Solución:</strong> Fusión de contenido + Redirección 301.</li>
-                            <li><strong>Fuga en "Pide Cita" (42.2% Rebote):</strong> Casi la mitad de los usuarios abandonan el formulario. <strong>Solución:</strong> Simplificar a Nombre + Teléfono (Click-to-Call).</li>
-                        </ul>
-                    </div>
-                `
-            },
-            "6": {
-                title: "6. Estrategia 'Expat Barcelona'",
-                subtitle: "El Océano Azul",
-                html: `
-                    <div class="prose-custom">
-                        <p>El mercado local está saturado. El crecimiento vendrá de dominar los nichos internacionales.</p>
-
-                        <div class="space-y-6 mt-6">
-                            <div class="flex flex-col md:flex-row gap-4 bg-dark-bg p-4 rounded border border-dark-border">
-                                <div class="md:w-1/4 font-bold text-brand uppercase">Fase 1: Infraestructura</div>
-                                <div class="md:w-3/4">
-                                    <strong class="text-white block">Implementar Hreflang Real</strong>
-                                    <p class="text-sm">Abandonar parámetros ?lang=. Crear subdirectorios /en/, /fr/. Es la única manera de que Google entienda la geo-orientación.</p>
-                                </div>
-                            </div>
-                            <div class="flex flex-col md:flex-row gap-4 bg-dark-bg p-4 rounded border border-dark-border">
-                                <div class="md:w-1/4 font-bold text-brand uppercase">Fase 2: Transaccional</div>
-                                <div class="md:w-3/4">
-                                    <strong class="text-white block">Landing "Emergency Dentist"</strong>
-                                    <p class="text-sm">Keyword: "emergency dentist barcelona". El expat con dolor no compara precios, busca inmediatez. Landing agresiva con WhatsApp flotante.</p>
-                                </div>
-                            </div>
-                            <div class="flex flex-col md:flex-row gap-4 bg-dark-bg p-4 rounded border border-dark-border">
-                                <div class="md:w-1/4 font-bold text-brand uppercase">Fase 3: Confianza</div>
-                                <div class="md:w-3/4">
-                                    <strong class="text-white block">Social Proof Segmentado</strong>
-                                    <p class="text-sm">Filtrar reseñas de GMB. Mostrar en la web inglesa SOLO las reseñas escritas en inglés.</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <h3>6.2. Riesgos de Traducción</h3>
-                        <p>Evitar traductores automáticos para términos médicos. Un error en "Root canal" destruye la confianza. Revisión humana obligatoria.</p>
-                    </div>
-                `
-            },
-            "7": {
-                title: "7. Hoja de Ruta (Roadmap)",
-                subtitle: "Plan de Acción Priorizado",
-                html: `
-                    <div class="overflow-x-auto rounded-lg border border-dark-border mt-6">
+                    <h3>2.1. Taula Comparativa Directa</h3>
+                    <div class="overflow-x-auto rounded-xl border border-dark-border mb-8 shadow-xl">
                         <table class="w-full text-left text-sm text-slate-300">
-                            <thead class="bg-brand text-white uppercase font-bold text-xs">
+                            <thead class="bg-dark-panel border-b border-dark-border">
                                 <tr>
-                                    <th class="p-4">Tarea</th>
-                                    <th class="p-4">Prioridad</th>
-                                    <th class="p-4">Impacto</th>
-                                    <th class="p-4">Esfuerzo</th>
-                                    <th class="p-4">Responsable</th>
+                                    <th class="p-4 text-white uppercase tracking-wider text-xs">Dimensió</th>
+                                    <th class="p-4 text-red-400 uppercase tracking-wider text-xs bg-red-900/10 border-l border-dark-border">VallBlanc (Nosaltres)</th>
+                                    <th class="p-4 text-brand uppercase tracking-wider text-xs border-l border-dark-border">Turó Park (Líder)</th>
+                                    <th class="p-4 text-brand uppercase tracking-wider text-xs border-l border-dark-border">Clínica Blasi / British</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-dark-border bg-dark-panel">
-                                <tr>
-                                    <td class="p-4 font-bold text-white">Implementar Hreflang y URLs (/en/)</td>
-                                    <td class="p-4"><span class="bg-red-600 text-white px-2 py-1 rounded text-xs">CRÍTICA</span></td>
-                                    <td class="p-4">Alto (SEO Int)</td>
-                                    <td class="p-4">Alto</td>
-                                    <td class="p-4 font-mono text-brand">Dev Web</td>
+                            <tbody class="divide-y divide-dark-border bg-[#0B0F19]">
+                                <tr class="hover:bg-dark-panel/50">
+                                    <td class="p-4 font-bold text-white">Arquitectura d'Idiomes</td>
+                                    <td class="p-4 text-red-300 bg-red-900/5 border-l border-dark-border">Paràmetres (?lang=). Sense Hreflang. Deficient.</td>
+                                    <td class="p-4 border-l border-dark-border">Subdirectoris robustos (/en/, /fr/). Banderes clares.</td>
+                                    <td class="p-4 border-l border-dark-border">Lloc natiu 100% en anglès (British).</td>
                                 </tr>
-                                <tr>
-                                    <td class="p-4 font-bold text-white">Optimizar carga JS (Delay) y LCP</td>
-                                    <td class="p-4"><span class="bg-red-600 text-white px-2 py-1 rounded text-xs">CRÍTICA</span></td>
-                                    <td class="p-4">Alto (UX/SEO)</td>
-                                    <td class="p-4">Medio</td>
-                                    <td class="p-4 font-mono text-brand">Dev</td>
+                                <tr class="hover:bg-dark-panel/50">
+                                    <td class="p-4 font-bold text-white">Estratègia de Contingut</td>
+                                    <td class="p-4 text-red-300 bg-red-900/5 border-l border-dark-border">Blog genèric informatiu. Poca profunditat transaccional.</td>
+                                    <td class="p-4 border-l border-dark-border">"Medical Tourism", tràmits d'assegurances, "Concierge".</td>
+                                    <td class="p-4 border-l border-dark-border">Casos clínics Abans/Després. Alta qualitat visual.</td>
                                 </tr>
-                                <tr>
-                                    <td class="p-4 font-bold text-white">Auditoría GTM (Limpieza)</td>
-                                    <td class="p-4"><span class="bg-orange-600 text-white px-2 py-1 rounded text-xs">ALTA</span></td>
-                                    <td class="p-4">Medio</td>
-                                    <td class="p-4">Bajo</td>
-                                    <td class="p-4 font-mono text-brand">Analista</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-4 font-bold text-white">Landing "Emergency Dentist"</td>
-                                    <td class="p-4"><span class="bg-orange-600 text-white px-2 py-1 rounded text-xs">ALTA</span></td>
-                                    <td class="p-4">Alto (Leads)</td>
-                                    <td class="p-4">Medio</td>
-                                    <td class="p-4 font-mono text-brand">Content</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-4 font-bold text-white">Simplificar Formulario Cita</td>
-                                    <td class="p-4"><span class="bg-orange-600 text-white px-2 py-1 rounded text-xs">ALTA</span></td>
-                                    <td class="p-4">Alto (Conv)</td>
-                                    <td class="p-4">Bajo</td>
-                                    <td class="p-4 font-mono text-brand">UX/Dev</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-4 font-bold text-white">Power Page "Periodoncia"</td>
-                                    <td class="p-4"><span class="bg-slate-600 text-white px-2 py-1 rounded text-xs">MEDIA</span></td>
-                                    <td class="p-4">Medio</td>
-                                    <td class="p-4">Alto</td>
-                                    <td class="p-4 font-mono text-brand">Content</td>
+                                <tr class="hover:bg-dark-panel/50">
+                                    <td class="p-4 font-bold text-white">Captació i Fricció</td>
+                                    <td class="p-4 text-red-300 bg-red-900/5 border-l border-dark-border">Formulari complex "Pide Cita" (42% abandonament).</td>
+                                    <td class="p-4 border-l border-dark-border">WhatsApp, Booking Online interactiu.</td>
+                                    <td class="p-4 border-l border-dark-border">Telèfon destacat, Widget "Need Help?".</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <div class="data-box mt-8">
-                        <h4 style="margin-top:0">7.1. Datos Pendientes de Input</h4>
-                        <ul class="mb-0 text-sm">
-                            <li><strong>Informe de Cobertura Indexación (GSC):</strong> Necesario para detectar URLs zombis.</li>
-                            <li><strong>Crawl Completo (Screaming Frog):</strong> Necesario para mapa de arquitectura real (sitemap bloqueado).</li>
+                    <h3>2.2. Anàlisi de "Gap de Continguts"</h3>
+                    <p>Què tenen ells que ens falta a nosaltres de manera crítica per captar al pacient premium/expat?</p>
+                    <div class="grid md:grid-cols-3 gap-6 mb-8">
+                        <div class="data-card">
+                            <h4 class="mt-0">Aterratge Suau Expat</h4>
+                            <p class="text-sm">La competència té pàgines de "Medical Tourism" i explicacions detallades sobre reemborsaments d'assegurances internacionals. VallBlanc deixa l'expat a les palpentes logísticament.</p>
+                        </div>
+                        <div class="data-card">
+                            <h4 class="mt-0">Transparència de Preus</h4>
+                            <p class="text-sm">Turó Park publica llistes de preus (Price Lists). VallBlanc no té tarifari visible, generant fricció immediata en usuaris anglosaxons acostumats a l'estimació prèvia.</p>
+                        </div>
+                        <div class="data-card">
+                            <h4 class="mt-0">Estratègia de Confiança (E-E-A-T)</h4>
+                            <p class="text-sm">Competidors destaquen "American Board Certified" i idiomes per doctor. VallBlanc no "tradueix" el prestigi del seu equip al mercat internacional.</p>
+                        </div>
+                    </div>
+
+                    <h3>2.3. Estratègies Local Pack de la Competència</h3>
+                    <div class="data-card border-l-4 border-l-brand">
+                        <ul>
+                            <li><strong>Categorització Agressiva:</strong> Les clíniques top exploten les 10 categories secundàries a Google Maps (Emergency dental service, Pediatric dentist, etc.).</li>
+                            <li><strong>Ressenyes Semàntiques:</strong> Aconsegueixen que els pacients incloguin keywords ("root canal", "implant") en les seves ressenyes, cosa que Google llegeix com a contingut SEO.</li>
+                            <li><strong>Fotos Reals vs Stock:</strong> La competència satura el seu perfil amb fotos de la tecnologia real (CBCT, boxs), mentre que VallBlanc necessita més material visual propi.</li>
                         </ul>
                     </div>
-                `
-            },
-            "8": {
-                title: "Extra: Mapa de Arquitectura",
-                subtitle: "Estructura de Silos Recomendada",
-                html: `
-                    <div class="prose-custom">
-                        <div class="grid md:grid-cols-2 gap-8">
-                            <div class="data-box">
-                                <h4 style="margin-top:0">Mapa de Oportunidades</h4>
-                                <ul>
-                                    <li><strong>Local Nativo:</strong> "Dentista Vallcarca", "Implantes Gràcia", "Urgencias dentales Barcelona".</li>
-                                    <li><strong>Local Expat:</strong> "English speaking dentist Barcelona", "Emergency dentist", "Dental implants cost".</li>
-                                </ul>
+                </section>
+
+                <!-- SECCIÓN 3: TÉCNICA -->
+                <section id="sec-3" class="content-section prose-custom">
+                    <header class="mb-10 border-l-4 border-brand pl-6">
+                        <h2 class="text-4xl font-serif font-bold text-white mb-2">3. Auditoria Tècnica (WPO & Core Vitals)</h2>
+                        <p class="text-brand text-xl">L'arquitectura oculta: Diagnòstic línia per línia</p>
+                    </header>
+
+                    <h3>3.1. Diagnòstic d'Infraestructura i Rendiment</h3>
+                    <p>La salut tècnica de vallblanc.com presenta una contradicció perillosa: mètriques de camp acceptables (CrUX) que emmascaren una arquitectura de codi ineficient i pesada (Lab Data).</p>
+
+                    <!-- BLOC: EVIDÈNCIA + DIAGNÒSTIC + IMPACTE + SOLUCIÓ -->
+                    <div class="data-card border-l-4 border-l-red-500">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-dark-border pb-4 mb-4">
+                            <h4 class="mt-0 text-white text-xl">1. Problema de Latència del Servidor (TTFB)</h4>
+                            <div class="bg-red-900/30 border border-red-500/50 text-red-400 px-3 py-1 rounded text-sm font-mono font-bold mt-2 md:mt-0">
+                                EVIDÈNCIA (PSI): TTFB de 1.7 segons
                             </div>
-                            <div class="data-box font-mono text-sm">
-                                <h4 style="margin-top:0; font-family:sans-serif">Arquitectura Silos</h4>
-                                <ul class="list-none pl-0">
-                                    <li>/es/ (Home Local)</li>
-                                    <li class="pl-4">├── /es/tratamientos/implantes/</li>
-                                    <li class="pl-4">├── /es/urgencias-dentales/ (Landing)</li>
-                                    <li class="pl-4">└── /es/barrio/vallcarca/</li>
-                                    <li class="mt-2">/en/ (Home Expat)</li>
-                                    <li class="pl-4">├── /en/emergency-dentist/</li>
-                                    <li class="pl-4">└── /en/international-patients/</li>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <strong class="text-slate-500 uppercase text-xs tracking-wider block mb-2">Diagnòstic (Anàlisi)</strong>
+                                <p class="text-sm">El servidor triga gairebé 2 segons a "pensar" abans de retornar el primer byte de dades a l'usuari. Això indica una de dues coses: un hosting compartit saturat i de baixa qualitat, o l'absència total de memòria cau a nivell de servidor (Object Cache).</p>
+                                
+                                <strong class="text-red-400 uppercase text-xs tracking-wider block mb-2 mt-4">Impacte Econòmic / Negoci</strong>
+                                <p class="text-sm">Destrucció del <em>Crawl Budget</em>. Googlebot té un temps limitat per rastrejar; si triga 2s per URL, rastreja poques pàgines. El contingut nou no s'indexa i el SEO internacional no arrencarà mai a causa de la latència per a usuaris fora d'Espanya.</p>
+                            </div>
+                            <div class="bg-dark-bg p-5 rounded-lg border border-brand/20">
+                                <strong class="text-brand uppercase text-xs tracking-wider block mb-2">Solució Tècnica (Exacta)</strong>
+                                <p class="text-sm text-white mb-2"><strong>Prioritat: Alta | Esforç: Mitjà</strong></p>
+                                <ul class="text-sm m-0">
+                                    <li>1. Activar memòria cau a nivell de servidor (Redis o Varnish).</li>
+                                    <li>2. Revisar la configuració del plugin Litespeed Cache, aparentment mal configurat.</li>
+                                    <li>3. Si el problema persisteix, migrar a un Cloud Hosting (AWS, DigitalOcean, Cloudways).</li>
                                 </ul>
                             </div>
                         </div>
                     </div>
-                `
-            }
-        };
 
-        // --- RENDERIZADO SIMPLE ---
-        const menuContainer = document.getElementById('sidebar-menu');
-        const mobileNavContainer = document.getElementById('mobile-nav');
-        const contentContainer = document.getElementById('content-container');
-        const mobileMenu = document.getElementById('mobile-menu');
+                    <!-- BLOC 2 -->
+                    <div class="data-card border-l-4 border-l-red-500">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-dark-border pb-4 mb-4">
+                            <h4 class="mt-0 text-white text-xl">2. Script Bloat (Saturació Javascript)</h4>
+                            <div class="bg-red-900/30 border border-red-500/50 text-red-400 px-3 py-1 rounded text-sm font-mono font-bold mt-2 md:mt-0">
+                                EVIDÈNCIA (PSI): 80% del pes és JS
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <strong class="text-slate-500 uppercase text-xs tracking-wider block mb-2">Diagnòstic (Anàlisi)</strong>
+                                <p class="text-sm">Hi ha una càrrega massiva d'scripts de màrqueting i traqueig al <code>head</code> de la web abans que el contingut es pugui dibuixar. Sobresurten múltiples contenidors de Google Tag Manager (170kB c/u), Meta Pixel i Litespeed JS.</p>
+                                
+                                <strong class="text-red-400 uppercase text-xs tracking-wider block mb-2 mt-4">Impacte Econòmic / Negoci</strong>
+                                <p class="text-sm">Això bloqueja el fil principal (Main Thread) del navegador de l'usuari. En mòbil amb 4G, la pantalla es queda completament blanca durant 3-4 segons. Aquesta és la causa principal del 59.7% de rebot: l'usuari es frustra i marxa cap a la competència abans de veure l'oferta.</p>
+                            </div>
+                            <div class="bg-dark-bg p-5 rounded-lg border border-brand/20">
+                                <strong class="text-brand uppercase text-xs tracking-wider block mb-2">Solució Tècnica (Exacta)</strong>
+                                <p class="text-sm text-white mb-2"><strong>Prioritat: Crítica | Esforç: Alt</strong></p>
+                                <ul class="text-sm m-0">
+                                    <li>1. Auditoria urgent de Google Tag Manager per consolidar etiquetes i eliminar duplicats.</li>
+                                    <li>2. Implementar tècnica de <em>Delay JavaScript Execution</em>: els scripts de màrqueting NO s'han de carregar fins que l'usuari faci el primer scroll o mogui el dit.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
 
-        const NAV_ITEMS = [
-            { id: "1", label: "1. Resumen Ejecutivo" },
-            { id: "2", label: "2. Competencia" },
-            { id: "3", label: "3. Auditoría Técnica" },
-            { id: "4", label: "4. Auditoría GMB" },
-            { id: "5", label: "5. Rendimiento Orgánico" },
-            { id: "6", label: "6. Estrategia Expat" },
-            { id: "7", label: "7. Hoja de Ruta" },
-            { id: "8", label: "Extra: Arquitectura" }
-        ];
+                    <!-- BLOC 3 -->
+                    <div class="data-card border-l-4 border-l-yellow-500">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-dark-border pb-4 mb-4">
+                            <h4 class="mt-0 text-white text-xl">3. Largest Contentful Paint (LCP)</h4>
+                            <div class="bg-yellow-900/30 border border-yellow-500/50 text-yellow-400 px-3 py-1 rounded text-sm font-mono font-bold mt-2 md:mt-0">
+                                EVIDÈNCIA (PSI): LCP a 2.2s (Al Límit)
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <strong class="text-slate-500 uppercase text-xs tracking-wider block mb-2">Diagnòstic (Anàlisi)</strong>
+                                <p class="text-sm">L'element visual principal (Hero Image) de la versió mòbil triga massa a carregar perquè és una imatge d'alta resolució sense optimitzar correctament i competeix per la descàrrega amb les fonts tipogràfiques.</p>
+                                
+                                <strong class="text-yellow-400 uppercase text-xs tracking-wider block mb-2 mt-4">Impacte Econòmic / Negoci</strong>
+                                <p class="text-sm">Encara que no és suspens total, està a 0.3s d'entrar en "Poor Experience". Això posa en risc el posicionament mòbil a curt termini.</p>
+                            </div>
+                            <div class="bg-dark-bg p-5 rounded-lg border border-brand/20">
+                                <strong class="text-brand uppercase text-xs tracking-wider block mb-2">Solució Tècnica (Exacta)</strong>
+                                <p class="text-sm text-white mb-2"><strong>Prioritat: Mitjana | Esforç: Baix</strong></p>
+                                <ul class="text-sm m-0">
+                                    <li>1. Injectar etiqueta <code>&lt;link rel="preload" as="image"...&gt;</code> específicament per a la imatge hero.</li>
+                                    <li>2. Convertir massivament tot el catàleg a format WebP o AVIF (sense base64).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
 
-        let activeId = "1";
+                    <h3>3.2. Jerarquia d'Encapçalaments Rota</h3>
+                    <p>Durant el rastreig manual s'ha detectat que la jerarquia de H1-H6 està completament trencada. Això provoca que Googlebot no entengui la prioritat semàntica del contingut. Reestructuració necessària: H1 Únic per pàgina > H2 per a serveis clau > H3 per a detalls del tractament.</p>
+                </section>
 
-        function renderNav() {
-            const html = NAV_ITEMS.map(item => `
-                <div onclick="setActive('${item.id}')" 
-                     class="nav-item p-3 rounded mb-1 text-sm ${activeId === item.id ? 'active' : 'text-slate-400'}">
-                    ${item.label}
-                </div>
-            `).join('');
+                <!-- SECCIÓN 4: GMB -->
+                <section id="sec-4" class="content-section prose-custom">
+                    <header class="mb-10 border-l-4 border-brand pl-6">
+                        <h2 class="text-4xl font-serif font-bold text-white mb-2">4. Auditoria de Google My Business (GMB)</h2>
+                        <p class="text-brand text-xl">Optimització de Reputació i SEO Local</p>
+                    </header>
+
+                    <h3>4.1. Anàlisi de la Fitxa: NAP i Consistència</h3>
+                    <p>L'anàlisi de la captura de GMB revela elements de millora crítics per guanyar en el "Local Pack".</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div class="data-card">
+                            <h4 class="mt-0">Títol de la Fitxa</h4>
+                            <p class="text-sm">El títol actual és "VallBlanc Espai Dental i Fisioteràpia". Això dilueix la paraula clau principal "Dentista" o "Clínica Dental".</p>
+                            <p class="text-sm text-brand font-semibold mt-2">Acció: Testejar (si GMB ho permet sense suspensió) "VallBlanc - Dentista a Vallcarca".</p>
+                        </div>
+                        <div class="data-card">
+                            <h4 class="mt-0">Consistència NAP (Name, Address, Phone)</h4>
+                            <p class="text-sm">Risc d'inconsistència si en directoris externs la clínica es diu de manera diferent.</p>
+                            <p class="text-sm text-brand font-semibold mt-2">Acció: Auditar Pàgines Grogues, Yelp i directoris locals per fixar l'adreça exacta: "Av. de Vallcarca, 68".</p>
+                        </div>
+                    </div>
+
+                    <h3>4.2. Ressenyes, Fotos i Categories</h3>
+                    <div class="space-y-4">
+                        <div class="bg-dark-panel p-6 rounded-lg border border-dark-border">
+                            <strong class="text-white block mb-2">Mancança de Categories Secundàries</strong>
+                            <p class="text-sm text-slate-300">Google permet múltiples categories. No podem ser només "Clínica Dental". Hem d'afegir: "Servicio de urgencias dentales" (vital per a expats), "Implantes dentales periodoncista", "Ortodoncista" i "Clínica dental infantil".</p>
+                        </div>
+                        <div class="bg-dark-panel p-6 rounded-lg border border-dark-border">
+                            <strong class="text-white block mb-2">Volum i Qualitat de Ressenyes</strong>
+                            <p class="text-sm text-slate-300">Amb 93 ressenyes (4.9), la nota és excel·lent, però el volum és baix comparat amb els líders (200+). A més, les ressenyes no inclouen keywords. Cal formar a recepció per demanar als pacients satisfets que mencionin el tractament ("Digue'ls com de bé t'ha anat l'implant").</p>
+                        </div>
+                        <div class="bg-dark-panel p-6 rounded-lg border border-dark-border">
+                            <strong class="text-white block mb-2">El Catàleg de Productes buit</strong>
+                            <p class="text-sm text-slate-300">La secció de Productes de GMB està subutilitzada. S'ha de pujar cada servei (Implants, Invisalign, Blanquejament) amb una imatge dissenyada i un enllaç directe cap a la landing específica per augmentar el CTR.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECCIÓN 5: ORGÁNICO -->
+                <section id="sec-5" class="content-section prose-custom">
+                    <header class="mb-10 border-l-4 border-brand pl-6">
+                        <h2 class="text-4xl font-serif font-bold text-white mb-2">5. Rendiment Orgànic (Search Console & Analytics)</h2>
+                        <p class="text-brand text-xl">El Cementiri d'Impressions i les Fuites de Conversió</p>
+                    </header>
+
+                    <h3>5.1. Keywords d'Oportunitat Perduda (Deep Dive)</h3>
+                    <p>S'han detectat keywords amb un alt volum d'impressions (Google ens ensenya als resultats) però amb Clics i CTR propers a zero. Això significa que no satisfem la intenció de l'usuari amb el títol o la pàgina existent.</p>
+
+                    <!-- BLOC: EVIDÈNCIA + DIAGNÒSTIC + IMPACTE + SOLUCIÓ -->
+                    <div class="data-card border-l-4 border-l-brand">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-dark-border pb-4 mb-4">
+                            <h4 class="mt-0 text-white text-xl">A. El cas "Periodoncia Barcelona"</h4>
+                            <div class="bg-slate-900 border border-brand/50 text-brand px-3 py-1 rounded text-sm font-mono font-bold mt-2 md:mt-0">
+                                EVIDÈNCIA (GSC): 2,396 Impressions / 0 Clics
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <strong class="text-slate-500 uppercase text-xs tracking-wider block mb-2">Diagnòstic (Anàlisi)</strong>
+                                <p class="text-sm">Gairebé 2.400 persones han buscat aquest servei altament específic, Google ha decidit mostrar la nostra URL al llistat, però NINGÚ ha fet clic. El motiu: el resultat que mostrem és la Home o una llista genèrica de tractaments. L'usuari busca un "Especialista Periodoncista", no un "Dentista General".</p>
+                                
+                                <strong class="text-red-400 uppercase text-xs tracking-wider block mb-2 mt-4">Impacte Econòmic / Negoci</strong>
+                                <p class="text-sm">Pèrdua massiva d'ingressos recurrents d'alt valor (Life Time Value). El pacient periodontal és un pacient de per vida. Estem regalant de forma directa aquests usuaris a les clíniques de la competència que sí que disposen d'una pàgina dedicada a la periodòncia.</p>
+                            </div>
+                            <div class="bg-dark-bg p-5 rounded-lg border border-brand/20">
+                                <strong class="text-brand uppercase text-xs tracking-wider block mb-2">Solució Tècnica (Exacta)</strong>
+                                <p class="text-sm text-white mb-2"><strong>Prioritat: Alta | Esforç: Mitjà</strong></p>
+                                <ul class="text-sm m-0">
+                                    <li>Crear una <strong>Power Page Vertical</strong>: <code>/tratamientos/periodoncia-barcelona/</code>.</li>
+                                    <li>L'estructura de la pàgina ha de ser: Identificació de símptomes (Sagnat genives) -> La solució mèdica (Curetatge/Làser) -> Autoritat (Especialista responsable amb foto) -> FAQs i Finançament.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="data-card border-l-4 border-l-brand">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-dark-border pb-4 mb-4">
+                            <h4 class="mt-0 text-white text-xl">B. Intenció Transaccional: Preus</h4>
+                            <div class="bg-slate-900 border border-brand/50 text-brand px-3 py-1 rounded text-sm font-mono font-bold mt-2 md:mt-0">
+                                EVIDÈNCIA (GSC): "Precio Implante Dental" (1,835 imp / 0 clics)
+                            </div>
+                        </div>
+                        <p class="text-sm mb-4"><strong>Diagnòstic i Impacte:</strong> La intenció de cerca és 100% transaccional (Fase BoFu). Si no hi ha cap pàgina visible on parlem de preus base o "Des de X€", l'usuari no farà clic.</p>
+                        <p class="text-sm text-brand font-semibold"><strong>Solució:</strong> Crear una secció o pàgina de "Finançament i Preus" on s'expliqui de forma transparent les facilitats de pagament per a implants.</p>
+                    </div>
+
+                    <h3>5.2. Canibalitzacions Detectades</h3>
+                    
+                    <div class="data-card border-l-4 border-l-red-500">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-dark-border pb-4 mb-4">
+                            <h4 class="mt-0 text-white text-xl">El cas de "Regeneración Ósea"</h4>
+                            <div class="bg-red-900/30 border border-red-500/50 text-red-400 px-3 py-1 rounded text-sm font-mono font-bold mt-2 md:mt-0">
+                                EVIDÈNCIA (GSC): URLs Competeixen (id=11 vs id=43 vs id=61)
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <strong class="text-slate-500 uppercase text-xs tracking-wider block mb-2">Diagnòstic (Anàlisi)</strong>
+                                <p class="text-sm">La web té múltiples pàgines (com articles antics del blog i pàgines de tractament) que intenten posicionar exactament per la mateixa paraula clau. Davant el dubte, Google alterna quina pàgina mostra als resultats.</p>
+                                
+                                <strong class="text-red-400 uppercase text-xs tracking-wider block mb-2 mt-4">Impacte Econòmic / Negoci</strong>
+                                <p class="text-sm">Dilució greu de l'autoritat (PageRank). En lloc de concentrar tota la força en una única URL potent que entri a la Pàgina 1 de Google, tenim dues o tres URLs mediocres encallades a la pàgina 3 o 4. No captem cap pacient d'implantologia complexa per aquesta via.</p>
+                            </div>
+                            <div class="bg-dark-bg p-5 rounded-lg border border-brand/20">
+                                <strong class="text-brand uppercase text-xs tracking-wider block mb-2">Solució Tècnica (Exacta)</strong>
+                                <ul class="text-sm m-0">
+                                    <li>1. Decidir quina de les URLs és la "Mestra" (canònica), normalment la pàgina del servei.</li>
+                                    <li>2. Copiar i moure el contingut valuós dels articles antics cap a la URL Mestra per fer-la més robusta.</li>
+                                    <li>3. Aplicar una <strong>Redirecció 301</strong> a nivell de servidor des de les URLs perdedores cap a la URL Mestra.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>5.3. Comportament de l'Usuari: Fuites de Conversió</h3>
+                    
+                    <div class="data-card border-l-4 border-l-red-500">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-dark-border pb-4 mb-4">
+                            <h4 class="mt-0 text-white text-xl">Fuga Massiva en "/pide-cita"</h4>
+                            <div class="bg-red-900/30 border border-red-500/50 text-red-400 px-3 py-1 rounded text-sm font-mono font-bold mt-2 md:mt-0">
+                                EVIDÈNCIA (GA4): 42.2% Taxa d'Abandonament
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <strong class="text-slate-500 uppercase text-xs tracking-wider block mb-2">Diagnòstic (Anàlisi)</strong>
+                                <p class="text-sm">Gairebé la meitat dels usuaris (més de 1.200 visites analitzades) que JA han pres la decisió de prémer el botó de "Pedir Cita" i aterren a la pàgina del formulari, decideixen fer marxa enrere sense emplenar-lo. Això és atribuïble a un formulari excessivament complex, on es demanen dades no essencials, o a una fricció visual/tècnica en dispositius mòbils on el teclat no apareix correctament.</p>
+                                
+                                <strong class="text-red-400 uppercase text-xs tracking-wider block mb-2 mt-4">Impacte Econòmic / Negoci</strong>
+                                <p class="text-sm">Aquest és el forat negre de la clínica. L'increment del Cost Per Lead (CPL) és dramàtic. S'ha invertit temps en SEO i diners en Ads per portar el client a la porta de la clínica, només per tancar-li a la cara perquè se li exigeixen massa dades d'entrada.</p>
+                            </div>
+                            <div class="bg-dark-bg p-5 rounded-lg border border-brand/20 flex flex-col justify-center">
+                                <strong class="text-brand uppercase text-xs tracking-wider block mb-2">Solució Tècnica (Exacta)</strong>
+                                <ul class="text-sm m-0">
+                                    <li>Reduir la pàgina de cita a la seva mínima expressió: Només sol·licitar <strong>Nom i Telèfon</strong>.</li>
+                                    <li>Qualsevol altra dada (mutua, adreça, DNI, historial mèdic) s'ha de recopilar per telèfon durant la trucada de confirmació (tècnica de formulari de 2 passos).</li>
+                                    <li>Substituir per o afegir de forma prominent l'opció "Click-to-Call" via WhatsApp en mòbils.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECCIÓN 6: EXPAT -->
+                <section id="sec-6" class="content-section prose-custom">
+                    <header class="mb-10 border-l-4 border-brand pl-6">
+                        <h2 class="text-4xl font-serif font-bold text-white mb-2">6. Estratègia "Expat Barcelona"</h2>
+                        <p class="text-brand text-xl">A la conquesta de l'Oceà Blau (Anglès & Francès)</p>
+                    </header>
+
+                    <h3>6.1. Auditoria d'Idiomes Actuals i Infraestructura</h3>
+                    <p>Actualment, l'estratègia internacional depèn de l'ús de paràmetres <code>?lang=</code> a l'URL. Com s'ha comentat en apartats anteriors, això destrueix la indexació perquè Google tracta les versions d'idioma com a contingut duplicat de la pàgina en espanyol.</p>
+
+                    <div class="space-y-6 mt-8">
+                        <div class="bg-dark-panel p-6 rounded-xl border border-dark-border flex flex-col md:flex-row gap-6">
+                            <div class="md:w-1/4">
+                                <div class="bg-brand text-white font-bold px-4 py-2 rounded text-center uppercase tracking-wider text-sm">Fase 1</div>
+                                <div class="text-center text-xs text-slate-500 mt-2 uppercase">Arquitectura</div>
+                            </div>
+                            <div class="md:w-3/4">
+                                <h4 class="mt-0 text-white text-xl">Creació de Subdirectoris purs</h4>
+                                <p class="text-sm text-slate-300">S'ha de crear una jerarquia real: <code>vallblanc.com/en/</code> i <code>vallblanc.com/fr/</code>. És absolutament obligatori acompanyar això amb la implementació de les etiquetes meta <code>hreflang="en-es"</code> al codi per donar instruccions clares a Google de l'idioma i el país de destinació.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-dark-panel p-6 rounded-xl border border-dark-border flex flex-col md:flex-row gap-6">
+                            <div class="md:w-1/4">
+                                <div class="bg-brand text-white font-bold px-4 py-2 rounded text-center uppercase tracking-wider text-sm">Fase 2</div>
+                                <div class="text-center text-xs text-slate-500 mt-2 uppercase">Keywords Transaccionals</div>
+                            </div>
+                            <div class="md:w-3/4">
+                                <h4 class="mt-0 text-white text-xl">Landing "Emergency Dentist BCN"</h4>
+                                <p class="text-sm text-slate-300">Aquesta és la proposta de keyword d'altíssim ROI. L'expat o turista amb mal de queixal a Barcelona no fa cerques informatives ni compara preus durant hores. Busca solució immediata. La landing ha d'estar enfocada al "Pain-free" i "Same day appointment", amb botó flotant de trucada urgent.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-dark-panel p-6 rounded-xl border border-dark-border flex flex-col md:flex-row gap-6">
+                            <div class="md:w-1/4">
+                                <div class="bg-brand text-white font-bold px-4 py-2 rounded text-center uppercase tracking-wider text-sm">Fase 3</div>
+                                <div class="text-center text-xs text-slate-500 mt-2 uppercase">Mercat Francès</div>
+                            </div>
+                            <div class="md:w-3/4">
+                                <h4 class="mt-0 text-white text-xl">Landing Específica "Dentiste Barcelone"</h4>
+                                <p class="text-sm text-slate-300">S'ha detectat en GSC una demanda desatesa per cerques relacionades amb implants en francès. Requereix una landing específica enfocada a la qualitat de l'implant i preus, ja que els francesos busquen el "turisme dental" per estalvi respecte al seu país, a diferència de l'anglès que busca el dentista de barri.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>6.2. Riscos / Compliance Sanitari en Traduccions</h3>
+                    <div class="data-card border-l-4 border-l-yellow-500">
+                        <strong class="text-white block mb-2">Advertiment de Qualitat</strong>
+                        <p class="text-sm m-0">No s'han d'utilitzar plugins de traducció automàtica neuronal sense supervisió humana per a terminologia mèdica i dental ("Root canal", "Invisalign aligners", etc.). Una traducció literal errònia d'un tractament mèdic a l'anglès destrueix l'E-E-A-T (Expertise, Trust) immediatament als ulls de l'usuari natiu.</p>
+                    </div>
+                </section>
+
+                <!-- SECCIÓN 7: ROADMAP -->
+                <section id="sec-7" class="content-section prose-custom">
+                    <header class="mb-10 border-l-4 border-brand pl-6">
+                        <h2 class="text-4xl font-serif font-bold text-white mb-2">7. Full de Ruta (Pla d'Acció)</h2>
+                        <p class="text-brand text-xl">Tasques prioritzades segons Impacte vs. Esforç</p>
+                    </header>
+
+                    <h3>7.1. Taula d'Execució</h3>
+                    <div class="overflow-x-auto rounded-xl border border-dark-border shadow-xl mb-8">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead class="bg-dark-panel border-b border-dark-border">
+                                <tr>
+                                    <th class="p-4 text-white uppercase tracking-wider text-xs">Tasca / Acció</th>
+                                    <th class="p-4 text-white uppercase tracking-wider text-xs border-l border-dark-border">Prioritat</th>
+                                    <th class="p-4 text-white uppercase tracking-wider text-xs border-l border-dark-border">Impacte</th>
+                                    <th class="p-4 text-white uppercase tracking-wider text-xs border-l border-dark-border">Esforç</th>
+                                    <th class="p-4 text-white uppercase tracking-wider text-xs border-l border-dark-border">Responsable</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-dark-border bg-[#0B0F19]">
+                                <tr class="hover:bg-dark-panel/50">
+                                    <td class="p-4 font-bold text-white">1. Implementar Hreflang i reestructurar URLs cap a <code>/en/</code> i <code>/fr/</code>.</td>
+                                    <td class="p-4 border-l border-dark-border"><span class="bg-red-900/50 text-red-400 border border-red-500/30 px-2 py-1 rounded text-xs font-bold">ALTA</span></td>
+                                    <td class="p-4 border-l border-dark-border">Alt (SEO Internacional)</td>
+                                    <td class="p-4 border-l border-dark-border">Alt</td>
+                                    <td class="p-4 border-l border-dark-border font-mono text-xs text-brand">Dev Web</td>
+                                </tr>
+                                <tr class="hover:bg-dark-panel/50">
+                                    <td class="p-4 font-bold text-white">2. Optimitzar temps de càrrega: Delay JS i LCP.</td>
+                                    <td class="p-4 border-l border-dark-border"><span class="bg-red-900/50 text-red-400 border border-red-500/30 px-2 py-1 rounded text-xs font-bold">ALTA</span></td>
+                                    <td class="p-4 border-l border-dark-border">Alt (UX i Rebot)</td>
+                                    <td class="p-4 border-l border-dark-border">Mitjà</td>
+                                    <td class="p-4 border-l border-dark-border font-mono text-xs text-brand">Dev Web</td>
+                                </tr>
+                                <tr class="hover:bg-dark-panel/50">
+                                    <td class="p-4 font-bold text-white">3. Auditoria GTM: Consolidació i neteja de tags.</td>
+                                    <td class="p-4 border-l border-dark-border"><span class="bg-orange-900/50 text-orange-400 border border-orange-500/30 px-2 py-1 rounded text-xs font-bold">MITJANA-ALTA</span></td>
+                                    <td class="p-4 border-l border-dark-border">Mitjà</td>
+                                    <td class="p-4 border-l border-dark-border">Baix</td>
+                                    <td class="p-4 border-l border-dark-border font-mono text-xs text-brand">Analista</td>
+                                </tr>
+                                <tr class="hover:bg-dark-panel/50">
+                                    <td class="p-4 font-bold text-white">4. Redisseny landing <code>/pide-cita</code> per reduir camps.</td>
+                                    <td class="p-4 border-l border-dark-border"><span class="bg-red-900/50 text-red-400 border border-red-500/30 px-2 py-1 rounded text-xs font-bold">ALTA</span></td>
+                                    <td class="p-4 border-l border-dark-border">Alt (Conversió)</td>
+                                    <td class="p-4 border-l border-dark-border">Baix</td>
+                                    <td class="p-4 border-l border-dark-border font-mono text-xs text-brand">UX / Dev</td>
+                                </tr>
+                                <tr class="hover:bg-dark-panel/50">
+                                    <td class="p-4 font-bold text-white">5. Redacció i disseny Landing "Emergency Dentist Barcelona".</td>
+                                    <td class="p-4 border-l border-dark-border"><span class="bg-orange-900/50 text-orange-400 border border-orange-500/30 px-2 py-1 rounded text-xs font-bold">MITJANA-ALTA</span></td>
+                                    <td class="p-4 border-l border-dark-border">Alt (Leads nous)</td>
+                                    <td class="p-4 border-l border-dark-border">Mitjà</td>
+                                    <td class="p-4 border-l border-dark-border font-mono text-xs text-brand">Continguts</td>
+                                </tr>
+                                <tr class="hover:bg-dark-panel/50">
+                                    <td class="p-4 font-bold text-white">6. Fusió d'URLs per solucionar canibalització de Regeneració Òssia.</td>
+                                    <td class="p-4 border-l border-dark-border"><span class="bg-yellow-900/50 text-yellow-400 border border-yellow-500/30 px-2 py-1 rounded text-xs font-bold">MITJANA</span></td>
+                                    <td class="p-4 border-l border-dark-border">Mitjà</td>
+                                    <td class="p-4 border-l border-dark-border">Baix</td>
+                                    <td class="p-4 border-l border-dark-border font-mono text-xs text-brand">SEO</td>
+                                </tr>
+                                <tr class="hover:bg-dark-panel/50">
+                                    <td class="p-4 font-bold text-white">7. Creació Power Page: /tratamientos/periodoncia-barcelona/.</td>
+                                    <td class="p-4 border-l border-dark-border"><span class="bg-yellow-900/50 text-yellow-400 border border-yellow-500/30 px-2 py-1 rounded text-xs font-bold">MITJANA</span></td>
+                                    <td class="p-4 border-l border-dark-border">Mitjà</td>
+                                    <td class="p-4 border-l border-dark-border">Alt</td>
+                                    <td class="p-4 border-l border-dark-border font-mono text-xs text-brand">Continguts</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>7.2. (Dades pendents d'Input)</h3>
+                    <p>Per finalitzar l'auditoria a nivell macro i de salut profunda, manquen dues peces d'informació que s'hauran d'executar posteriorment:</p>
+                    <div class="data-card border-l-4 border-l-slate-500">
+                        <ul>
+                            <li><strong>Informe de Cobertura d'Indexació (GSC):</strong> Necessitem exportar el llistat complet de la pestanya "Pàgines > Motiu pel qual no s'han indexat" des de Search Console. Amb això podrem diagnosticar pàgines orfes, anomalies de rastreig per etiqueta 'noindex' i errors Soft 404 reals.</li>
+                            <li><strong>Crawl Complert (Screaming Frog):</strong> Atès que el <code>sitemap_index.xml</code> està bloquejat o dona error de servidor, no es pot validar l'arquitectura completa ni els errors 404 interns sense llançar una aranya emulant el comportament de Googlebot sobre la totalitat del domini.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- SECCIÓN 8: ARQUITECTURA -->
+                <section id="sec-8" class="content-section prose-custom">
+                    <header class="mb-10 border-l-4 border-brand pl-6">
+                        <h2 class="text-4xl font-serif font-bold text-white mb-2">Extra: Mapa d'Arquitectura i Oportunitats</h2>
+                        <p class="text-brand text-xl">L'estructura Silo recomanada per atacar el mercat</p>
+                    </header>
+
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="data-card">
+                            <h3 class="mt-0 border-none pb-0 text-xl">Mapa d'Oportunitats (KWs)</h3>
+                            
+                            <h4 class="text-brand mt-4 mb-2 border-b border-dark-border pb-1">Mercat Local Nadiu (ES/CA)</h4>
+                            <ul class="text-sm">
+                                <li>"dentista vallcarca"</li>
+                                <li>"clínica dental gràcia nord"</li>
+                                <li>"implantes dentales barcelona carga inmediata"</li>
+                                <li>"periodoncista barcelona"</li>
+                                <li>"urgencias dentales barcelona" (Transaccional alta)</li>
+                            </ul>
+
+                            <h4 class="text-brand mt-6 mb-2 border-b border-dark-border pb-1">Mercat Local Expat (EN/FR)</h4>
+                            <ul class="text-sm">
+                                <li>"english speaking dentist barcelona"</li>
+                                <li>"emergency dentist barcelona" (Transaccional crítica)</li>
+                                <li>"dental implants barcelona cost"</li>
+                                <li>"invisalign barcelona english"</li>
+                                <li>"dentiste francophone barcelone"</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="data-card bg-slate-900 border-dashed border-slate-600">
+                            <h3 class="mt-0 border-none pb-0 text-xl mb-4">Arquitectura Recomanada (Silos)</h3>
+                            <pre class="font-mono text-sm text-slate-300 leading-relaxed overflow-x-auto">
+/ (Home: VallBlanc Espai Dental)
+│
+├── /es/ (Versió Local ES)
+│   ├── /tratamientos/ (Pilar Hub)
+│   │   ├── /implantes-dentales-barcelona/
+│   │   ├── /periodoncia-barcelona/ (Nova)
+│   │   └── /ortodoncia-invisible/
+│   │
+│   ├── /urgencias-dentales/ (Landing conversió)
+│   │
+│   └── /barrio-vallcarca/ (Local SEO Landing)
+│
+├── /en/ (Versió Expat EN)
+│   ├── /emergency-dentist/ (Alta Prioritat)
+│   ├── /dental-implants/
+│   └── /international-patients-insurance/
+│
+└── /fr/ (Versió Expat FR - Fase 3)
+    └── /implant-dentaire-barcelone/
+                            </pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- FOOTER -->
+                <footer class="mt-16 pt-8 border-t border-dark-border text-center">
+                    <p class="text-sm text-slate-500 mb-2">Auditoria SEO Integral executada per a VallBlanc. Documentació Confidencial.</p>
+                    <div class="flex items-center justify-center gap-2 text-brand font-bold">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                        Ferran Martínez
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </main>
+
+    <!-- LOGICA DE PESTANYES (Vannila JS per màxima estabilitat) -->
+    <script>
+        function switchTab(tabId) {
+            // 1. Amagar totes les seccions
+            document.querySelectorAll('.content-section').forEach(el => {
+                el.classList.remove('active');
+            });
             
-            menuContainer.innerHTML = html;
-            mobileNavContainer.innerHTML = html;
-        }
+            // 2. Mostrar la secció corresponent
+            document.getElementById(tabId).classList.add('active');
 
-        function setActive(id) {
-            activeId = id;
-            renderNav();
-            renderContent();
-            mobileMenu.classList.add('hidden');
+            // 3. Actualitzar estils botons Desktop
+            document.querySelectorAll('aside .nav-btn').forEach(el => {
+                el.classList.remove('active');
+            });
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            // 4. Actualitzar estils botons Mobile
+            document.querySelectorAll('#mobile-menu .nav-btn').forEach(el => {
+                el.classList.remove('active');
+            });
+            const activeMBtn = document.getElementById('mbtn-' + tabId);
+            if (activeMBtn) activeMBtn.classList.add('active');
+
+            // 5. Tancar menú mòbil si està obert
+            document.getElementById('mobile-menu').classList.add('hidden');
+            
+            // 6. Scroll a dalt suau
+            document.getElementById('content-container').scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Fallback
         }
 
         function toggleMobileMenu() {
-            mobileMenu.classList.toggle('hidden');
-        }
-
-        function renderContent() {
-            const data = AUDIT_CONTENT[activeId];
-            contentContainer.innerHTML = `
-                <div class="max-w-5xl mx-auto animate-fade-in">
-                    <div class="border-l-4 border-brand pl-6 mb-8">
-                        <h2 class="text-3xl font-serif font-bold text-white mb-2">${data.title}</h2>
-                        <p class="text-brand text-lg font-medium">${data.subtitle}</p>
-                    </div>
-                    ${data.html}
-                    <footer class="mt-12 py-8 border-t border-dark-border text-center text-xs text-slate-600">
-                        <p>© 2026 Auditoría Estratégica Digital VallBlanc. Documento Confidencial.</p>
-                        <p class="mt-2 text-brand font-bold">Ferran Martínez</p>
-                    </footer>
-                </div>
-            `;
-            // Simple animation class injection
-            if(!document.getElementById('anim-style')) {
-                const style = document.createElement('style');
-                style.id = 'anim-style';
-                style.innerHTML = `@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } } .animate-fade-in { animation: fadeIn 0.4s ease-out; }`;
-                document.head.appendChild(style);
+            const menu = document.getElementById('mobile-menu');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
             }
         }
-
-        // Init
-        renderNav();
-        renderContent();
-
     </script>
 </body>
 </html>
